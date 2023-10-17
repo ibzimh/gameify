@@ -8,7 +8,7 @@ Before you get started, make sure you have the following software installed:
 
 2. **Xcode (for iOS development):** If you're planning to develop for iOS, you'll need Xcode installed on a macOS machine. You can download it from the Mac App Store. Xcode 15 requires a Mac running macOS Ventura 13.5 or later.
 
-5. **Android Studio (for Android development):** No clue lol
+4. **Android Studio (for Android development):** No clue lol
 
 ## Getting Started
 
