@@ -5,7 +5,7 @@ import { StyleSheet, Text, View, FlatList, TouchableOpacity } from 'react-native
 const Categories = () => {
   const[categories, setCategories] = useState([]);
   useEffect(() => {
-    fetch('http://localhost:8000/categories')
+    fetch('http://172.31.19.188:8000/categories')
     .then(response=>response.json())
     .then(data => setCategories(data))
     .catch(error => console.error(error));
