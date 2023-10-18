@@ -21,7 +21,7 @@ Follow these steps to run the React Native app:
    ```bash
    cd src
    npm install
-   cs ../server
+   cd ../server
    npm install
    ```
 3.  **Server dependencies:** 
