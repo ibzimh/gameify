@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, Button, Linking } from "react-native";
+import { Text, View, Button, Linking } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import qs from "qs"; // npm install --save qs
@@ -9,46 +9,25 @@ import Hashes from "jshashes"; // npm install --save jshashes
 import URL from "url-parse"; // npm install --save url-parse
 
 import Config from "./env";
-// import styles from "./components/styles";
+import styles from "./components/styles";
 
-export default class App extends React.Component {
-  state = {};
+export default function App() {
+  const [user, setUser] = useState(null);
 
-  render() {
-    const { user } = this.state;
-    if (!user) {
-      return (
-        <View style={styles.container}>
-          <LoginView />
-        </View>
-      );
-    }
-
+  if (!user) {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome {user.username}!</Text>
+        <LoginView />
       </View>
     );
   }
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.welcome}>Welcome {user.username}!</Text>
+    </View>
+  );  
 }
-
-// export default function App() {
-//   const [user, setUser] = useState(null);
-
-//   if (!user) {
-//     return (
-//       <View style={styles.container}>
-//         <LoginView />
-//       </View>
-//     );
-//   }
-
-//   return (
-//     <View style={styles.container}>
-//       <Text style={styles.welcome}>Welcome {user.username}!</Text>
-//     </View>
-//   );  
-// }
 
 const loginProviders = {
   google: {
@@ -227,22 +206,3 @@ class LoginView extends React.Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F5FCFF",
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: "center",
-    margin: 10,
-  },
-  instructions: {
-    textAlign: "center",
-    color: "#333333",
-    marginBottom: 5,
-  },
-}); 
