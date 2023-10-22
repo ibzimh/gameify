@@ -22,6 +22,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "^0.72.6",
+    "react-native-app-auth": "^7.1.0",
     "react-native-web": "~0.19.6",
     "url-parse": "^1.5.10"
   },
