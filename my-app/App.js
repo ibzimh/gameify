@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Text, View, Button, Linking } from "react-native";
 
-import styles from "./components/styles";
+import styles from "./styles";
 import LoginView from "./components/LoginView";
 
 export default function App() {
