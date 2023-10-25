@@ -13,12 +13,11 @@ import Config from "../env";
 const loginProviders = {
   google: {
     title: "Google",
-    redirect_uri: Config.BACKEND + "/google/oauth2callback", // where google will send the user back to
+    redirect_uri: Config.BACKEND, // where google will send the user back to
     client_id: Config.GOOGLE_CLIENT_ID,
     response_type: "code",
     scope: "profile email",
     token_endpoint: Config.BACKEND + "/oauth2/google/token",
-    // grant_type: "access_code",
     authorization_endpoint: "https://accounts.google.com/o/oauth2/v2/auth",
   },
 };
@@ -36,7 +35,7 @@ class LoginView extends React.Component {
     this.handleRedirectUri(url);
   };
 
-  componentDidMount() {
+  componentDidMount() { 
     console.log("the component mounted");
     this.changeEventListener = Linking.addEventListener(
       "url",
