@@ -1,12 +1,9 @@
 import React, { useState } from "react";
 import { Text, View, Button, Linking } from "react-native";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import qs from "qs"; // npm install --save qs
-import randomString from "random-string"; // npm install --save random-string
-import Hashes from "jshashes"; // npm install --save jshashes
-
-import URL from "url-parse"; // npm install --save url-parse
+import qs from "qs";
+import randomString from "random-string";
+import URL from "url-parse";
 
 import Config from "../env";
 
@@ -80,7 +77,6 @@ class LoginView extends React.Component {
 
   handleLogin = (key) => {
     const loginProvider = loginProviders[key];
-    // this.setState({ loginProvider });
     const { client_id, redirect_uri, response_type, scope, authorization_endpoint } = loginProvider;
 
     const state = randomString();
