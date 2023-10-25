@@ -21,22 +21,24 @@ Follow these steps to run the React Native app:
    ```bash
    cd src
    npm install
+   cd ../server
+   npm install
    ```
-
-
-3. **Start the Development Server:**
-
-   ```bash
-   npx expo start
-   ```
-
-4.  **Server dependencies:** 
+3.  **Server dependencies:** 
    ```bash
    npm install mongodb express cors dotenv
    ```
 
-5. **Run Server**
+4. **Run Server**
    ```bash
-   cd ../server
    node server.js
    ```
+
+5. **Start the Development Server:**
+
+   ```bash
+   cd ../src
+   npx expo start
+   ```
+
+

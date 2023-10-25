@@ -1,37 +1,341 @@
-import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, FlatList, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  TextInput,
+  Button,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
+import { Calendar } from 'react-native-calendars';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-const Categories = () => {
-  const[categories, setCategories] = useState([]);
-  useEffect(() => {
-    fetch('http://localhost:8000/categories')
-    .then(response=>response.json())
-    .then(data => setCategories(data))
-    .catch(error => console.error(error));
-  }, []);
+import { FontAwesome5 } from '@expo/vector-icons';
+const Tab = createBottomTabNavigator();
+const HomeScreen = () => (
+  <View style={styles.container}>
+    <Text>Home Screen</Text>
+  </View>
+);
+
+const UsersScreen = () => (
+  <View style={styles.container}>
+    <Text>Users Screen</Text>
+  </View>
+);
+
+const TrophyScreen = () => (
+  <View style={styles.container}>
+    <Text>Trophy Screen</Text>
+  </View>
+);
+
+const GiftScreen = () => (
+  <View style={styles.container}>
+    <Text>Gift Screen</Text>
+  </View>
+);
+
+const CustomTabBarButton = ({ children, onPress, focused }) => (
+  <TouchableOpacity
+    style={{
+      flex: 1,
+      height: 70,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: focused ? '#FF69B4' : '#ADD8E6', 
+      borderRadius:15,
+      marginHorizontal:5,
+    }}
+    onPress={onPress}
+  >
+    {children}
+  </TouchableOpacity>
+);
+const TaskScreen = () => {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [points, setPoints] = useState('');
+  const [deadline, setDeadline] = useState('');
+
+  const handlePointsButtonPress = (selectedPoints) => {
+    setPoints(selectedPoints);
+  };
+
+  const handlePointsInputChange = (text) => {
+    setPoints(text);
+  };
+
+  const handleDateSelect = (date) => {
+    setDeadline(date.dateString);
+  };
+
+  const handleCreateTask = () => {
+    console.log(`Task Title: ${title}, Description: ${description}, Points: ${points}, Deadline: ${deadline}`);
+  };
+
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={categories}
-        renderItem={({item}) => (
-          <TouchableOpacity style={styles.item} onPress={() => console.log(item)}>
-            <Text style={styles.title}>{item.category_id}</Text>
-            <Text style={styles.content}>{item.category_name}</Text>
-          </TouchableOpacity>
-        )}
-        keyExtractor={item => item.category_id.toString()}
+    <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.headerContainer}>
+        <Text style={styles.header}>Create a New Task</Text>
+      </View>
+      <Text style={styles.taskDescription}>Task Name</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Task Title"
+        value={title}
+        onChangeText={setTitle}
       />
-    </View>
+      <View style={styles.pointsContainer}>
+        <Text style={styles.pointsText}>Points:</Text>
+        <ScrollView horizontal>
+          {[100, 200, 300, 400, 500, 600].map((value) => (
+            <TouchableOpacity
+              key={value}
+              style={[
+                styles.pointsButton,
+                points === value.toString() && styles.selectedPointsButton,
+              ]}
+              onPress={() => handlePointsButtonPress(value.toString())}
+            >
+              <Text style={styles.pointsButtonText}>{value}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+      <TextInput
+        style={styles.input}
+        placeholder="Points (e.g., 500)"
+        keyboardType="numeric"
+        value={points}
+        onChangeText={handlePointsInputChange}
+      />
+      <TouchableOpacity style={styles.deadlineContainer}>
+        <Text style={styles.deadlineText}>Deadline:</Text>
+        <Text style={styles.selectedDeadline}>{deadline}</Text>
+      </TouchableOpacity>
+      <Calendar
+        onDayPress={handleDateSelect}
+        markedDates={deadline ? {[deadline]: {selected: true, selectedColor: '#007BFF'}} : {}}
+        style={styles.calendar}
+      />
+      <Text style={styles.taskDescription}>Description</Text>
+      <TextInput
+        style={styles.descriptionInput}
+        placeholder="Task Description"
+        value={description}
+        onChangeText={setDescription}
+        multiline
+      />
+      <TouchableOpacity //style = {styles.addButtonContainer}
+        style={styles.addButton}
+        onPress={() => console.log("Add Task Button Pressed")} 
+      >
+        <Text style={styles.addButtonText}>+ Add Task</Text>
+      </TouchableOpacity>
+      
+    </ScrollView>
+  );
+};
+
+const App = () => {
+  return (
+    <NavigationContainer>
+      <Tab.Navigator
+        tabBarOptions={{ showLabel: false }}
+        screenOptions={{ headerShown: false }}
+      >
+        <Tab.Screen
+          name="Home"
+          component={HomeScreen}
+          options={({ navigation, route }) => ({
+            tabBarButton: (props) => (
+              <CustomTabBarButton
+                {...props}
+                onPress={() => navigation.navigate(route.name)}
+              >
+                <FontAwesome5 name="home" size={30} color="#000" />
+              </CustomTabBarButton>
+            ),
+          })}
+        />
+        <Tab.Screen
+          name="Users"
+          component={UsersScreen}
+          options={({ navigation, route }) => ({
+            tabBarButton: (props) => (
+              <CustomTabBarButton
+                {...props}
+                onPress={() => navigation.navigate(route.name)}
+              >
+                <FontAwesome5 name="users" size={30} color="#000" />
+              </CustomTabBarButton>
+            ),
+          })}
+        />
+        <Tab.Screen
+          name="Tasks"
+          component={TaskScreen}
+          options={({ navigation, route }) => ({
+            tabBarButton: (props) => (
+              <CustomTabBarButton
+                {...props}
+                onPress={() => navigation.navigate(route.name)}
+              >
+                <FontAwesome5 name="tasks" size={30} color="#000" />
+              </CustomTabBarButton>
+            ),
+          })}
+        />
+        <Tab.Screen
+          name="Trophy"
+          component={TrophyScreen}
+          options={({ navigation, route }) => ({
+            tabBarButton: (props) => (
+              <CustomTabBarButton
+                {...props}
+                onPress={() => navigation.navigate(route.name)}
+              >
+                <FontAwesome5 name="trophy" size={30} color="#000" />
+              </CustomTabBarButton>
+            ),
+          })}
+        />
+        <Tab.Screen
+          name="Gift"
+          component={GiftScreen}
+          options={({ navigation, route }) => ({
+            tabBarButton: (props) => (
+              <CustomTabBarButton
+                {...props}
+                onPress={() => navigation.navigate(route.name)}
+              >
+                <FontAwesome5 name="gift" size={30} color="#000" />
+              </CustomTabBarButton>
+            ),
+          })}
+        />
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 };
 
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center', }, item: { padding: 16, borderBottomWidth: 1, borderBottomColor: '#ccc', }, title: { fontWeight: 'bold', fontSize: 18, marginBottom: 8, }, content: { fontSize: 14, }, });
+    flexGrow: 1,
+    padding: 50,
+    backgroundColor: '#f0f0f0',
+  },
 
-export default Categories;
+
+  addButton: {
+    backgroundColor: '#007BFF',
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 50,
+  },
+
+  addButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    textAlign: 'center',
+  },
+  headerContainer: {
+    alignItems: 'center',
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 16,
+    paddingHorizontal: 8,
+  },
+  pointsContainer: {
+    flexDirection: 'row',
+    marginBottom: 16,
+  },
+  pointsText: {
+    fontSize: 16,
+    marginRight: 8,
+    alignSelf: 'center',
+  },
+  pointsButton: {
+    backgroundColor: '#ccc',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    marginHorizontal: 4,
+  },
+  selectedPointsButton: {
+    backgroundColor: '#007BFF',
+  },
+  pointsButtonText: {
+    fontSize: 16,
+    color: '#fff',
+  },
+  deadlineContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  deadlineText: {
+    fontSize: 16,
+    marginRight: 8,
+    alignSelf: 'center',
+  },
+  selectedDeadline: {
+    fontSize: 16,
+    color: '#007BFF',
+    alignSelf: 'center',
+  },
+  calendar: {
+    height: 300,
+    marginBottom: 20,
+
+  },
+  taskDescription: {
+    fontSize: 16,
+    alignSelf: 'start'
+  },
+  descriptionInput: {
+    height: 100,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 20,
+    paddingHorizontal: 8,
+  },
+  navbar: {
+    flex: 1,
+      height: 70,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor:  '#fff', // Pink for selected, white for others
+      borderTopLeftRadius: 15,
+      borderTopRightRadius: 15,
+  },
+  navButton: {
+    backgroundColor: '#FFD700',
+    padding: 10,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 60,
+    height: 60,
+  },
+  navButtonText: {
+    color: '#007BFF',
+    fontSize: 12,
+    marginTop: 5,
+  },
+  
+});
+
+export default App;
