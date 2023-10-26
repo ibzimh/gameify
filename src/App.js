@@ -26,9 +26,9 @@ const UsersScreen = () => (
   </View>
 );
 
-const TrophyScreen = () => (
+const Leaderboard = () => (
   <View style={styles.container}>
-    <Text>Trophy Screen</Text>
+    <Text>Leaderboard</Text>
   </View>
 );
 
@@ -191,7 +191,7 @@ const App = () => {
         />
         <Tab.Screen
           name="Trophy"
-          component={TrophyScreen}
+          component={Leaderboard}
           options={({ navigation, route }) => ({
             tabBarButton: (props) => (
               <CustomTabBarButton
