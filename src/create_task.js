@@ -3,7 +3,6 @@ import { View, TextInput, ScrollView, TouchableOpacity, StyleSheet, Text } from 
 import { Calendar } from 'react-native-calendars';
 
 const TaskScreen = () => {
-  //this handle the api call from backend
   const [task, setTask] = useState({
     title: '',
     description: '',
@@ -11,21 +10,17 @@ const TaskScreen = () => {
     deadline: '',
   });
 
-  //This function will handle the input, which might be connect to backend to handle it
   const handleInputChange = (key, value) => {
     setTask({ ...task, [key]: value });
   };
 
-  //Handle the deadline set up
   const handleDateSelect = (date) => {
     handleInputChange('deadline', date.dateString);
   };
-  //print out the task created when button is press
   const handleCreateTask = () => {
     console.log(`Task Title: ${task.title}, Description: ${task.description}, Points: ${task.points}, Deadline: ${task.deadline}`);
   };
 
-  //handle point button
   const handlePointsButtonPress = (selectedPoints) => {
     setTask({ ...task, points: selectedPoints });
   };
