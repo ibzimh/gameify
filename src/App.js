@@ -6,33 +6,10 @@ import { TouchableOpacity } from 'react-native';
 
 import HomeScreen from './home';
 import UsersScreen from './team';
-import TrophyScreen from './leaderboard';
+import Leaderboard from './leaderboard';
 import GiftScreen from './reward';
 import TaskScreen from './create_task'; 
 const Tab = createBottomTabNavigator();
-const HomeScreen = () => (
-  <View style={styles.container}>
-    <Text>Home Screen</Text>
-  </View>
-);
-
-const UsersScreen = () => (
-  <View style={styles.container}>
-    <Text>Users Screen</Text>
-  </View>
-);
-
-const Leaderboard = () => (
-  <View style={styles.container}>
-    <Text>Leaderboard</Text>
-  </View>
-);
-
-const GiftScreen = () => (
-  <View style={styles.container}>
-    <Text>Gift Screen</Text>
-  </View>
-);
 
 const CustomTabBarButton = ({ children, onPress, focused }) => (
   <TouchableOpacity
