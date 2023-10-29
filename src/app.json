@@ -11,6 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "scheme": "gameify",
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -21,7 +22,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.anonymous.gameify"
     },
     "web": {
       "favicon": "./assets/favicon.png"
