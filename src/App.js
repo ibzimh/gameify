@@ -17,6 +17,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import { FontAwesome5 } from "@expo/vector-icons";
+import LoginView from "./LoginView";
 
 const Tab = createBottomTabNavigator();
 const HomeScreen = () => (
@@ -169,6 +170,20 @@ const TaskScreen = () => {
 };
 
 const App = () => {
+  const [user, setUser] = useState(null);
+
+  if (!user) {
+    return (
+      <View style={styles.container}>
+        <LoginView />
+        <Button title={"secretly sneak into the app"} onPress={() => { // temporary button to skip login
+          setUser(true);
+          console.log("done");
+        }}/>
+      </View>
+    );
+  }
+
   return (
     <SafeAreaProvider>
     <NavigationContainer>
