@@ -9,7 +9,7 @@ const UsersScreen = () => {
     { name: 'Arnav', role: 'Member', points: 120 },
     { name: 'Viet', role: 'Member', points: 120 },
     { name: 'Emily', role: 'Member', points: 120 },
-    { name: 'Bob', role: 'Member', points: 120 }
+    { name: 'Ibrahim', role: 'Member', points: 120 }
   ];
 
   return (
