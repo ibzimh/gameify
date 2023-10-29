@@ -55,6 +55,24 @@ const CustomTabBarButton = ({ children, onPress, focused }) => (
     {children}
   </TouchableOpacity>
 );
+
+const CustomTabScreen = (name, component) => {
+  return <Tab.Screen
+    name={name}
+    component={component}
+    options={({ navigation, route }) => ({
+      tabBarButton: (props) => (
+        <CustomTabBarButton
+          {...props}
+          onPress={() => navigation.navigate(route.name)}
+        >
+          <FontAwesome5 name={name.toLowerCase()} size={30} color="#000" />
+        </CustomTabBarButton>
+      ),
+    })}
+  />;
+};
+
 const TaskScreen = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -153,76 +171,11 @@ const App = () => {
         tabBarOptions={{ showLabel: false }}
         screenOptions={{ headerShown: false }}
       >
-        <Tab.Screen
-          name="Home"
-          component={HomeScreen}
-          options={({ navigation, route }) => ({
-            tabBarButton: (props) => (
-              <CustomTabBarButton
-                {...props}
-                onPress={() => navigation.navigate(route.name)}
-              >
-                <FontAwesome5 name="home" size={30} color="#000" />
-              </CustomTabBarButton>
-            ),
-          })}
-        />
-        <Tab.Screen
-          name="Users"
-          component={UsersScreen}
-          options={({ navigation, route }) => ({
-            tabBarButton: (props) => (
-              <CustomTabBarButton
-                {...props}
-                onPress={() => navigation.navigate(route.name)}
-              >
-                <FontAwesome5 name="users" size={30} color="#000" />
-              </CustomTabBarButton>
-            ),
-          })}
-        />
-        <Tab.Screen
-          name="Tasks"
-          component={TaskScreen}
-          options={({ navigation, route }) => ({
-            tabBarButton: (props) => (
-              <CustomTabBarButton
-                {...props}
-                onPress={() => navigation.navigate(route.name)}
-              >
-                <FontAwesome5 name="tasks" size={30} color="#000" />
-              </CustomTabBarButton>
-            ),
-          })}
-        />
-        <Tab.Screen
-          name="Trophy"
-          component={TrophyScreen}
-          options={({ navigation, route }) => ({
-            tabBarButton: (props) => (
-              <CustomTabBarButton
-                {...props}
-                onPress={() => navigation.navigate(route.name)}
-              >
-                <FontAwesome5 name="trophy" size={30} color="#000" />
-              </CustomTabBarButton>
-            ),
-          })}
-        />
-        <Tab.Screen
-          name="Gift"
-          component={GiftScreen}
-          options={({ navigation, route }) => ({
-            tabBarButton: (props) => (
-              <CustomTabBarButton
-                {...props}
-                onPress={() => navigation.navigate(route.name)}
-              >
-                <FontAwesome5 name="gift" size={30} color="#000" />
-              </CustomTabBarButton>
-            ),
-          })}
-        />
+    {CustomTabScreen("Home", HomeScreen)}
+    {CustomTabScreen("Users", UsersScreen)}
+    {CustomTabScreen("Tasks", TaskScreen)}
+    {CustomTabScreen("Trophy", TrophyScreen)}
+    {CustomTabScreen("Gift", GiftScreen)}
       </Tab.Navigator>
     </NavigationContainer>
   );
