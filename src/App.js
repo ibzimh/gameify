@@ -16,6 +16,8 @@ import { Calendar } from 'react-native-calendars';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
+import LoginView from "./LoginView";
+
 import { FontAwesome5 } from '@expo/vector-icons';
 const Tab = createBottomTabNavigator();
 const HomeScreen = () => (
