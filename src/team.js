@@ -9,13 +9,13 @@ import {
 
 const UsersScreen = () => {
   const members = [
-    { name: "Julia", role: "Admin", points: 120 },
-    { name: "Jason", role: "Member", points: 120 },
-    { name: "Kshama", role: "Member", points: 120 },
-    { name: "Arnav", role: "Member", points: 120 },
-    { name: "Viet", role: "Member", points: 120 },
-    { name: "Emily", role: "Member", points: 120 },
-    { name: "Bob", role: "Member", points: 120 },
+    { name: 'Julia', role: 'Admin', points: 120 },
+    { name: 'Jason', role: 'Member', points: 120 },
+    { name: 'Kshama', role: 'Member', points: 120 },
+    { name: 'Arnav', role: 'Member', points: 120 },
+    { name: 'Viet', role: 'Member', points: 120 },
+    { name: 'Emily', role: 'Member', points: 120 },
+    { name: 'Ibrahim', role: 'Member', points: 120 }
   ];
 
   return (
