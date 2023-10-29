@@ -12,8 +12,8 @@ const Leaderboard = () => {
       { name: 'Jason', score: 80 },
       { name: 'Ibrahim', score: 60 },
       { name: 'Arnav', score: 40 },
-      { name: 'Julia', score: 120},
-      { name: 'Viet', score: 175}
+      { name: 'Julia', score: 120 },
+      { name: 'Viet', score: 175 },
     ];
     setLeaderboardData(staticData);
   }, []);
@@ -25,19 +25,20 @@ const Leaderboard = () => {
     // Extract the top 3 players
     const topThreePlayers = sortedData.slice(0, 3);
 
-    return topThreePlayers;
+    return { topThreePlayers, allPlayers: sortedData };
   };
 
-  const topThreePlayers = getPodiumPlayers();
+  const { topThreePlayers, allPlayers } = getPodiumPlayers();
 
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>Leaderboard</Text>
       <View style={styles.podium}>
         {topThreePlayers.map((player, index) => (
           <View
             style={[
               styles.podiumItem,
-              { backgroundColor: podiumColors[index] }, // Set different colors for podium items
+              { backgroundColor: podiumColors[index] },
             ]}
             key={index}
           >
@@ -45,9 +46,8 @@ const Leaderboard = () => {
           </View>
         ))}
       </View>
-      <Text style={styles.title}>Leaderboard</Text>
       <FlatList
-        data={leaderboardData}
+        data={allPlayers}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item, index }) => (
           <View style={styles.item}>
@@ -61,7 +61,7 @@ const Leaderboard = () => {
   );
 };
 
-const podiumColors = ['gold', 'silver', 'peru']; // Different colors for podium items
+const podiumColors = ['gold', 'silver', 'peru'];
 
 const styles = StyleSheet.create({
   container: {
