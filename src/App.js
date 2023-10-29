@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   TextInput,
@@ -7,12 +7,13 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-} from 'react-native';
-import { Calendar } from 'react-native-calendars';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+} from "react-native";
+import { Calendar } from "react-native-calendars";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import { FontAwesome5 } from '@expo/vector-icons';
+import { FontAwesome5 } from "@expo/vector-icons";
+
 const Tab = createBottomTabNavigator();
 const HomeScreen = () => (
   <View style={styles.container}>
@@ -43,11 +44,11 @@ const CustomTabBarButton = ({ children, onPress, focused }) => (
     style={{
       flex: 1,
       height: 70,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: focused ? '#FF69B4' : '#ADD8E6', 
-      borderRadius:15,
-      marginHorizontal:5,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: focused ? "#FF69B4" : "#ADD8E6",
+      borderRadius: 15,
+      marginHorizontal: 5,
     }}
     onPress={onPress}
   >
@@ -55,10 +56,10 @@ const CustomTabBarButton = ({ children, onPress, focused }) => (
   </TouchableOpacity>
 );
 const TaskScreen = () => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [points, setPoints] = useState('');
-  const [deadline, setDeadline] = useState('');
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [points, setPoints] = useState("");
+  const [deadline, setDeadline] = useState("");
 
   const handlePointsButtonPress = (selectedPoints) => {
     setPoints(selectedPoints);
@@ -73,7 +74,9 @@ const TaskScreen = () => {
   };
 
   const handleCreateTask = () => {
-    console.log(`Task Title: ${title}, Description: ${description}, Points: ${points}, Deadline: ${deadline}`);
+    console.log(
+      `Task Title: ${title}, Description: ${description}, Points: ${points}, Deadline: ${deadline}`
+    );
   };
 
   return (
@@ -118,7 +121,11 @@ const TaskScreen = () => {
       </TouchableOpacity>
       <Calendar
         onDayPress={handleDateSelect}
-        markedDates={deadline ? {[deadline]: {selected: true, selectedColor: '#007BFF'}} : {}}
+        markedDates={
+          deadline
+            ? { [deadline]: { selected: true, selectedColor: "#007BFF" } }
+            : {}
+        }
         style={styles.calendar}
       />
       <Text style={styles.taskDescription}>Description</Text>
@@ -131,11 +138,10 @@ const TaskScreen = () => {
       />
       <TouchableOpacity //style = {styles.addButtonContainer}
         style={styles.addButton}
-        onPress={() => console.log("Add Task Button Pressed")} 
+        onPress={() => console.log("Add Task Button Pressed")}
       >
         <Text style={styles.addButtonText}>+ Add Task</Text>
       </TouchableOpacity>
-      
     </ScrollView>
   );
 };
@@ -222,120 +228,114 @@ const App = () => {
   );
 };
 
-
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 50,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: "#f0f0f0",
   },
-
-
   addButton: {
-    backgroundColor: '#007BFF',
+    backgroundColor: "#007BFF",
     padding: 15,
     borderRadius: 8,
     marginBottom: 50,
   },
-
   addButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    textAlign: 'center',
+    textAlign: "center",
   },
   headerContainer: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   header: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
   },
   input: {
     height: 40,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderWidth: 1,
     marginBottom: 16,
     paddingHorizontal: 8,
   },
   pointsContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginBottom: 16,
   },
   pointsText: {
     fontSize: 16,
     marginRight: 8,
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   pointsButton: {
-    backgroundColor: '#ccc',
+    backgroundColor: "#ccc",
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 8,
     marginHorizontal: 4,
   },
   selectedPointsButton: {
-    backgroundColor: '#007BFF',
+    backgroundColor: "#007BFF",
   },
   pointsButtonText: {
     fontSize: 16,
-    color: '#fff',
+    color: "#fff",
   },
   deadlineContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 16,
   },
   deadlineText: {
     fontSize: 16,
     marginRight: 8,
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   selectedDeadline: {
     fontSize: 16,
-    color: '#007BFF',
-    alignSelf: 'center',
+    color: "#007BFF",
+    alignSelf: "center",
   },
   calendar: {
     height: 300,
     marginBottom: 20,
-
   },
   taskDescription: {
     fontSize: 16,
-    alignSelf: 'start'
+    alignSelf: "start",
   },
   descriptionInput: {
     height: 100,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderWidth: 1,
     marginBottom: 20,
     paddingHorizontal: 8,
   },
   navbar: {
     flex: 1,
-      height: 70,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor:  '#fff', // Pink for selected, white for others
-      borderTopLeftRadius: 15,
-      borderTopRightRadius: 15,
+    height: 70,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff", // Pink for selected, white for others
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
   },
   navButton: {
-    backgroundColor: '#FFD700',
+    backgroundColor: "#FFD700",
     padding: 10,
     borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     width: 60,
     height: 60,
   },
   navButtonText: {
-    color: '#007BFF',
+    color: "#007BFF",
     fontSize: 12,
     marginTop: 5,
   },
-  
 });
 
 export default App;
