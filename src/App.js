@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 import {
+    SafeAreaProvider,
+    useSafeAreaInsets,
+} from 'react-native-safe-area-context';
+import {
   View,
   TextInput,
   Button,
@@ -166,6 +170,7 @@ const TaskScreen = () => {
 
 const App = () => {
   return (
+    <SafeAreaProvider>
     <NavigationContainer>
       <Tab.Navigator
         tabBarOptions={{ showLabel: false }}
@@ -178,6 +183,7 @@ const App = () => {
     {CustomTabScreen("Gift", GiftScreen)}
       </Tab.Navigator>
     </NavigationContainer>
+    </SafeAreaProvider>
   );
 };
 
