@@ -3,28 +3,22 @@ const  choreSchema = new mongoose.Schema(
     {
         chore_name: {
             type:String,
-            required: true,
         },
         description: {
             type:String,
-            required: true,
         },due_date: {
             type:String,
-            required: true,
         },assign_to:{
             type: Number,
-            required: true
         },
         category:{
             type:Number,
-            required: true
         },
         points:{
             type:Number,
-            required: true
         }
     },
     {timestamps:true}
 )
-const Chore = mongoose.model('chore', choreSchema);
+const Chore = mongoose.model('Chore', choreSchema);
 module.exports = Chore;
