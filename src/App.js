@@ -21,19 +21,14 @@ import HomeScreen from "./home";
 import UsersScreen from "./team";
 
 import { FontAwesome5 } from '@expo/vector-icons';
+import { TouchableOpacity } from 'react-native'; 
+
+import HomeScreen from './home';
+import UsersScreen from './team';
+import Leaderboard from './leaderboard';
+import GiftScreen from './reward';
+import TaskScreen from './create_task'; 
 const Tab = createBottomTabNavigator();
-
-const Leaderboard = () => (
-  <View style={styles.container}>
-    <Text>Leaderboard</Text>
-  </View>
-);
-
-const GiftScreen = () => (
-  <View style={styles.container}>
-    <Text>Gift Screen</Text>
-  </View>
-);
 
 const CustomTabBarButton = ({ children, onPress, focused }) => (
   <TouchableOpacity
