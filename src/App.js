@@ -17,20 +17,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import LoginView from "./LoginView";
+import HomeScreen from "./home";
+import UsersScreen from "./team";
 
 import { FontAwesome5 } from '@expo/vector-icons';
 const Tab = createBottomTabNavigator();
-const HomeScreen = () => (
-  <View style={styles.container}>
-    <Text>Home Screen</Text>
-  </View>
-);
-
-const UsersScreen = () => (
-  <View style={styles.container}>
-    <Text>Users Screen</Text>
-  </View>
-);
 
 const Leaderboard = () => (
   <View style={styles.container}>
