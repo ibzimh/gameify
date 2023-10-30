@@ -1,5 +1,11 @@
-import React from 'react';
-import { View, ScrollView, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React from "react";
+import {
+  View,
+  ScrollView,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 
 const UsersScreen = () => {
   const members = [
@@ -9,7 +15,7 @@ const UsersScreen = () => {
     { name: 'Arnav', role: 'Member', points: 120 },
     { name: 'Viet', role: 'Member', points: 120 },
     { name: 'Emily', role: 'Member', points: 120 },
-    { name: 'Bob', role: 'Member', points: 120 }
+    { name: 'Ibrahim', role: 'Member', points: 120 }
   ];
 
   return (
@@ -42,65 +48,65 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 20,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: "#f0f0f0",
   },
   headerContainer: {
-    marginBottom: 20
+    marginBottom: 20,
   },
   header: {
     fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center'
+    fontWeight: "bold",
+    textAlign: "center",
   },
   subHeader: {
     fontSize: 20,
     marginBottom: 20,
-    textAlign: 'center'
+    textAlign: "center",
   },
   memberContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 15,
     padding: 10,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderWidth: 1,
-    borderRadius: 8
+    borderRadius: 8,
   },
   avatar: {
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#ddd',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 10
+    backgroundColor: "#ddd",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 10,
   },
   avatarText: {
     fontSize: 20,
-    fontWeight: 'bold'
+    fontWeight: "bold",
   },
   memberName: {
     flex: 2,
-    fontSize: 16
+    fontSize: 16,
   },
   memberRole: {
     flex: 1,
     fontSize: 16,
-    color: '#777'
+    color: "#777",
   },
   pointsContainer: {
-    backgroundColor: '#e5e5e5',
+    backgroundColor: "#e5e5e5",
     padding: 5,
-    borderRadius: 5
+    borderRadius: 5,
   },
   pointsText: {
-    fontSize: 16
+    fontSize: 16,
   },
   footerButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 20
-  }
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 20,
+  },
 });
 
 export default UsersScreen;

@@ -1,3 +1,9 @@
+#Expo
+.expo
+__generated__
+web-build
+bare-apps
+
 # Logs
 logs
 *.log
