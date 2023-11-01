@@ -230,7 +230,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
   },
 
-
   addButton: {
     backgroundColor: '#007BFF',
     padding: 15,
