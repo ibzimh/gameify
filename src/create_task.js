@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { View, TextInput, ScrollView, TouchableOpacity, StyleSheet, Text } from 'react-native';
 import { Calendar } from 'react-native-calendars';
-
+import axios from 'axios';
 const TaskScreen = () => {
   const [task, setTask] = useState({
     title: '',
     description: '',
     points: '',
     deadline: '',
+    category: 0,
+    assign_to: 0
   });
 
   const handleInputChange = (key, value) => {
@@ -17,9 +19,38 @@ const TaskScreen = () => {
   const handleDateSelect = (date) => {
     handleInputChange('deadline', date.dateString);
   };
-  const handleCreateTask = () => {
-    console.log(`Task Title: ${task.title}, Description: ${task.description}, Points: ${task.points}, Deadline: ${task.deadline}`);
+ 
+
+const handleCreateTask = async () => {
+  console.log("Sending POST request...");
+  const data = {
+    chore_name: task.title,
+    description: task.description,
+    due_date: task.deadline,
+    assign_to: parseInt(task.assign_to),
+    category: parseInt(task.category),
+    points: parseInt(task.points),
   };
+  console.log("Task:", data);
+
+  axios.post('http://172.31.233.211:8081/chores/add', data)
+    .then((response) => {
+      console.log(response.data);
+      setTask({
+        title: '',
+        description: '',
+        points: '',
+        deadline: '',
+        category: 0,
+        assign_to: 0
+      });
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+};
+
+  
 
   const handlePointsButtonPress = (selectedPoints) => {
     setTask({ ...task, points: selectedPoints });
@@ -185,7 +216,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     paddingHorizontal: 8,
   },
-
 
 });
 
