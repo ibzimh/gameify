@@ -100,10 +100,6 @@ const styles = StyleSheet.create({
     padding: 50,
     backgroundColor: '#f0f0f0',
   },
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/julia-dev
   addButton: {
     backgroundColor: '#007BFF',
     padding: 15,
