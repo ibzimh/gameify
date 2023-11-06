@@ -63,7 +63,7 @@ const CustomTabScreen = (name, component) => {
 const App = () => {
   const [user, setUser] = useState(null);
 
-  if (!user) {
+  // if (!user) {
     return (
       <View style={styles.container}>
         <LoginView />
@@ -73,7 +73,7 @@ const App = () => {
         }}/>
       </View>
     );
-  }
+  // }
 
   return (
     <SafeAreaProvider>
