@@ -22,19 +22,19 @@ const usersRouter = require("./route/choreRoute.js");
 
 app.use("/chores", usersRouter);
 
-app.get('/oauth2proxy/', (req, res) => {
+app.get('/oauth2proxy/*', (req, res) => {
   fs = require('fs');
   res.writeHead(200);
   res.write(fs.readFileSync('page.html'));
   // res.redirect(process.env.EXPO_GO_URL);
 });
 
-app.get('/oauth2proxy/google/*', (req, res) => {
-  fs = require('fs');
-  res.writeHead(200);
-  res.write(fs.readFileSync('page.html'));
-  // res.redirect(process.env.EXPO_GO_URL);
-});
+// app.get('/oauth2proxy/google/*', (req, res) => {
+//   fs = require('fs');
+//   res.writeHead(200);
+//   res.write(fs.readFileSync('page.html'));
+//   // res.redirect(process.env.EXPO_GO_URL);
+// });
 
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
