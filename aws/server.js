@@ -22,6 +22,14 @@ const usersRouter = require("./route/choreRoute.js");
 
 app.use("/chores", usersRouter);
 
+app.get('/oauth2proxy/', (req, res) => {
+  // res.redirect(process.env.EXPO_GO_URL);
+});
+
+app.get('/oauth2proxy/google/*', (req, res) => {
+  // res.redirect(process.env.EXPO_GO_URL);
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
 });
