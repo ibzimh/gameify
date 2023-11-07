@@ -19,6 +19,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import LoginView from "./LoginView";
 import HomeScreen from "./home";
 import UsersScreen from "./team";
+import ProfileScreen from "./Profile";
 import { FontAwesome5 } from '@expo/vector-icons';
 import Leaderboard from './leaderboard';
 import GiftScreen from './reward';
@@ -84,6 +85,7 @@ const App = () => {
       >
       {CustomTabScreen("Home", HomeScreen)}
       {CustomTabScreen("Users", UsersScreen)}
+      {CustomTabScreen("Profile", ProfileScreen)}
       {CustomTabScreen("Tasks", TaskScreen)}
       {CustomTabScreen("Trophy", Leaderboard)}
       {CustomTabScreen("Gift", GiftScreen)}
