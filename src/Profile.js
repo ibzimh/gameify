@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Text, ScrollView } from 'react-native';
+import { View, Image, StyleSheet, Text, ScrollView } from 'react-native';
 
 class ProfileScreen extends Component {
   constructor(props) {
@@ -9,7 +9,11 @@ class ProfileScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.name}>Julia Epshtein</Text>
+        <Image
+          source={require('/Users/juliaepshtein/Desktop/CS 320/gameify/src/assets/defaultProfile.png')}
+          style={styles.profileImage}
+        />
+        <Text style={styles.name}>John Doe</Text>
         <Text style={styles.subheading}>Web Developer</Text>
         <ScrollView>
           <Text style={styles.team}>Team A</Text>
@@ -26,11 +30,20 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#f2f2f2', // Background color
+  },
+  profileImage: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    borderColor: 'white', 
+    borderWidth: 3,
   },
   name: {
     fontSize: 24,
     fontWeight: 'bold',
     marginTop: 10,
+    color: 'black', 
   },
   subheading: {
     fontSize: 18,
@@ -40,6 +53,7 @@ const styles = StyleSheet.create({
   team: {
     fontSize: 16,
     marginBottom: 10,
+    color: 'blue', 
   },
 });
 
