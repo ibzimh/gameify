@@ -33,7 +33,7 @@ const handleCreateTask = async () => {
   };
   console.log("Task:", data);
 
-  axios.post('http://172.31.233.211:8081/chores/add', data)
+  axios.post('http://192.168.1.37:8081/chores/add', data)
     .then((response) => {
       console.log(response.data);
       setTask({
