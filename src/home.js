@@ -1,8 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { ScrollView, View, Text, StyleSheet } from "react-native";
+import {
+  ScrollView,
+  View,
+  Button,
+  Text,
+  Modal,
+  StyleSheet,
+} from "react-native";
 
 const HomeScreen = () => {
   const [tasks, setTasks] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
   useEffect(() => {
     const fetchChores = async () => {
       try {
@@ -26,8 +35,38 @@ const HomeScreen = () => {
           <View style={styles.layerZeroContainer}>
             <View style={styles.infoContainer}>
               <Text style={styles.taskName}>{task.chore_name}</Text>
-              <View style={styles.pointsContainer}>
-                <Text style={styles.pointsText}>{task.points}pt</Text>
+              <View style={styles.rightSideContainer}>
+                <View style={styles.pointsContainer}>
+                  <Text style={styles.pointsText}>{task.points}pt</Text>
+                </View>
+                <View style={styles.modalContainer}>
+                  <Button
+                    title="..."
+                    onPress={() => setIsModalVisible(true)}
+                    color={"midnightblue"}
+                  />
+                  <Modal
+                    visible={isModalVisible}
+                    onRequestClose={() => setIsModalVisible(false)}
+                    animationType="slide"
+                    presentationStyle="pageSheet"
+                  >
+                    <View>
+                      {tasks.map((task, index) => (
+                        <View
+                          key={index}
+                          style={styles.modalTaskContainer}
+                        ></View>
+                      ))}
+
+                      <Button
+                        title="Close"
+                        color="midnightblue"
+                        onPress={() => setIsModalVisible(false)}
+                      />
+                    </View>
+                  </Modal>
+                </View>
               </View>
             </View>
             <View style={styles.descContainer}>
@@ -56,8 +95,9 @@ const styles = StyleSheet.create({
   },
   taskContainer: {
     marginBottom: 20,
-    backgroundColor: "#F0F0F0",
+    backgroundColor: "#f0f0f0",
     borderRadius: 8,
+    borderColor: "ccc",
     padding: 16,
   },
   layerZeroContainer: {},
@@ -71,6 +111,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
+  rightSideContainer: {
+    flexDirection: "row",
+  },
   pointsContainer: {
     backgroundColor: "#5CB85C",
     padding: 8,
@@ -78,6 +121,12 @@ const styles = StyleSheet.create({
   },
   pointsText: {
     color: "white",
+  },
+  modalContainer: {
+    flex: 0,
+    marginTop: -8,
+    paddingTop: -4,
+    paddingLeft: 4,
   },
   descContainer: {
     marginBottom: 10,
