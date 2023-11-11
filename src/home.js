@@ -1,51 +1,42 @@
-import React from "react";
-import { View, ScrollView, Text, StyleSheet } from "react-native";
+import React, { useState, useEffect } from 'react';
+import { ScrollView, View, Text, StyleSheet } from 'react-native';
 
 const HomeScreen = () => {
-  const tasks = [
-    {
-      taskName: "Design Wireframe",
-      points: 120,
-      date: "Mon, 19 Jul 2022",
-      time: "8:30 PM",
-      desc: "Complete the Figma Wireframe by the next Sprint",
-    },
-    {
-      taskName: "Create Login Page",
-      points: 120,
-      date: "Mon, 19 Jul 2022",
-      time: "9:30 PM",
-      desc: "Complete the login page by the next Sprint",
-    },
-    {
-      taskName: "Create Leaderboard",
-      points: 120,
-      date: "Mon, 19 Jul 2022",
-      time: "10:30 PM",
-      desc: "Complete the leaderboard page by the next Sprint",
-    },
-  ];
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    const fetchChores = async () => {
+      try {
+        const response = await fetch('http://192.168.1.37:8081/chores');
+        const data = await response.json();
+        setTasks(data.data);
+      } catch (error) {
+        console.error('Error fetching chores:', error.message);
+      }
+    };
+
+    fetchChores();
+  }, []);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.headerContainer}>
-        <Text style={styles.header}>Home</Text>
+        <Text style={styles.header}></Text>
       </View>
-      {tasks.map((tasks, index) => (
+      {tasks.map((task, index) => (
         <View key={index} style={styles.taskContainer}>
           <View style={styles.layerZeroContainer}>
             <View style={styles.infoContainer}>
-              <Text style={styles.taskName}>{tasks.taskName}</Text>
+              <Text style={styles.taskName}>{task.chore_name}</Text>
               <View style={styles.pointsContainer}>
-                <Text style={styles.pointsText}>{tasks.points}pt</Text>
+                <Text style={styles.pointsText}>{task.points}pt</Text>
               </View>
             </View>
             <View style={styles.descContainer}>
-              <Text style={styles.desc}>{tasks.desc}</Text>
+              <Text style={styles.desc}>{task.description}</Text>
             </View>
             <View style={styles.deadlineContainer}>
-              <Text style={styles.time}>{tasks.time}</Text>
-              <Text style={styles.date}>{tasks.date}</Text>
+              <Text style={styles.date}>{task.due_date}</Text>
             </View>
           </View>
         </View>
@@ -56,97 +47,52 @@ const HomeScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
-    padding: 20,
-    backgroundColor: "#f0f0f0",
+    padding: 16,
   },
   headerContainer: {
     marginBottom: 20,
   },
   header: {
     fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
+    fontWeight: 'bold',
   },
   taskContainer: {
-    flexDirection: "row",
-    alignItems: "center",
     marginBottom: 20,
-    // padding: 10,
-    borderColor: "#ccc",
-    borderWidth: 1,
+    backgroundColor: '#f0f0f0',
     borderRadius: 8,
+    padding: 16,
   },
-  layerZeroContainer: {
-    flexDirection: "column",
-    flex: 1,
-  },
+  layerZeroContainer: {},
   infoContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    // backgroundColor: "red",
-    padding: 10,
-    paddingTop: 0,
-    alignContent: "space-between",
-    flex: 1,
-    margin: 2,
-    borderWidth: 1,
-    borderTopColor: "#f0f0f0",
-    borderRightColor: "#f0f0f0",
-    borderLeftColor: "#f0f0f0",
-    borderBottomColor: "#000",
-  },
-  descContainer: {
-    flexDirection: "column",
-    alignItems: "center",
-    //backgroundColor: "green",
-    flex: 2,
-    margin: 2,
-    padding: 10,
-    alignContent: "flex-start",
-  },
-  deadlineContainer: {
-    flexDirection: "row",
-    flex: 3,
-    // backgroundColor: "darkorange",
-    margin: 2,
-    padding: 5,
-    borderWidth: 1,
-    borderTopColor: "#000",
-    borderRightColor: "#f0f0f0",
-    borderLeftColor: "#f0f0f0",
-    borderBottomColor: "#f0f0f0",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
   },
   taskName: {
-    flexDirection: "row",
-    flex: 2,
-    fontSize: 24,
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   pointsContainer: {
-    backgroundColor: "#e5e5e5",
-    padding: 5,
-    marginTop: 8,
-    borderRadius: 5,
+    backgroundColor: '#5cb85c',
+    padding: 8,
+    borderRadius: 4,
   },
   pointsText: {
-    fontSize: 16,
+    color: 'white',
+  },
+  descContainer: {
+    marginBottom: 10,
   },
   desc: {
-    fontSize: 18,
-    textAlign: "left",
+    fontSize: 16,
+  },
+  deadlineContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   date: {
-    flex: 1,
-    fontSize: 12,
-    color: "#777",
-    // backgroundColor: "pink",
-    textAlign: "right",
-  },
-  time: {
-    flex: 1,
-    fontSize: 12,
-    color: "#777",
-    // backgroundColor: "purple",
+    color: '#888',
   },
 });
 

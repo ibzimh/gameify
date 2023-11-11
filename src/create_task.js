@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, ScrollView, TouchableOpacity, StyleSheet, Text } from 'react-native';
 import { Calendar } from 'react-native-calendars';
-import axios from 'axios';
+
 const TaskScreen = () => {
   const [task, setTask] = useState({
     title: '',
@@ -19,23 +19,33 @@ const TaskScreen = () => {
   const handleDateSelect = (date) => {
     handleInputChange('deadline', date.dateString);
   };
- 
 
-const handleCreateTask = async () => {
-  console.log("Sending POST request...");
-  const data = {
-    chore_name: task.title,
-    description: task.description,
-    due_date: task.deadline,
-    assign_to: parseInt(task.assign_to),
-    category: parseInt(task.category),
-    points: parseInt(task.points),
-  };
-  console.log("Task:", data);
+  const handleCreateTask = async () => {
+    console.log("Sending POST request...");
+    const data = {
+      chore_name: task.title,
+      description: task.description,
+      due_date: task.deadline,
+      assign_to: parseInt(task.assign_to),
+      category: parseInt(task.category),
+      points: parseInt(task.points),
+    };
 
-  axios.post('http://192.168.1.37:8081/chores/add', data)
-    .then((response) => {
-      console.log(response.data);
+    console.log("Task:", data);
+
+    try {
+      const response = await fetch('http://192.168.1.37:8081/chores/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      const responseData = await response.json();
+
+      console.log(responseData);
+
       setTask({
         title: '',
         description: '',
@@ -44,13 +54,10 @@ const handleCreateTask = async () => {
         category: 0,
         assign_to: 0
       });
-    })
-    .catch((error) => {
+    } catch (error) {
       console.error('Error:', error);
-    });
-};
-
-  
+    }
+  };
 
   const handlePointsButtonPress = (selectedPoints) => {
     setTask({ ...task, points: selectedPoints });

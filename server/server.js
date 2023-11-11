@@ -25,6 +25,7 @@ const userRouter = require('./route/userRoute.js');
 const authRouter = require('./route/authenticationRoute.js')
 const rewardRouter = require('./route/rewardRoute.js')
 const categoryRouter = require('./route/categoryRoute.js')
+
 app.use('/users', userRouter);
 app.use('/chores', choreRouter);
 
