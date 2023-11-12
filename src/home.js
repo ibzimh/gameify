@@ -1,7 +1,7 @@
 import React from "react";
-import { View, ScrollView, Text, StyleSheet } from "react-native";
+import { View, ScrollView, Text, StyleSheet, Button } from "react-native";
 
-const HomeScreen = () => {
+const HomeScreen = ({setUser: setUser}) => {
   const tasks = [
     {
       taskName: "Design Wireframe",
@@ -31,6 +31,10 @@ const HomeScreen = () => {
       <View style={styles.headerContainer}>
         <Text style={styles.header}>Home</Text>
       </View>
+      <Button title={"log out"} onPress={() => {
+          setUser(false);
+          console.log("have been logged out");
+      }}/>
       {tasks.map((tasks, index) => (
         <View key={index} style={styles.taskContainer}>
           <View style={styles.layerZeroContainer}>
