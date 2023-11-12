@@ -63,17 +63,13 @@ const CustomTabScreen = (name, component) => {
 const App = () => {
   const [user, setUser] = useState(null);
 
-  // if (!user) {
+  if (!user) { 
     return (
       <View style={styles.container}>
-        <LoginView />
-        <Button title={"secretly sneak into the app"} onPress={() => { // temporary button to skip login
-          setUser(true);
-          console.log("done");
-        }}/>
+        <LoginView setUser={setUser}/>
       </View>
     );
-  // }
+  }
 
   return (
     <SafeAreaProvider>
