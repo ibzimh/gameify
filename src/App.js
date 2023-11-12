@@ -42,14 +42,14 @@ const CustomTabBarButton = ({ children, onPress, focused }) => (
   </TouchableOpacity>
 );
 
-const CustomTabScreen = (name, component) => {
+const CustomTabScreen = (name, Component, props) => {
   return <Tab.Screen
     name={name}
-    component={component}
+    children={(screenProps) => <Component {...screenProps} {...props} />}
     options={({ navigation, route }) => ({
-      tabBarButton: (props) => (
+      tabBarButton: (screenProps) => (
         <CustomTabBarButton
-          {...props}
+          {...screenProps}
           onPress={() => navigation.navigate(route.name)}
         >
           <FontAwesome5 name={name.toLowerCase()} size={30} color="#000" />
@@ -78,7 +78,7 @@ const App = () => {
         tabBarOptions={{ showLabel: false }}
         screenOptions={{ headerShown: false }}
       >
-      {CustomTabScreen("Home", HomeScreen)}
+      {CustomTabScreen("Home", HomeScreen, {setUser: setUser})}
       {CustomTabScreen("Users", UsersScreen)}
       {CustomTabScreen("Tasks", TaskScreen)}
       {CustomTabScreen("Trophy", Leaderboard)}
