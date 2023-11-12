@@ -1,112 +1,106 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from "react";
+import { ScrollView, View, Text, StyleSheet } from "react-native";
 
 const Leaderboard = () => {
-  const [leaderboardData, setLeaderboardData] = useState([]);
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    // Fetch your leaderboard data here from an API or some other data source.
-    // For this example, I'll use static data.
-    const staticData = [
-      { name: 'Kshama', score: 100 },
-      { name: 'Jason', score: 80 },
-      { name: 'Ibrahim', score: 60 },
-      { name: 'Arnav', score: 40 },
-      { name: 'Julia', score: 120 },
-      { name: 'Viet', score: 175 },
-    ];
-    setLeaderboardData(staticData);
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch("http://172.31.8.17:8081/users");
+        const data = await response.json();
+
+        // Sorting users based on total points in descending order
+        const sortedUsers = data.data.sort((a, b) => b.total_points - a.total_points);
+        setUsers(sortedUsers);
+      } catch (error) {
+        console.error("Error fetching users:", error.message);
+      }
+    };
+    fetchUsers();
   }, []);
 
-  const getPodiumPlayers = () => {
-    // Sort the leaderboard data by score in descending order
-    const sortedData = [...leaderboardData].sort((a, b) => b.score - a.score);
-
-    // Extract the top 3 players
-    const topThreePlayers = sortedData.slice(0, 3);
-
-    return { topThreePlayers, allPlayers: sortedData };
-  };
-
-  const { topThreePlayers, allPlayers } = getPodiumPlayers();
-
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Leaderboard</Text>
-      <View style={styles.podium}>
-        {topThreePlayers.map((player, index) => (
-          <View
-            style={[
-              styles.podiumItem,
-              { backgroundColor: podiumColors[index] },
-            ]}
-            key={index}
-          >
-            <Text style={styles.podiumText}>{player.name}</Text>
-          </View>
-        ))}
+    <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.headerContainer}>
+        <Text style={styles.header}>Leaderboard</Text>
       </View>
-      <FlatList
-        data={allPlayers}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item, index }) => (
-          <View style={styles.item}>
-            <Text style={styles.rank}>{index + 1}</Text>
-            <Text style={styles.name}>{item.name}</Text>
-            <Text style={styles.score}>{item.score} points</Text>
+      {users.map((user, index) => (
+        <View
+          key={index}
+          style={[
+            styles.userContainer,
+            index === 0 ? styles.gold : index === 1 ? styles.silver : index === 2 ? styles.bronze : {},
+          ]}
+        >
+          <View style={styles.rankContainer}>
+            <Text style={styles.rankText}>{index + 1}</Text>
           </View>
-        )}
-      />
-    </View>
+          <View style={styles.userInfoContainer}>
+            <Text style={styles.userName}>{user.user_name}</Text>
+            <Text style={styles.email}>{user.email}</Text>
+          </View>
+          <View style={styles.pointsContainer}>
+            <Text style={styles.pointsText}>{user.total_points}pt</Text>
+          </View>
+        </View>
+      ))}
+    </ScrollView>
   );
 };
 
-const podiumColors = ['gold', 'silver', 'peru'];
-
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 20,
+    padding: 16,
   },
-  podium: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+  headerContainer: {
     marginBottom: 20,
   },
-  podiumItem: {
-    width: 80,
-    height: 120,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 10,
-  },
-  podiumText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  title: {
+  header: {
     fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
+    fontWeight: "bold",
   },
-  item: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 10,
+  userContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+    backgroundColor: "#F0F0F0",
+    borderRadius: 8,
+    padding: 16,
   },
-  rank: {
+  gold: {
+    backgroundColor: "gold",
+  },
+  silver: {
+    backgroundColor: "silver",
+  },
+  bronze: {
+    backgroundColor: "#cd7f32", // Bronze color
+  },
+  rankContainer: {
+    marginRight: 10,
+  },
+  rankText: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
+    color: "#888",
   },
-  name: {
-    flex: 1,
+  userInfoContainer: {},
+  userName: {
     fontSize: 18,
-    marginLeft: 10,
+    fontWeight: "bold",
   },
-  score: {
-    fontSize: 18,
-    fontWeight: 'bold',
+  email: {
+    color: "#888",
+  },
+  pointsContainer: {
+    backgroundColor: "#5CB85C",
+    padding: 8,
+    borderRadius: 4,
+  },
+  pointsText: {
+    color: "white",
   },
 });
 
