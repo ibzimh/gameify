@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@aws-amplify/ui-react": "^5.3.2",
     "@expo/html-elements": "^0.5.1",
     "@expo/vector-icons": "^13.0.0",
     "@expo/webpack-config": "^19.0.0",
@@ -19,6 +20,7 @@
     "@react-native-google-signin/google-signin": "^10.1.0",
     "@react-navigation/bottom-tabs": "^6.5.10",
     "@react-navigation/native": "^6.1.9",
+    "aws-amplify": "^5.3.12",
     "axios": "^1.6.0",
     "expo": "^49.0.13",
     "expo-auth-session": "~5.0.2",
