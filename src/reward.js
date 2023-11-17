@@ -38,12 +38,19 @@ class GiftScreen extends Component {
           renderItem={({ item }) => (
             <View style={styles.itemBox}>
               <Text style={styles.itemName}>{item.name}</Text>
-              <Text style={styles.itemPoints}>
-                {item.pointsRequired} points
-              </Text>
+              <View style={styles.pointsRequired}>
+                <Text style={styles.itemPoints}>
+                  {item.pointsRequired} points
+                </Text>
+              </View>
             </View>
           )}
         />
+
+        {/* Box that displays total points with "Points" inside */}
+        <View style={styles.totalPointsBox}>
+          <Text style={styles.itemPoints}>Points</Text>
+        </View>
       </View>
     );
   }
@@ -53,16 +60,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: "rgba(93, 14, 234, 0.59)",
+    backgroundColor: "#fffeff",
   },
   titleContainer: {
     width: 214,
     height: 54,
     borderRadius: 20,
-    backgroundColor: "rgba(143, 85, 245, 0.59)",
+    backgroundColor: "#fffeff",
     alignItems: "center",
     justifyContent: "center",
     marginHorizontal: 16,
+    marginTop: 20,
+    marginBottom: 20,
   },
   title: {
     fontSize: 24,
@@ -70,34 +79,34 @@ const styles = StyleSheet.create({
   },
   // Outer Circle Styles
   outerCircle: {
-    width: 191,
+    width: 190,
     height: 190,
     flexShrink: 0,
-    backgroundColor: "rgba(221, 144, 240, 0.70)",
+    backgroundColor: "#5f43b2",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 191 / 2,
+    borderRadius: 90,
     marginTop: 20,
   },
   // Inner Circle Styles
   innerCircle: {
-    width: 151,
-    height: 148,
+    width: 160,
+    height: 160,
     flexShrink: 0,
     backgroundColor: "#FFF",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 148 / 2,
+    borderRadius: 80,
   },
   score: {
-    color: "#A42FC1",
+    color: "#3a3153",
     textAlign: "center",
     fontSize: 32,
     fontStyle: "normal",
     fontWeight: "700",
   },
   points: {
-    color: "#A42FC1",
+    color: "#3a3153",
     textAlign: "center",
     fontSize: 20,
     fontStyle: "normal",
@@ -108,15 +117,42 @@ const styles = StyleSheet.create({
     borderColor: "#6C19FF",
     padding: 10,
     marginTop: 10,
+    marginBottom: 14,
     backgroundColor: "rgba(255, 255, 255, 0.90)",
     borderRadius: 10,
+    height: 50,
   },
   itemName: {
     fontSize: 16,
   },
-  itemPoints: {
-    fontSize: 16,
+  pointsRequired: {
+    width: 80,
+    height: 30,
+    borderRadius: 20,
+    backgroundColor: "#FBECFF",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    right: 10,
+    top: 4,
   },
+  itemPoints: {
+    color: "#2B262D",
+    textAlign: "center",
+    fontSize: 15,
+    fontStyle: "normal",
+    fontWeight: "400",
+  },
+  totalPointsBox: {
+    backgroundColor: "#FFECFB",
+    width: 214,
+    height: 54,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    marginHorizontal: 16,
+    marginTop: 20,    
+  },    
 });
 
 export default GiftScreen;
