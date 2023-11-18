@@ -1,6 +1,7 @@
 const express = require('express');
 const User = require('../model/user.model.js');
 const router = express.Router();
+
 //get all user
 router.route('/').get( async (request, response) => {
     try {
@@ -36,12 +37,14 @@ router.route('/').get( async (request, response) => {
       response.status(500).send({ message: error.message });
     }
   });
+  
   //Add user
   router.route('/add').post((req, res) => {
-    const { user_name, email, dob, gender, total_point, achievement, status } = req.body;
+    const { user_name,role, email, dob, gender, total_point, achievement, status } = req.body;
   
     const newUser = new User({
       user_name,
+      role,
       email,
       dob,
       gender,
@@ -54,6 +57,8 @@ router.route('/').get( async (request, response) => {
       .then(() => res.json('User added!'))
       .catch(err => res.status(400).json('Error: ' + err));
   });
+
+
   //delete user by id
   router.route('/:id').delete(async (request, response) => {
     try {
