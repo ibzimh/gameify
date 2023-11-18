@@ -34,11 +34,16 @@ Follow these steps to run the React Native app:
    node server.js
    ```
 
-5. **Start the Development Server:**
+5. **Start the Expo Go App:**
 
    ```bash
    cd ../src
    npx expo start
    ```
 
+5. **Start the Development Build:**
 
+   ```bash
+   cd ../src
+   npx expo start --dev-client
+   ```

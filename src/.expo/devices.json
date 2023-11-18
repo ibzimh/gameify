@@ -1,3 +1,12 @@
 {
-  "devices": []
+  "devices": [
+    {
+      "installationId": "bde260ef-484c-460c-a489-3cfbde4f8180",
+      "lastUsed": 1699244936966
+    },
+    {
+      "installationId": "8240359e-2b3a-4bd6-b24f-fa8f0eb221c9",
+      "lastUsed": 1699237113209
+    }
+  ]
 }
