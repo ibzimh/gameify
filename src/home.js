@@ -1,20 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { ScrollView, View, Text, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from "react";
+import {
+  ScrollView,
+  View,
+  Button,
+  Text,
+  Modal,
+  StyleSheet,
+} from "react-native";
 
 const HomeScreen = () => {
   const [tasks, setTasks] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
     const fetchChores = async () => {
       try {
-        const response = await fetch('http://192.168.1.37:8081/chores');
+        const response = await fetch("http://10.78.152.56:8081/chores");
         const data = await response.json();
         setTasks(data.data);
       } catch (error) {
-        console.error('Error fetching chores:', error.message);
+        console.error("Error fetching chores:", error.message);
       }
     };
-
     fetchChores();
   }, []);
 
@@ -28,8 +35,38 @@ const HomeScreen = () => {
           <View style={styles.layerZeroContainer}>
             <View style={styles.infoContainer}>
               <Text style={styles.taskName}>{task.chore_name}</Text>
-              <View style={styles.pointsContainer}>
-                <Text style={styles.pointsText}>{task.points}pt</Text>
+              <View style={styles.rightSideContainer}>
+                <View style={styles.pointsContainer}>
+                  <Text style={styles.pointsText}>{task.points}pt</Text>
+                </View>
+                <View style={styles.modalContainer}>
+                  <Button
+                    title="..."
+                    onPress={() => setIsModalVisible(true)}
+                    color={"midnightblue"}
+                  />
+                  <Modal
+                    visible={isModalVisible}
+                    onRequestClose={() => setIsModalVisible(false)}
+                    animationType="slide"
+                    presentationStyle="pageSheet"
+                  >
+                    <View>
+                      {tasks.map((task, index) => (
+                        <View
+                          key={index}
+                          style={styles.modalTaskContainer}
+                        ></View>
+                      ))}
+
+                      <Button
+                        title="Close"
+                        color="midnightblue"
+                        onPress={() => setIsModalVisible(false)}
+                      />
+                    </View>
+                  </Modal>
+                </View>
               </View>
             </View>
             <View style={styles.descContainer}>
@@ -54,32 +91,42 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   taskContainer: {
     marginBottom: 20,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: "#f0f0f0",
     borderRadius: 8,
+    borderColor: "ccc",
     padding: 16,
   },
   layerZeroContainer: {},
   infoContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 10,
   },
   taskName: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
+  },
+  rightSideContainer: {
+    flexDirection: "row",
   },
   pointsContainer: {
-    backgroundColor: '#5cb85c',
+    backgroundColor: "#5CB85C",
     padding: 8,
     borderRadius: 4,
   },
   pointsText: {
-    color: 'white',
+    color: "white",
+  },
+  modalContainer: {
+    flex: 0,
+    marginTop: -8,
+    paddingTop: -4,
+    paddingLeft: 4,
   },
   descContainer: {
     marginBottom: 10,
@@ -88,11 +135,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   deadlineContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   date: {
-    color: '#888',
+    color: "#888",
   },
 });
 
