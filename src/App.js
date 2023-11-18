@@ -67,6 +67,10 @@ const App = () => {
   if (!user) { 
     return (
       <View style={styles.container}>
+        <Button title={"secretly sneak into the app"} onPress={() => { // temporary button to skip login
+          setUser(true);
+          console.log("done");
+        }}/>
         <LoginView setUser={setUser}/>
       </View>
     );

@@ -16,10 +16,10 @@ class ProfileScreen extends Component {
   render() {
     return (
       <ScrollView style={styles.container}>
-        <Image
+        {/* <Image
           source={require("/Users/juliaepshtein/Desktop/CS 320/gameify/src/assets/girlIcon.png")}
           style={styles.profileImage}
-        />
+        /> */}
         <Text style={styles.name}>Jane Doe</Text>
         <Text style={styles.subheading}>Web Developer</Text>
         <ScrollView style={styles.horizontalLine} />
