@@ -6,16 +6,19 @@ import {
   Text,
   Modal,
   StyleSheet,
+  Dimensions,
 } from "react-native";
 
 const HomeScreen = () => {
   const [tasks, setTasks] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const { height } = Dimensions.get("window");
+  const modalHeight = height * 0.5;
 
   useEffect(() => {
     const fetchChores = async () => {
       try {
-        const response = await fetch("http://10.78.152.56:8081/chores");
+        const response = await fetch("http://172.31.103.147:8081/chores");
         const data = await response.json();
         setTasks(data.data);
       } catch (error) {
@@ -51,19 +54,30 @@ const HomeScreen = () => {
                     animationType="slide"
                     presentationStyle="pageSheet"
                   >
-                    <View>
-                      {tasks.map((task, index) => (
-                        <View
-                          key={index}
-                          style={styles.modalTaskContainer}
-                        ></View>
-                      ))}
-
-                      <Button
+                    <View
+                      style={[styles.modalContent, { height: modalHeight }]}
+                    >
+                      <View style={styles.infoContainer}>
+                        <Text style={styles.taskName}>{task.chore_name}</Text>
+                        <View style={styles.rightSideContainer}>
+                          <View style={styles.pointsContainer}>
+                            <Text style={styles.pointsText}>
+                              {task.points}pt
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+                      <View style={styles.descContainer}>
+                        <Text style={styles.desc}>{task.description}</Text>
+                      </View>
+                      <View style={styles.deadlineContainer}>
+                        <Text style={styles.date}>{task.due_date}</Text>
+                      </View>
+                      {/* <Button
                         title="Close"
                         color="midnightblue"
                         onPress={() => setIsModalVisible(false)}
-                      />
+                      /> */}
                     </View>
                   </Modal>
                 </View>
@@ -127,6 +141,14 @@ const styles = StyleSheet.create({
     marginTop: -8,
     paddingTop: -4,
     paddingLeft: 4,
+  },
+  modalTaskContainer: {
+    backgroundColor: "white",
+    padding: 22,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 4,
+    borderColor: "rgba(0, 0, 0, 0.1)",
   },
   descContainer: {
     marginBottom: 10,
