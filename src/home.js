@@ -8,7 +8,7 @@ import {
   StyleSheet,
 } from "react-native";
 
-const HomeScreen = () => {
+const HomeScreen = ({setUser: setUser}) => {
   const [tasks, setTasks] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
 

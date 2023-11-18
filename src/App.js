@@ -43,14 +43,14 @@ const CustomTabBarButton = ({ children, onPress, focused }) => (
   </TouchableOpacity>
 );
 
-const CustomTabScreen = (name, component) => {
+const CustomTabScreen = (name, Component, props) => {
   return <Tab.Screen
     name={name}
-    component={component}
+    children={(screenProps) => <Component {...screenProps} {...props} />}
     options={({ navigation, route }) => ({
-      tabBarButton: (props) => (
+      tabBarButton: (screenProps) => (
         <CustomTabBarButton
-          {...props}
+          {...screenProps}
           onPress={() => navigation.navigate(route.name)}
         >
           <FontAwesome5 name={name.toLowerCase()} size={30} color="#000" />
@@ -64,14 +64,10 @@ const CustomTabScreen = (name, component) => {
 const App = () => {
   const [user, setUser] = useState(null);
 
-  if (!user) {
+  if (!user) { 
     return (
       <View style={styles.container}>
-        <LoginView />
-        <Button title={"secretly sneak into the app"} onPress={() => { // temporary button to skip login
-          setUser(true);
-          console.log("done");
-        }}/>
+        <LoginView setUser={setUser}/>
       </View>
     );
   }
@@ -83,7 +79,7 @@ const App = () => {
         tabBarOptions={{ showLabel: false }}
         screenOptions={{ headerShown: false }}
       >
-      {CustomTabScreen("Home", HomeScreen)}
+      {CustomTabScreen("Home", HomeScreen, {setUser: setUser})}
       {CustomTabScreen("Users", UsersScreen)}
       {CustomTabScreen("Profile", ProfileScreen)}
       {CustomTabScreen("Tasks", TaskScreen)}
