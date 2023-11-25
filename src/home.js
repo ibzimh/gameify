@@ -6,19 +6,17 @@ import {
   Text,
   Modal,
   StyleSheet,
-  Dimensions,
+  TouchableOpacity,
 } from "react-native";
 
 const HomeScreen = () => {
   const [tasks, setTasks] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { height } = Dimensions.get("window");
-  const modalHeight = height * 0.5;
 
   useEffect(() => {
     const fetchChores = async () => {
       try {
-        const response = await fetch("http://172.31.103.147:8081/chores");
+        const response = await fetch("http://192.168.1.189:8081/chores");
         const data = await response.json();
         setTasks(data.data);
       } catch (error) {
@@ -46,38 +44,44 @@ const HomeScreen = () => {
                   <Button
                     title="..."
                     onPress={() => setIsModalVisible(true)}
-                    color={"midnightblue"}
+                    color={"black"}
                   />
                   <Modal
                     visible={isModalVisible}
                     onRequestClose={() => setIsModalVisible(false)}
                     animationType="slide"
-                    presentationStyle="pageSheet"
+                    transparent={true}
                   >
-                    <View
-                      style={[styles.modalContent, { height: modalHeight }]}
-                    >
-                      <View style={styles.infoContainer}>
-                        <Text style={styles.taskName}>{task.chore_name}</Text>
-                        <View style={styles.rightSideContainer}>
-                          <View style={styles.pointsContainer}>
-                            <Text style={styles.pointsText}>
-                              {task.points}pt
-                            </Text>
+                    <View style={styles.modalContentHelp}>
+                      <View style={styles.modalContent}>
+                        <View style={styles.headerCloseContainer}>
+                          <Text style={styles.taskDetail}>Task Detail</Text>
+                          <View style={styles.closeButton}>
+                            <TouchableOpacity
+                              styles={styles.closeButton}
+                              onPress={() => setIsModalVisible(false)}
+                            >
+                              <Text style={styles.buttonText}>X</Text>
+                            </TouchableOpacity>
                           </View>
                         </View>
+
+                        <View style={styles.modalInfoContainer}>
+                          <Text style={styles.modalTaskName}>
+                            {task.chore_name}
+                          </Text>
+                          <Text style={styles.modalDesc}>
+                            {task.description}
+                          </Text>
+                          <Text style={styles.modalDate}>{task.due_date}</Text>
+                        </View>
+
+                        <Button
+                          title="Complete"
+                          color="black"
+                          onPress={() => setIsModalVisible(false)}
+                        />
                       </View>
-                      <View style={styles.descContainer}>
-                        <Text style={styles.desc}>{task.description}</Text>
-                      </View>
-                      <View style={styles.deadlineContainer}>
-                        <Text style={styles.date}>{task.due_date}</Text>
-                      </View>
-                      {/* <Button
-                        title="Close"
-                        color="midnightblue"
-                        onPress={() => setIsModalVisible(false)}
-                      /> */}
                     </View>
                   </Modal>
                 </View>
@@ -111,7 +115,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     backgroundColor: "#f0f0f0",
     borderRadius: 8,
-    borderColor: "ccc",
+    borderWidth: 1,
+    borderColor: "#ccc",
     padding: 16,
   },
   layerZeroContainer: {},
@@ -142,13 +147,64 @@ const styles = StyleSheet.create({
     paddingTop: -4,
     paddingLeft: 4,
   },
-  modalTaskContainer: {
+  modalContentHelp: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: "transparent",
+    paddingBottom: 80,
+  },
+  modalContent: {
     backgroundColor: "white",
-    padding: 22,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 4,
-    borderColor: "rgba(0, 0, 0, 0.1)",
+    height: "30%",
+    width: "100%",
+    padding: 15,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderTopColor: "gray",
+  },
+  headerCloseContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    //backgroundColor: "blue",
+    marginBottom: 15,
+    paddingBottom: 10,
+    borderColor: "lightgray",
+    borderBottomWidth: 1,
+  },
+  taskDetail: {
+    //backgroundColor: "purple",
+    fontWeight: "bold",
+    fontSize: 24,
+  },
+  closeButton: {},
+  buttonText: {
+    fontSize: 22,
+    //backgroundColor: "yellow",
+    color: "gray",
+  },
+  modalInfoContainer: {
+    flexDirection: "column",
+    justifyContent: "space-between",
+    marginLeft: 32,
+    marginRight: 32,
+  },
+  modalTaskName: {
+    fontSize: 20,
+    fontWeight: 600,
+    marginBottom: 6,
+    //backgroundColor: "pink",
+  },
+  modalDescContainer: {},
+  modalDesc: {
+    fontSize: 14,
+    marginBottom: 12,
+    //backgroundColor: "yellow",
+  },
+  modalDeadlineContainer: {},
+  modalDate: {
+    fontSize: 12,
+    color: "gray",
+    //backgroundColor: "purple",
   },
   descContainer: {
     marginBottom: 10,
