@@ -1,23 +1,23 @@
 {
-  "cli": {
-    "version": ">= 5.6.0"
-  },
-  "build": {
-    "development": {
-      "distribution": "internal",
-      "android": {
-        "gradleCommand": ":app:assembleDebug"
+    "cli": {
+      "version": ">= 5.6.0"
+    },
+    "build": {
+      "development": {
+        "distribution": "internal",
+        "android": {
+          "gradleCommand": ":app:assembleDebug"
+        },
+        "ios": {
+          "buildConfiguration": "Debug"
+        }
       },
-      "ios": {
-        "buildConfiguration": "Debug"
-      }
+      "preview": {
+        "distribution": "internal"
+      },
+      "production": {}
     },
-    "preview": {
-      "distribution": "internal"
-    },
-    "production": {}
-  },
-  "submit": {
-    "production": {}
+    "submit": {
+      "production": {}
+    }
   }
-}
