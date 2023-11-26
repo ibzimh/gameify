@@ -44,9 +44,25 @@ const UsersScreen = () => {
   useEffect(() => {
     const fetchUsersInCurrentTeam = async () => {
       try {
+        const res = await fetch("http://gameify.us-east-1.elasticbeanstalk.com/teams/6563b623779f11fb0b7d594d");
+        const da =  await res.json();
+        console.log(da)
+
         const response = await fetch("http://gameify.us-east-1.elasticbeanstalk.com/users"); // Update the URL
-        const data = await response.json();
-        setUsers(data.data);
+        const userData = await response.json();
+        if (response.ok) {
+          const currentTeamUserIds = da.data.usersList; // IDs of users in the current team
+          console.log(currentTeamUserIds)
+          // Filter users based on IDs present in the current team's usersList
+          const usersInTeam = userData.data.filter(user => currentTeamUserIds.includes(user._id));
+          console.log(usersInTeam)
+          setUsers(usersInTeam); // Set state with users only in the current team
+        } else {
+
+          console.error("Error fetching users:", userData.message);
+
+        }
+
       } catch (error) {
         console.error("Error fetching users:", error.message);
       }
