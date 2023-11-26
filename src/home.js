@@ -9,14 +9,16 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-const HomeScreen = () => {
+const HomeScreen = ({ setUser: setUser }) => {
   const [tasks, setTasks] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
     const fetchChores = async () => {
       try {
-        const response = await fetch("http://10.78.152.23:8081/chores");
+        const response = await fetch(
+          "http://gameify.us-east-1.elasticbeanstalk.com/chores"
+        );
         const data = await response.json();
         setTasks(data.data);
       } catch (error) {
@@ -28,6 +30,13 @@ const HomeScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <Button
+        title={"Logout"}
+        onPress={() => {
+          // temporary button to skip login
+          setUser(false);
+        }}
+      />
       <View style={styles.headerContainer}>
         <Text style={styles.header}></Text>
       </View>

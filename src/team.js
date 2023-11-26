@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   ScrollView,
@@ -8,42 +8,42 @@ import {
 } from "react-native";
 
 const UsersScreen = () => {
-  const members = [
-    { name: 'Julia', role: 'Admin', points: 120 },
-    { name: 'Jason', role: 'Member', points: 120 },
-    { name: 'Kshama', role: 'Member', points: 120 },
-    { name: 'Arnav', role: 'Member', points: 120 },
-    { name: 'Viet', role: 'Member', points: 120 },
-    { name: 'Emily', role: 'Member', points: 120 },
-    { name: 'Ibrahim', role: 'Member', points: 120 }
-  ];
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch("http://gameify.us-east-1.elasticbeanstalk.com/users"); // Update the URL
+        const data = await response.json();
+        setUsers(data.data);
+      } catch (error) {
+        console.error("Error fetching users:", error.message);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.headerContainer}>
         <Text style={styles.header}>Team Management</Text>
       </View>
-      <Text style={styles.subHeader}>CS 320 Group</Text>
-      {members.map((member, index) => (
+      {users.map((user, index) => (
         <View key={index} style={styles.memberContainer}>
           <View style={styles.avatar}>
-            {/* Avatar placeholder */}
-            <Text style={styles.avatarText}>{member.name.charAt(0)}</Text>
+            <Text style={styles.avatarText}>{user.user_name.charAt(0)}</Text>
           </View>
-          <Text style={styles.memberName}>{member.name}</Text>
-          <Text style={styles.memberRole}>{member.role}</Text>
-          <View style={styles.pointsContainer}>
-            <Text style={styles.pointsText}>{member.points}pt</Text>
-          </View>
+          <Text style={styles.memberName}>{user.user_name}</Text>
+          <Text style={styles.memberRole}>{user.role}</Text>
+          <Text>{user.total_point}</Text>          
         </View>
       ))}
       <View style={styles.footerButtons}>
-        {/* Placeholder for footer icons/buttons */}
       </View>
     </ScrollView>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
@@ -56,11 +56,6 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 24,
     fontWeight: "bold",
-    textAlign: "center",
-  },
-  subHeader: {
-    fontSize: 20,
-    marginBottom: 20,
     textAlign: "center",
   },
   memberContainer: {
@@ -93,14 +88,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: "#777",
-  },
-  pointsContainer: {
-    backgroundColor: "#e5e5e5",
-    padding: 5,
-    borderRadius: 5,
-  },
-  pointsText: {
-    fontSize: 16,
   },
   footerButtons: {
     flexDirection: "row",

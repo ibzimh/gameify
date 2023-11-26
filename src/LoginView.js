@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, Button, Linking } from "react-native";;
+import { Text, View, Button, Linking, StyleSheet, TouchableOpacity } from "react-native";;
 
 import qs from "qs";
 import randomString from "random-string";
@@ -19,7 +19,76 @@ const loginProviders = {
   },
 };
 
-function LoginView({user, setUser}) {
+function LoginView({setUser: setUser}) {
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: 100,
+      backgroundColor: '#F5F5F5',
+      borderRadius: 25,
+      display: 'flex',
+      paddingTop: 20,
+      paddingRight: 20,
+      paddingBottom: 20,
+      paddingLeft: 20,
+    },
+    login: {
+      height: 40,
+      borderWidth: 1,
+      borderStyle: 'solid',
+      borderColor:'#2b2684',
+      borderRadius: 15,
+      fontWeight: 'bold',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: 'white',
+      marginBottom: 20,
+      color: '#2b2684',
+      transition: 0.5,
+      // width: 20,
+      // marginRight: 10,
+      paddingTop: 5,
+      paddingRight: 15,
+      paddingBottom: 5,
+      paddingLeft: 15,
+    },
+    register: {
+      height: 25,
+      display: 'flex',
+      alignItems: 'center',
+      backgroundColor: 'white',
+      borderWidth: 1,
+      borderStyle: 'solid',
+      borderColor:'#2b2684',
+      borderRadius: 10,
+      justifyContent: 'center',
+      color: '#2b2684',
+      transition: 0.5,
+      paddingTop: 5,
+      paddingRight: 15,
+      paddingBottom: 5,
+      paddingLeft: 15,
+    },
+    googleButton: {
+      width: 20,
+      marginRight: 10,
+    },
+    registerText: {
+      color: '#2b2684',
+      textAlign: 'center',
+      fontSize: 10,
+      fontWeight: 'bold',
+    },
+    loginText: {
+      color: '#2b2684',
+      textAlign: 'center',
+      fontWeight: 'bold',
+    },
+  });
 
   useEffect(() => {
     const changeEventListener = Linking.addEventListener("url", handleOpenUrl);
@@ -79,15 +148,13 @@ function LoginView({user, setUser}) {
   };
 
   return (
-    <View>
-      <Text>Choose how you want to log in</Text>
-      {Object.entries(loginProviders).map(([key, provider]) => (
-        <Button
-          title={provider.title}
-          onPress={() => handleLogin(key)}
-          key={key}
-        />
-      ))}
+    <View style={styles.container}>
+        <TouchableOpacity style={styles.login} onPress={() => handleLogin('google')}>
+          <Text style={styles.loginText}>Login with Google</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.register} onPress={() => {setUser(true)}}>
+          <Text style={styles.registerText}>Sneak In</Text>
+        </TouchableOpacity>
     </View>
   );
 }
