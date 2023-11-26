@@ -85,11 +85,14 @@ const HomeScreen = ({ setUser: setUser }) => {
                           <Text style={styles.modalDate}>{task.due_date}</Text>
                         </View>
 
-                        <Button
+                        {/* <Button
                           title="Complete"
                           color="black"
                           onPress={() => setIsModalVisible(false)}
-                        />
+                        /> */}
+                        <TouchableOpacity style={styles.completeButton}>
+                          <Text style={styles.completeText}>Complete</Text>
+                        </TouchableOpacity>
                       </View>
                     </View>
                   </Modal>
