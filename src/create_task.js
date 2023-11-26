@@ -34,7 +34,7 @@ const TaskScreen = () => {
     console.log("Task:", data);
 
     try {
-      const response = await fetch('http://10.0.0.218:8081/chores/add', {
+      const response = await fetch('http://gameify.us-east-1.elasticbeanstalk.com/chores/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

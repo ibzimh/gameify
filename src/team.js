@@ -44,11 +44,11 @@ const UsersScreen = () => {
   useEffect(() => {
     const fetchUsersInCurrentTeam = async () => {
       try {
-        const res = await fetch("http://192.168.1.37:8081/teams/6563b623779f11fb0b7d594d");
+        const res = await fetch("http://gameify.us-east-1.elasticbeanstalk.com/teams/6563b623779f11fb0b7d594d");
         const da =  await res.json();
         console.log(da)
 
-        const response = await fetch("http://192.168.1.37:8081/users");
+        const response = await fetch("http://gameify.us-east-1.elasticbeanstalk.com/users");
         const userData = await response.json();
         if (response.ok) {
           const currentTeamUserIds = da.data.usersList; // IDs of users in the current team
