@@ -13,7 +13,7 @@ const UsersScreen = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch("http://192.168.1.37:8081/users"); // Update the URL
+        const response = await fetch("http://gameify.us-east-1.elasticbeanstalk.com/users"); // Update the URL
         const data = await response.json();
         setUsers(data.data);
       } catch (error) {

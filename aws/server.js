@@ -18,9 +18,14 @@ connection.once("open", () => {
   console.log("MongoDB database connection established successfully");
 });
 
-const usersRouter = require("./route/choreRoute.js");
+const choreRouter = require('./route/choreRoute.js');
+const userRouter = require('./route/userRoute.js');
+const authRouter = require('./route/authenticationRoute.js');
+const rewardRouter = require('./route/rewardRoute.js');
+const categoryRouter = require('./route/categoryRoute.js');
 
-app.use("/chores", usersRouter);
+app.use('/users', userRouter);
+app.use('/chores', choreRouter);
 
 app.get('/oauth2proxy/*', (req, res) => {
   fs = require('fs');
