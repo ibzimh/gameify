@@ -5,13 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1b72033f-5821-486a-aa6b-a789c0390da0" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/server/model/team.model.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/route/teamRoute.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/dashboard.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/model/user.model.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/model/user.model.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/route/authenticationRoute.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/route/authenticationRoute.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/route/userRoute.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/route/userRoute.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/server.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/create_task.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/create_task.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/home.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/home.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/eas.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/eas.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/team.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/team.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
