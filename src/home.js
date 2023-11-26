@@ -16,7 +16,7 @@ const HomeScreen = () => {
   useEffect(() => {
     const fetchChores = async () => {
       try {
-        const response = await fetch("http://192.168.1.189:8081/chores");
+        const response = await fetch("http://10.78.152.23:8081/chores");
         const data = await response.json();
         setTasks(data.data);
       } catch (error) {
