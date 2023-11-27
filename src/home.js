@@ -59,9 +59,7 @@ const HomeScreen = ({ setUser: setUser }) => {
     // Fetch chores every time refreshKey changes
     const fetchChores = async () => {
       try {
-        const response = await fetch(
-          "http://gameify.us-east-1.elasticbeanstalk.com/chores"
-        );
+        const response = await fetch("http://gameify.us-east-1.elasticbeanstalk.com/chores");
         const data = await response.json();
         setTasks(data.data);
       } catch (error) {
