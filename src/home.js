@@ -35,9 +35,7 @@ const HomeScreen = ({ setUser: setUser }) => {
   useEffect(() => {
     const fetchChores = async () => {
       try {
-        const response = await fetch(
-          "http://gameify.us-east-1.elasticbeanstalk.com/chores"
-        );
+        const response = await fetch("http://172.31.215.6:8081/chores");
         const data = await response.json();
         setTasks(data.data);
       } catch (error) {
@@ -61,7 +59,10 @@ const HomeScreen = ({ setUser: setUser }) => {
     // Fetch chores every time refreshKey changes
     const fetchChores = async () => {
       try {
-        const response = await fetch("http://172.31.215.6:8081/chores");
+        const response = await fetch(
+          "http://gameify.us-east-1.elasticbeanstalk.com/chores"
+        );
+
         const data = await response.json();
         setTasks(data.data);
       } catch (error) {
