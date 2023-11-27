@@ -35,7 +35,7 @@ const HomeScreen = ({ setUser: setUser }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({}),
+        body: JSON.stringify({ id: itemID }),
       });
 
       if (response.ok) {
