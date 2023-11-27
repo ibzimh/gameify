@@ -6,13 +6,10 @@ import {
   Text,
   Modal,
   StyleSheet,
-} from "react-native";
-
-const HomeScreen = ({setUser: setUser}) => {
+  TouchableOpacity,
+} from "react-native";const HomeScreen = ({ setUser: setUser }) => {
   const [tasks, setTasks] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
-  useEffect(() => {
+  const [isModalVisible, setIsModalVisible] = useState(false);  useEffect(() => {
     const fetchChores = async () => {
       try {
         const response = await fetch("http://gameify.us-east-1.elasticbeanstalk.com/chores");
@@ -23,13 +20,15 @@ const HomeScreen = ({setUser: setUser}) => {
       }
     };
     fetchChores();
-  }, []);
-
-  return (
+  }, []);  return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Button title={"Logout"} onPress={() => { // temporary button to skip login
+      <Button
+        title={"Logout"}
+        onPress={() => {
+          // temporary button to skip login
           setUser(false);
-      }}/>
+        }}
+      />
       <View style={styles.headerContainer}>
         <Text style={styles.header}></Text>
       </View>
@@ -46,27 +45,40 @@ const HomeScreen = ({setUser: setUser}) => {
                   <Button
                     title="..."
                     onPress={() => setIsModalVisible(true)}
-                    color={"midnightblue"}
+                    color={"black"}
                   />
                   <Modal
                     visible={isModalVisible}
                     onRequestClose={() => setIsModalVisible(false)}
                     animationType="slide"
-                    presentationStyle="pageSheet"
+                    transparent={true}
                   >
-                    <View>
-                      {tasks.map((task, index) => (
-                        <View
-                          key={index}
-                          style={styles.modalTaskContainer}
-                        ></View>
-                      ))}
-
-                      <Button
-                        title="Close"
-                        color="midnightblue"
-                        onPress={() => setIsModalVisible(false)}
-                      />
+                    <View style={styles.modalContentHelp}>
+                      <View style={styles.modalContent}>
+                        <View style={styles.headerCloseContainer}>
+                          <Text style={styles.taskDetail}>Task Detail</Text>
+                          <View style={styles.closeButton}>
+                            <TouchableOpacity
+                              styles={styles.closeButton}
+                              onPress={() => setIsModalVisible(false)}
+                            >
+                              <Text style={styles.buttonText}>X</Text>
+                            </TouchableOpacity>
+                          </View>
+                        </View>                        <View style={styles.modalInfoContainer}>
+                          <Text style={styles.modalTaskName}>
+                            {task.chore_name}
+                          </Text>
+                          <Text style={styles.modalDesc}>
+                            {task.description}
+                          </Text>
+                          <Text style={styles.modalDate}>{task.due_date}</Text>
+                        </View>                        <Button
+                          title="Complete"
+                          color="black"
+                          onPress={() => setIsModalVisible(false)}
+                        />
+                      </View>
                     </View>
                   </Modal>
                 </View>
@@ -83,9 +95,7 @@ const HomeScreen = ({setUser: setUser}) => {
       ))}
     </ScrollView>
   );
-};
-
-const styles = StyleSheet.create({
+};const styles = StyleSheet.create({
   container: {
     padding: 16,
   },
@@ -98,9 +108,10 @@ const styles = StyleSheet.create({
   },
   taskContainer: {
     marginBottom: 20,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#F0F0F0",
     borderRadius: 8,
-    borderColor: "ccc",
+    borderWidth: 1,
+    borderColor: "#ccc",
     padding: 16,
   },
   layerZeroContainer: {},
@@ -131,6 +142,65 @@ const styles = StyleSheet.create({
     paddingTop: -4,
     paddingLeft: 4,
   },
+  modalContentHelp: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: "transparent",
+    paddingBottom: 80,
+  },
+  modalContent: {
+    backgroundColor: "white",
+    height: "30%",
+    width: "100%",
+    padding: 15,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderTopColor: "gray",
+  },
+  headerCloseContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    //backgroundColor: "blue",
+    marginBottom: 15,
+    paddingBottom: 10,
+    borderColor: "lightgray",
+    borderBottomWidth: 1,
+  },
+  taskDetail: {
+    //backgroundColor: "purple",
+    fontWeight: "bold",
+    fontSize: 24,
+  },
+  closeButton: {},
+  buttonText: {
+    fontSize: 22,
+    //backgroundColor: "yellow",
+    color: "gray",
+  },
+  modalInfoContainer: {
+    flexDirection: "column",
+    justifyContent: "space-between",
+    marginLeft: 32,
+    marginRight: 32,
+  },
+  modalTaskName: {
+    fontSize: 20,
+    fontWeight: 600,
+    marginBottom: 6,
+    //backgroundColor: "pink",
+  },
+  modalDescContainer: {},
+  modalDesc: {
+    fontSize: 14,
+    marginBottom: 12,
+    //backgroundColor: "yellow",
+  },
+  modalDeadlineContainer: {},
+  modalDate: {
+    fontSize: 12,
+    color: "gray",
+    //backgroundColor: "purple",
+  },
   descContainer: {
     marginBottom: 10,
   },
@@ -144,104 +214,4 @@ const styles = StyleSheet.create({
   date: {
     color: "#888",
   },
-});
-
-export default HomeScreen;
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flexGrow: 1,
-//     padding: 20,
-//     backgroundColor: "#f0f0f0",
-//   },
-//   headerContainer: {
-//     marginBottom: 20,
-//   },
-//   header: {
-//     fontSize: 24,
-//     fontWeight: "bold",
-//     textAlign: "center",
-//   },
-//   taskContainer: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//     marginBottom: 20,
-//     // padding: 10,
-//     borderColor: "#ccc",
-//     borderWidth: 1,
-//     borderRadius: 8,
-//   },
-//   layerZeroContainer: {
-//     flexDirection: "column",
-//     flex: 1,
-//   },
-//   infoContainer: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//     // backgroundColor: "red",
-//     padding: 10,
-//     paddingTop: 0,
-//     alignContent: "space-between",
-//     flex: 1,
-//     margin: 2,
-//     borderWidth: 1,
-//     borderTopColor: "#f0f0f0",
-//     borderRightColor: "#f0f0f0",
-//     borderLeftColor: "#f0f0f0",
-//     borderBottomColor: "#000",
-//   },
-//   descContainer: {
-//     flexDirection: "column",
-//     alignItems: "center",
-//     //backgroundColor: "green",
-//     flex: 2,
-//     margin: 2,
-//     padding: 10,
-//     alignContent: "flex-start",
-//   },
-//   deadlineContainer: {
-//     flexDirection: "row",
-//     flex: 3,
-//     // backgroundColor: "darkorange",
-//     margin: 2,
-//     padding: 5,
-//     borderWidth: 1,
-//     borderTopColor: "#000",
-//     borderRightColor: "#f0f0f0",
-//     borderLeftColor: "#f0f0f0",
-//     borderBottomColor: "#f0f0f0",
-//   },
-//   taskName: {
-//     flexDirection: "row",
-//     flex: 2,
-//     fontSize: 24,
-//   },
-//   pointsContainer: {
-//     backgroundColor: "#e5e5e5",
-//     padding: 5,
-//     marginTop: 8,
-//     borderRadius: 5,
-//   },
-//   pointsText: {
-//     fontSize: 16,
-//   },
-//   desc: {
-//     fontSize: 18,
-//     textAlign: "left",
-//   },
-//   date: {
-//     flex: 1,
-//     fontSize: 12,
-//     color: "#777",
-//     // backgroundColor: "pink",
-//     textAlign: "right",
-//   },
-//   time: {
-//     flex: 1,
-//     fontSize: 12,
-//     color: "#777",
-//     // backgroundColor: "purple",
-//   },
-// });
-
-// export default HomeScreen;
+});export default HomeScreen;

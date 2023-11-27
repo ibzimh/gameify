@@ -70,35 +70,17 @@ const CustomTabScreen = (name, component, iconName) => {
 
 const App = () => {
   
-  const [currentUser, setCurrentUser] = useState(null);
+  const [user, setUser] = useState(null);
 
-  // Check if the user is logged in by retrieving data from AsyncStorage on app startup
-  const checkLoggedInUser = async () => {
-    try {
-      const userData = await AsyncStorage.getItem('currentUser');
-      if (userData) {
-        setCurrentUser(JSON.parse(userData));
-      }
-    } catch (error) {
-      console.error('Error retrieving user data:', error);
-    }
-  };
-  useState(() => {
-    checkLoggedInUser();
-  }, []);
-  const handleUserLogin = (user) => {
-    // Update the currentUser state and store it in AsyncStorage
-    setCurrentUser(user);
-    AsyncStorage.setItem('currentUser', JSON.stringify(user));
-  };
-
-  const handleUserLogout = async () => {
-    // Remove the currentUser from state and AsyncStorage on logout
-    setCurrentUser(null);
-    await AsyncStorage.removeItem('currentUser');
-  };
+  if (!user) { 
+    return (
+      <View style={styles.container}>
+        <LoginView setUser={setUser}/>
+      </View>
+    );
+  }
   return (
-    <UserContext.Provider value={{ currentUser, setCurrentUser }}>
+    <UserContext.Provider>
     <SafeAreaProvider>
        
     <NavigationContainer>
