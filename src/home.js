@@ -14,43 +14,82 @@ const HomeScreen = ({ setUser: setUser }) => {
   const [tasks, setTasks] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [selectedTask, setSelectedTask] = useState(null);
+
+  // useEffect(() => {
+  //   const fetchChores = async () => {
+  //     try {
+  //       const response = await fetch("http://172.31.215.6:8081/chores");
+  //       //const response = await fetch(
+  //       //   "http://gameify.us-east-1.elasticbeanstalk.com/chores"
+  //       // );
+  //       const data = await response.json();
+  //       setTasks(data.data);
+  //     } catch (error) {
+  //       console.error("Error fetching chores:", error.message);
+  //     }
+  //   };
+  //   fetchChores();
+  // }, []);
 
   useEffect(() => {
     const fetchChores = async () => {
       try {
         const response = await fetch("http://172.31.215.6:8081/chores");
-        //const response = await fetch(
-        //   "http://gameify.us-east-1.elasticbeanstalk.com/chores"
-        // );
         const data = await response.json();
         setTasks(data.data);
       } catch (error) {
         console.error("Error fetching chores:", error.message);
       }
     };
+
+    const refreshTimer = setInterval(() => {
+      // Trigger a re-render by updating the state
+      setRefreshKey((prevKey) => prevKey + 1);
+    }, 10000);
+
+    // Fetch chores on mount
     fetchChores();
-  }, []);
+
+    // Clean up the timer when the component is unmounted
+    return () => clearInterval(refreshTimer);
+  }, []); // Empty dependency array ensures the effect runs only once on mount
+
+  useEffect(() => {
+    // Fetch chores every time refreshKey changes
+    const fetchChores = async () => {
+      try {
+        const response = await fetch("http://172.31.215.6:8081/chores");
+        const data = await response.json();
+        setTasks(data.data);
+      } catch (error) {
+        console.error("Error fetching chores:", error.message);
+      }
+    };
+
+    // Fetch chores every time refreshKey changes
+    fetchChores();
+  }, [refreshKey]);
 
   const handleDelete = async (itemID) => {
     try {
-      const response = await fetch(
-        `http://172.31.215.6:8001/chores/${itemID}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ id: itemID }),
-        }
-      );
-
-      if (response.ok) {
-        setRefreshKey((prevKey) => prevKey + 1);
-      }
+      await fetch(`http://172.31.215.6:8081/chores/${itemID}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: itemID }),
+      });
+      setRefreshKey((prevKey) => prevKey + 1);
     } catch (error) {
       console.error("Error:", error);
       Alert.alert("Error", "An unexpected error occurred. Please try again.");
     }
+  };
+
+  const toggleModal = (task) => {
+    setSelectedTask(task);
+    setIsModalVisible(!isModalVisible);
   };
 
   return (
@@ -77,7 +116,10 @@ const HomeScreen = ({ setUser: setUser }) => {
                 <View style={styles.modalContainer}>
                   <Button
                     title="..."
-                    onPress={() => setIsModalVisible(true)}
+                    onPress={() => {
+                      setIsModalVisible(true);
+                      toggleModal({ task });
+                    }}
                     color={"black"}
                   />
                   <Modal
