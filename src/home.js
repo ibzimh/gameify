@@ -46,7 +46,7 @@ const HomeScreen = ({ setUser: setUser }) => {
     const refreshTimer = setInterval(() => {
       // Trigger a re-render by updating the state
       setRefreshKey((prevKey) => prevKey + 1);
-    }, 10000);
+    }, 100);
 
     // Fetch chores on mount
     fetchChores();
@@ -59,7 +59,7 @@ const HomeScreen = ({ setUser: setUser }) => {
     // Fetch chores every time refreshKey changes
     const fetchChores = async () => {
       try {
-        const response = await fetch("http://gameify.us-east-1.elasticbeanstalk.com/chores");
+        const response = await fetch("http://172.31.215.6:8081/chores");
         const data = await response.json();
         setTasks(data.data);
       } catch (error) {
@@ -87,10 +87,10 @@ const HomeScreen = ({ setUser: setUser }) => {
     }
   };
 
-  const toggleModal = (task) => {
-    setSelectedTask(task);
-    setIsModalVisible(!isModalVisible);
-  };
+  // const toggleModal = (task) => {
+  //   setSelectedTask(task);
+  //   setIsModalVisible(!isModalVisible);
+  // };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -118,7 +118,7 @@ const HomeScreen = ({ setUser: setUser }) => {
                     title="..."
                     onPress={() => {
                       setIsModalVisible(true);
-                      toggleModal({ task });
+                      setSelectedTask(task);
                     }}
                     color={"black"}
                   />
@@ -135,7 +135,10 @@ const HomeScreen = ({ setUser: setUser }) => {
                           <View style={styles.closeButton}>
                             <TouchableOpacity
                               styles={styles.closeButton}
-                              onPress={() => setIsModalVisible(false)}
+                              onPress={() => {
+                                setIsModalVisible(false);
+                                setSelectedTask(null);                                
+                              }}
                             >
                               <Text style={styles.buttonText}>X</Text>
                             </TouchableOpacity>
@@ -151,12 +154,6 @@ const HomeScreen = ({ setUser: setUser }) => {
                           </Text>
                           <Text style={styles.modalDate}>{task.due_date}</Text>
                         </View>
-
-                        {/* <Button
-                          title="Complete"
-                          color="black"
-                          onPress={() => setIsModalVisible(false)}
-                        /> */}
                         <TouchableOpacity
                           style={styles.completeButton}
                           onPress={() => handleDelete(task._id)}
