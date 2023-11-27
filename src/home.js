@@ -18,7 +18,10 @@ const HomeScreen = ({ setUser: setUser }) => {
   useEffect(() => {
     const fetchChores = async () => {
       try {
-        const response = await fetch("http://10.78.152.23:8081/chores");
+        //const response = await fetch("http://10.78.152.23:8081/chores");
+        const response = await fetch(
+          "http://gameify.us-east-1.elasticbeanstalk.com/chores"
+        );
         const data = await response.json();
         setTasks(data.data);
       } catch (error) {
@@ -30,7 +33,7 @@ const HomeScreen = ({ setUser: setUser }) => {
 
   const handleDelete = async (itemID) => {
     try {
-      const response = await fetch("http://10.78.152.23:8001/chores", {
+      const response = await fetch("http://10.78.152.23:8001/chores/delete", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
