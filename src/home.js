@@ -81,6 +81,8 @@ const HomeScreen = ({ setUser: setUser }) => {
         body: JSON.stringify({ id: itemID }),
       });
       setRefreshKey((prevKey) => prevKey + 1);
+      setSelectedTask(null); // Clear the selected task after deletion
+      setIsModalVisible(false); // Close the modal after deletion
     } catch (error) {
       console.error("Error:", error);
       Alert.alert("Error", "An unexpected error occurred. Please try again.");
@@ -158,9 +160,7 @@ const HomeScreen = ({ setUser: setUser }) => {
                         <TouchableOpacity
                           style={styles.completeButton}
                           onPress={() => {
-                            handleDelete(task._id);
-                            setSelectedTask(null);
-                            setIsModalVisible(false);
+                            handleDelete(selectedTask?._id);
                           }}
                         >
                           <Text style={styles.completeText}>Complete</Text>
