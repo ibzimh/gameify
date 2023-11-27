@@ -137,26 +137,31 @@ const HomeScreen = ({ setUser: setUser }) => {
                               styles={styles.closeButton}
                               onPress={() => {
                                 setIsModalVisible(false);
-                                setSelectedTask(null);                                
+                                setSelectedTask(null);
                               }}
                             >
                               <Text style={styles.buttonText}>X</Text>
                             </TouchableOpacity>
                           </View>
                         </View>
-
                         <View style={styles.modalInfoContainer}>
                           <Text style={styles.modalTaskName}>
-                            {task.chore_name}
+                            {selectedTask?.chore_name}
                           </Text>
                           <Text style={styles.modalDesc}>
-                            {task.description}
+                            {selectedTask?.description}
                           </Text>
-                          <Text style={styles.modalDate}>{task.due_date}</Text>
+                          <Text style={styles.modalDate}>
+                            {selectedTask?.due_date}
+                          </Text>
                         </View>
                         <TouchableOpacity
                           style={styles.completeButton}
-                          onPress={() => handleDelete(task._id)}
+                          onPress={() => {
+                            handleDelete(task._id);
+                            setSelectedTask(null);
+                            setIsModalVisible(false);
+                          }}
                         >
                           <Text style={styles.completeText}>Complete</Text>
                         </TouchableOpacity>
@@ -318,101 +323,3 @@ const styles = StyleSheet.create({
 });
 
 export default HomeScreen;
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flexGrow: 1,
-//     padding: 20,
-//     backgroundColor: "#f0f0f0",
-//   },
-//   headerContainer: {
-//     marginBottom: 20,
-//   },
-//   header: {
-//     fontSize: 24,
-//     fontWeight: "bold",
-//     textAlign: "center",
-//   },
-//   taskContainer: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//     marginBottom: 20,
-//     // padding: 10,
-//     borderColor: "#ccc",
-//     borderWidth: 1,
-//     borderRadius: 8,
-//   },
-//   layerZeroContainer: {
-//     flexDirection: "column",
-//     flex: 1,
-//   },
-//   infoContainer: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//     // backgroundColor: "red",
-//     padding: 10,
-//     paddingTop: 0,
-//     alignContent: "space-between",
-//     flex: 1,
-//     margin: 2,
-//     borderWidth: 1,
-//     borderTopColor: "#f0f0f0",
-//     borderRightColor: "#f0f0f0",
-//     borderLeftColor: "#f0f0f0",
-//     borderBottomColor: "#000",
-//   },
-//   descContainer: {
-//     flexDirection: "column",
-//     alignItems: "center",
-//     //backgroundColor: "green",
-//     flex: 2,
-//     margin: 2,
-//     padding: 10,
-//     alignContent: "flex-start",
-//   },
-//   deadlineContainer: {
-//     flexDirection: "row",
-//     flex: 3,
-//     // backgroundColor: "darkorange",
-//     margin: 2,
-//     padding: 5,
-//     borderWidth: 1,
-//     borderTopColor: "#000",
-//     borderRightColor: "#f0f0f0",
-//     borderLeftColor: "#f0f0f0",
-//     borderBottomColor: "#f0f0f0",
-//   },
-//   taskName: {
-//     flexDirection: "row",
-//     flex: 2,
-//     fontSize: 24,
-//   },
-//   pointsContainer: {
-//     backgroundColor: "#e5e5e5",
-//     padding: 5,
-//     marginTop: 8,
-//     borderRadius: 5,
-//   },
-//   pointsText: {
-//     fontSize: 16,
-//   },
-//   desc: {
-//     fontSize: 18,
-//     textAlign: "left",
-//   },
-//   date: {
-//     flex: 1,
-//     fontSize: 12,
-//     color: "#777",
-//     // backgroundColor: "pink",
-//     textAlign: "right",
-//   },
-//   time: {
-//     flex: 1,
-//     fontSize: 12,
-//     color: "#777",
-//     // backgroundColor: "purple",
-//   },
-// });
-
-// export default HomeScreen;
