@@ -13,7 +13,7 @@ import {
     const fetchChores = async () => {
       try {
         const response = await fetch(
-          "http://192.168.1.37:8081/chores"
+          "http://gameify.us-east-1.elasticbeanstalk.com/chores"
         );
         const data = await response.json();
         setTasks(data.data);
