@@ -1,60 +1,110 @@
-import React, { Component } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal, Button } from "react-native";
 
-class GiftScreen extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      points: "100 pt",
-      items: [
-        { id: 1, name: "Item 1", pointsRequired: 20 },
-        { id: 2, name: "Item 2", pointsRequired: 30 },
-        { id: 3, name: "Item 3", pointsRequired: 40 },
-      ],
+
+const currentUser = {
+  _id: "655130639407a73e835e4ac3",
+  user_name: "Viet Truong",
+  teamIds: ["655d3e1b6669b07181c0a468"],
+  role: "admin",
+  email: "vbtruong@umass.edu",
+  dob: "1990-01-01",
+  gender: "Male",
+  total_point: 900,
+  achievement: "Some achievement",
+  status: "Active",
+};
+
+const GiftScreen = () => {
+
+  const [points, setPoints] = useState(currentUser ? `${currentUser.total_point} pt` : "0 pt");
+  const [items, setItems] = useState([]);
+  const [selectedReward, setSelectedReward] = useState(null);
+  const [redeemModalVisible, setRedeemModalVisible] = useState(false);
+
+  useEffect(() => {
+    const fetchGiftData = async () => {
+      try {
+        const response = await fetch("http://gameify.us-east-1.elasticbeanstalk.com/rewards");
+        const data = await response.json();
+
+        setItems(data); // Update items in the state with data from the API
+      } catch (error) {
+        console.error("Error fetching gifts:", error.message);
+      }
     };
-  }
 
-  render() {
-    return (
-      <View style={styles.container}>
-        {/* Outer Circle */}
-        <View style={styles.outerCircle}>
-          {/* Inner Circle */}
-          <View style={styles.innerCircle}>
-            <Text style={styles.score}>Your Score</Text>
-            <Text style={styles.points}>{this.state.points}</Text>
-          </View>
-        </View>
+    fetchGiftData();
+  }, []); // Empty dependency array ensures useEffect runs only once, equivalent to componentDidMount
 
-        {/* Section Title */}
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>Available Items:</Text>
-        </View>
+  const handleRedeem = () => {
+    // Implement the redemption logic here
+    // For now, let's just log the selected reward
+    console.log("Redeeming:", selectedReward);
+    setRedeemModalVisible(false);
+  };
 
-        {/* List of Items */}
-        <FlatList
-          data={this.state.items}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <View style={styles.itemBox}>
-              <Text style={styles.itemName}>{item.name}</Text>
-              <View style={styles.pointsRequired}>
-                <Text style={styles.itemPoints}>
-                  {item.pointsRequired} points
-                </Text>
-              </View>
-            </View>
-          )}
-        />
-
-        {/* Box that displays total points with "Points" inside */}
-        <View style={styles.totalPointsBox}>
-          <Text style={styles.itemPoints}>Points</Text>
+  return (
+    <View style={styles.container}>
+      {/* Outer Circle */}
+      <View style={styles.outerCircle}>
+        {/* Inner Circle */}
+        <View style={styles.innerCircle}>
+          <Text style={styles.score}>Your Score</Text>
+          <Text style={styles.points}>{points}</Text>
         </View>
       </View>
-    );
-  }
-}
+
+      {/* Section Title */}
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>Available Items:</Text>
+      </View>
+
+      {/* List of Items */}
+      <FlatList
+        data={items}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.itemBox}
+            onPress={() => {
+              setSelectedReward(item);
+              setRedeemModalVisible(true);
+            }}
+          >
+            <Text style={styles.itemName}>{item.name}</Text>
+            <View style={styles.pointsRequired}>
+              <Text style={styles.itemPoints}>
+                {item.pointsRequired} points
+              </Text>
+            </View>
+          </TouchableOpacity>
+        )}
+      />
+
+      {/* Redeem Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={redeemModalVisible}
+        onRequestClose={() => {
+          setRedeemModalVisible(false);
+        }}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>
+              Are you sure you want to redeem {selectedReward ? selectedReward.name : ""}?
+            </Text>
+            <Button title="Redeem" onPress={handleRedeem} />
+            <Button title="Cancel" onPress={() => setRedeemModalVisible(false)} />
+          </View>
+        </View>
+      </Modal>
+    </View>
+  );
+};
+
 
 const styles = StyleSheet.create({
   container: {
@@ -152,7 +202,23 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginHorizontal: 16,
     marginTop: 20,    
-  },    
+  }, 
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 10,
+    elevation: 5,
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 20,
+    textAlign: "center",
+  },   
 });
 
 export default GiftScreen;
