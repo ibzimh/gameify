@@ -21,6 +21,7 @@ const GiftScreen = () => {
   const [items, setItems] = useState([]);
   const [selectedReward, setSelectedReward] = useState(null);
   const [redeemModalVisible, setRedeemModalVisible] = useState(false);
+  const [redeemedItems, setRedeemedItems] = useState([]);
 
   useEffect(() => {
     const fetchGiftData = async () => {
@@ -38,11 +39,55 @@ const GiftScreen = () => {
   }, []); // Empty dependency array ensures useEffect runs only once, equivalent to componentDidMount
 
   const handleRedeem = () => {
-    // Implement the redemption logic here
-    // For now, let's just log the selected reward
-    console.log("Redeeming:", selectedReward);
+    if (!selectedReward) {
+      return;
+    }
+
+    // Update the list of redeemed items
+    setRedeemedItems([...redeemedItems, selectedReward.id]);
+
+    // Calculate the new points after deduction
+    const newPoints = currentUser.total_point - selectedReward.pointsRequired;
+
+    // Update currentUser with new points and achievements
+    const updatedUser = {
+      ...currentUser,
+      total_point: newPoints,
+      achievement: selectedReward.name, // Update achievement (replace with the desired logic)
+    };
+
+    // Implement the logic to update the user's achievements (you may want to append to an array)
+    // Example: updatedUser.achievements.push(selectedReward.name);
+
+    // Update the state with the new points
+    setPoints(`${newPoints} pt`);
+
+    // Implement the logic to update the backend or any other data storage with the updated user
+
+    // Close the redeem modal
     setRedeemModalVisible(false);
   };
+
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      style={[
+        styles.itemBox,
+        redeemedItems.includes(item.id) ? styles.redeemedItem : null,
+      ]}
+      onPress={() => {
+        setSelectedReward(item);
+        setRedeemModalVisible(true);
+      }}
+    >
+      <Text style={styles.itemName}>{item.name}</Text>
+      <View style={styles.pointsRequired}>
+        <Text style={styles.itemPoints}>{item.pointsRequired} points</Text>
+      </View>
+      {redeemedItems.includes(item.id) && (
+        <Text style={styles.redeemedText}>Redeemed by {currentUser.user_name}</Text>
+      )}
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.container}>
@@ -64,22 +109,7 @@ const GiftScreen = () => {
       <FlatList
         data={items}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.itemBox}
-            onPress={() => {
-              setSelectedReward(item);
-              setRedeemModalVisible(true);
-            }}
-          >
-            <Text style={styles.itemName}>{item.name}</Text>
-            <View style={styles.pointsRequired}>
-              <Text style={styles.itemPoints}>
-                {item.pointsRequired} points
-              </Text>
-            </View>
-          </TouchableOpacity>
-        )}
+        renderItem={renderItem}
       />
 
       {/* Redeem Modal */}
@@ -104,7 +134,6 @@ const GiftScreen = () => {
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -219,6 +248,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: "center",
   },   
+  redeemedItem: {
+    backgroundColor: "#FF69B4", // Change the color to pink for redeemed items
+  },
+  redeemedText: {
+    color: "#FFF",
+    fontSize: 12,
+    marginTop: 5,
+  },
 });
 
 export default GiftScreen;
