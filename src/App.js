@@ -15,8 +15,7 @@ import {
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { createStackNavigator } from '@react-navigation/stack';
 
 import LoginView from "./LoginView";
 import HomeScreen from "./home";
@@ -27,8 +26,11 @@ import Leaderboard from './leaderboard';
 import GiftScreen from './reward';
 import TaskScreen from './create_task'; 
 import Dashboard from './dashboard';
+
+
 const Tab = createBottomTabNavigator();
 const UserContext = createContext();
+
 
 const CustomTabBarButton = ({ children, onPress, focused }) => (
   <TouchableOpacity
@@ -69,7 +71,7 @@ const CustomTabScreen = (name, component, iconName) => {
 
 
 const App = () => {
-  
+
   const [user, setUser] = useState(null);
 
   if (!user) { 
@@ -79,7 +81,12 @@ const App = () => {
       </View>
     );
   }
+
+  console.log(user)
+  
+
   return (
+    
     <UserContext.Provider>
     <SafeAreaProvider>
        

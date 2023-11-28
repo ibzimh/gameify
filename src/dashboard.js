@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Modal, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
 
 const currentUser = {
   _id: "655130639407a73e835e4ac3",
@@ -26,16 +25,23 @@ const Dashboard = () => {
     
     const fetchTeam = async () =>{
       try{
-      const respond = await fetch("http://192.168.1.37:8081/users/656012a3cb5dbe885bfc9ee1")
-      const data = await respond.json();
-   
-      const respond1 = await fetch("http://192.168.1.37:8081/teams")
-      const data1 = await respond1.json();
-      const team_id = data.data.teamIds;
-      const currentTeam = data1.data.filter(team => team_id.includes(team._id))
-      setTeam(currentTeam)
-    } catch (error) {
-      console.error("Error fetching users:", error.message);
+        const respond = await fetch("http://10.0.0.218:8081/users/656012a3cb5dbe885bfc9ee1");
+    if (!respond.ok) {
+      throw new Error(`Failed to fetch user data. Status: ${respond.status}`);
+    }
+    const data = await respond.json();
+
+    const respond1 = await fetch("http://10.0.0.218:8081/teams");
+    if (!respond1.ok) {
+      throw new Error(`Failed to fetch teams. Status: ${respond1.status}`);
+    }
+    const data1 = await respond1.json();
+
+    const team_id = data.data.teamIds;
+    const currentTeam = data1.data.filter(team => team_id.includes(team._id));
+    setTeam(currentTeam);
+  } catch (error) {
+    console.error("Error fetching data:", error.message);
     }
   };
   
@@ -57,7 +63,7 @@ const Dashboard = () => {
   };
   const handleConfirmCreateTeam = async () => {
     try {
-      const response = await fetch("http://192.168.1.37:8081/teams/add", {
+      const response = await fetch("http://10.0.0.218:8081/teams/add", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -68,14 +74,11 @@ const Dashboard = () => {
       if (!response.ok) {
         throw new Error('Failed to add team');
       }
-      const respond1 = await fetch("http://192.168.1.37:8081/users/656012a3cb5dbe885bfc9ee1")
+      const respond1 = await fetch("http://10.0.0.218:8081/users/656012a3cb5dbe885bfc9ee1")
       const data = await respond1.json();
-      const user = data.data;
-      console.log(user)
-      // Get the newly created team data
+      const user = data.data;      // Get the newly created team data
       const newTeamData = await response.json();
       const newTeam = newTeamData.data;
-      console.log(newTeam)
 
       // Update the dashboard with the new team
       setTeam(prevTeam => [...prevTeam, newTeam]);
@@ -87,7 +90,7 @@ const Dashboard = () => {
       };
   
       // Update the teamIds field for the current user
-      await fetch(`http://192.168.1.37:8081/users/${user._id}`, {
+      await fetch(`http://10.0.0.218:8081/users/${user._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
