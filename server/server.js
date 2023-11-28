@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 
-require('dotenv').config();
+require('dotenv').config({ path: "config.env" });
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -20,10 +20,16 @@ connection.once('open', () => {
   console.log("MongoDB database connection established successfully");
 })
 
-const usersRouter = require('./route/choreRoute.js');
-
-app.use('/chores', usersRouter);
-
+const choreRouter = require('./route/choreRoute.js');
+const userRouter = require('./route/userRoute.js');
+const authRouter = require('./route/authenticationRoute.js')
+const rewardRouter = require('./route/rewardRoute.js')
+const categoryRouter = require('./route/categoryRoute.js')
+const teamRouter = require('./route/teamRoute.js')
+app.use('/teams', teamRouter)
+app.use('/users', userRouter);
+app.use('/chores', choreRouter);
+app.use('/user/email',userRouter)
 app.listen(port, () => {
     console.log(`Server is running on port: ${port}`);
 });

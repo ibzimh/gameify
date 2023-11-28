@@ -16,7 +16,12 @@ const  choreSchema = new mongoose.Schema(
         },
         points:{
             type:Number,
-        }
+        },
+         teamId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Team'
+
+         }
     },
     {timestamps:true}
 )
