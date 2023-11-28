@@ -30,7 +30,7 @@ const currentTeam = {
 }
 
 const currT = async () => {
-  const res = await fetch("http://192.168.1.37:8081/teams/6563b623779f11fb0b7d594d");
+  const res = await fetch("http://10.0.0.218:8081/teams/6563b623779f11fb0b7d594d");
   const da= await res.json();
   return  da;
 }
@@ -44,25 +44,23 @@ const UsersScreen = () => {
   useEffect(() => {
     const fetchUsersInCurrentTeam = async () => {
       try {
-        const response = await fetch("http://gameify.us-east-1.elasticbeanstalk.com/users"); // Update the URL
+        const response = await fetch("http://10.0.0.218:8081/users"); // Update the URL
         const data = await response.json();
-        const res = await fetch("http://gameify.us-east-1.elasticbeanstalk.com/teams/6563b623779f11fb0b7d594d");
+        const res = await fetch("http://10.0.0.218:8081/teams/6563b623779f11fb0b7d594d");
         const da =  await res.json();
         if (response.ok) {
           const currentTeamUserIds = da.data.usersList; // IDs of users in the current team
-          console.log(currentTeamUserIds)
           // Filter users based on IDs present in the current team's usersList
           const usersInTeam = data.data.filter(user => currentTeamUserIds.includes(user._id));
-          console.log(usersInTeam)
           setUsers(usersInTeam); // Set state with users only in the current team
         } else {
 
-          console.error("Error fetching users:", data.message);
+          console.error("Error fetching user:", data.message);
 
         }
 
       } catch (error) {
-        console.error("Error fetching users:", error.message);
+        console.error("Error fetching user:", error.message);
       }
     };
 
@@ -81,10 +79,10 @@ const UsersScreen = () => {
         userId => userId !== userToDelete._id
       );
       console.log(updatedUsersList)
-      const res = await fetch("http://192.168.1.37:8081/teams/6563b623779f11fb0b7d594d");
+      const res = await fetch("http://10.0.0.218:8081/teams/6563b623779f11fb0b7d594d");
       const da =  await res.json();
       // Update the current team's usersList without the deleted user ID
-      await fetch(`http://192.168.1.37:8081/teams/${da.data._id}`, {
+      await fetch(`http://10.0.0.218:8081/teams/${da.data._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -98,7 +96,7 @@ const UsersScreen = () => {
       const updatedTeamIds = userToDelete.teamIds.filter(
         teamId => teamId !== currentTeam._id
       );
-      await fetch(`http://192.168.1.37:8081/users/${userToDelete._id}`, {
+      await fetch(`http://10.0.0.218:8081/users/${userToDelete._id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -112,7 +110,7 @@ const UsersScreen = () => {
  
   const handleConfirmAddMember = async () => {
     const currentT = await currT();
-    const response = await fetch(`http://192.168.1.37:8081/users/email/${memberEmail}`);
+    const response = await fetch(`http://10.0.0.218:8081/users/email/${memberEmail}`);
     const data = await response.json();
     console.log(data); // Inspect the structure of the response data
 
@@ -135,21 +133,21 @@ const UsersScreen = () => {
       const updatedUsersList = [...currentT.data.usersList, userId];
       console.log(updatedUsersList)
       // Update the current team's usersList with the new userId
-      await fetch(`http://192.168.1.37:8081/teams/${currentTeam._id}`, {
+      await fetch(`http://10.0.0.218:8081/teams/${currentTeam._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ usersList: updatedUsersList }),
       });
-      const updatedResponse = await fetch("http://192.168.1.37:8081/users");
+      const updatedResponse = await fetch("http://10.0.0.218:8081/users");
       const updatedUserData = await updatedResponse.json();
 
       // Update the user's teamIds by adding the team ID to their teamIds array
     const updatedTeamIds = [...data.data.teamIds, currentTeam._id];
 
     // Update the user's teamIds field with the new team ID
-    await fetch(`http://192.168.1.37:8081/users/${userId}`, {
+    await fetch(`http://10.0.0.218:8081/users/${userId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

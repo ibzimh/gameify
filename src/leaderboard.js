@@ -7,7 +7,7 @@ const Leaderboard = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch("http://gameify.us-east-1.elasticbeanstalk.com/users");
+        const response = await fetch("http://172.31.8.17:8081/users");
         const data = await response.json();
 
         // Sorting users based on total points in descending order

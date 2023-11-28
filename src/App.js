@@ -15,8 +15,7 @@ import {
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { createStackNavigator } from '@react-navigation/stack';
 
 import LoginView from "./LoginView";
 import HomeScreen from "./home";
@@ -27,8 +26,11 @@ import Leaderboard from './leaderboard';
 import GiftScreen from './reward';
 import TaskScreen from './create_task'; 
 import Dashboard from './dashboard';
+
+
 const Tab = createBottomTabNavigator();
 const UserContext = createContext();
+
 
 const CustomTabBarButton = ({ children, onPress, focused }) => (
   <TouchableOpacity
@@ -69,36 +71,23 @@ const CustomTabScreen = (name, component, iconName) => {
 
 
 const App = () => {
+
+  const [user, setUser] = useState(null);
+
+  if (!user) { 
+    return (
+      <View style={styles.container}>
+        <LoginView setUser={setUser}/>
+      </View>
+    );
+  }
+
+  console.log(user)
   
-  const [currentUser, setCurrentUser] = useState(null);
 
-  // Check if the user is logged in by retrieving data from AsyncStorage on app startup
-  const checkLoggedInUser = async () => {
-    try {
-      const userData = await AsyncStorage.getItem('currentUser');
-      if (userData) {
-        setCurrentUser(JSON.parse(userData));
-      }
-    } catch (error) {
-      console.error('Error retrieving user data:', error);
-    }
-  };
-  useState(() => {
-    checkLoggedInUser();
-  }, []);
-  const handleUserLogin = (user) => {
-    // Update the currentUser state and store it in AsyncStorage
-    setCurrentUser(user);
-    AsyncStorage.setItem('currentUser', JSON.stringify(user));
-  };
-
-  const handleUserLogout = async () => {
-    // Remove the currentUser from state and AsyncStorage on logout
-    setCurrentUser(null);
-    await AsyncStorage.removeItem('currentUser');
-  };
   return (
-    <UserContext.Provider value={{ currentUser, setCurrentUser }}>
+    
+    <UserContext.Provider>
     <SafeAreaProvider>
        
     <NavigationContainer>
