@@ -1,11 +1,10 @@
-const express = require('express');
-const Chore = require('../model/chore.model.js');
+const express = require("express");
+const Chore = require("../model/chore.model.js");
 const router = express.Router();
 
-router.route('/').get( async (request, response) => {
-    try {
-
-      const chore = await Chore.find();
+router.route("/").get(async (request, response) => {
+  try {
+    const chore = await Chore.find();
 
       return response.status(200).json({
         count: chore.length,

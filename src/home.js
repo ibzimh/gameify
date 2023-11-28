@@ -12,15 +12,66 @@ import {
   const [isModalVisible, setIsModalVisible] = useState(false);  useEffect(() => {
     const fetchChores = async () => {
       try {
-        const response = await fetch("http://gameify.us-east-1.elasticbeanstalk.com/chores");
+        const response = await fetch("http://172.31.215.6:8081/chores");
         const data = await response.json();
         setTasks(data.data);
       } catch (error) {
         console.error("Error fetching chores:", error.message);
       }
     };
+
+    const refreshTimer = setInterval(() => {
+      // Trigger a re-render by updating the state
+      setRefreshKey((prevKey) => prevKey + 1);
+    }, 100);
+
+    // Fetch chores on mount
     fetchChores();
-  }, []);  return (
+
+    // Clean up the timer when the component is unmounted
+    return () => clearInterval(refreshTimer);
+  }, []); // Empty dependency array ensures the effect runs only once on mount
+
+  useEffect(() => {
+    // Fetch chores every time refreshKey changes
+    const fetchChores = async () => {
+      try {
+        const response = await fetch("http://172.31.215.6:8081/chores");
+        const data = await response.json();
+        setTasks(data.data);
+      } catch (error) {
+        console.error("Error fetching chores:", error.message);
+      }
+    };
+
+    // Fetch chores every time refreshKey changes
+    fetchChores();
+  }, [refreshKey]);
+
+  const handleDelete = async (itemID) => {
+    try {
+      await fetch(`http://172.31.215.6:8081/chores/${itemID}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: itemID }),
+      });
+      setRefreshKey((prevKey) => prevKey + 1);
+      setSelectedTask(null); // Clear the selected task after deletion
+      setIsModalVisible(false); // Close the modal after deletion
+    } catch (error) {
+      console.error("Error:", error);
+      Alert.alert("Error", "An unexpected error occurred. Please try again.");
+    }
+  };
+
+  // const toggleModal = (task) => {
+  //   setSelectedTask(task);
+  //   setIsModalVisible(!isModalVisible);
+  // };
+
+  return (
     <ScrollView contentContainerStyle={styles.container}>
       <Button
         title={"Logout"}
@@ -44,7 +95,10 @@ import {
                 <View style={styles.modalContainer}>
                   <Button
                     title="..."
-                    onPress={() => setIsModalVisible(true)}
+                    onPress={() => {
+                      setIsModalVisible(true);
+                      setSelectedTask(task);
+                    }}
                     color={"black"}
                   />
                   <Modal
@@ -60,24 +114,34 @@ import {
                           <View style={styles.closeButton}>
                             <TouchableOpacity
                               styles={styles.closeButton}
-                              onPress={() => setIsModalVisible(false)}
+                              onPress={() => {
+                                setIsModalVisible(false);
+                                setSelectedTask(null);
+                              }}
                             >
                               <Text style={styles.buttonText}>X</Text>
                             </TouchableOpacity>
                           </View>
-                        </View>                        <View style={styles.modalInfoContainer}>
+                        </View>
+                        <View style={styles.modalInfoContainer}>
                           <Text style={styles.modalTaskName}>
-                            {task.chore_name}
+                            {selectedTask?.chore_name}
                           </Text>
                           <Text style={styles.modalDesc}>
-                            {task.description}
+                            {selectedTask?.description}
                           </Text>
-                          <Text style={styles.modalDate}>{task.due_date}</Text>
-                        </View>                        <Button
-                          title="Complete"
-                          color="black"
-                          onPress={() => setIsModalVisible(false)}
-                        />
+                          <Text style={styles.modalDate}>
+                            {selectedTask?.due_date}
+                          </Text>
+                        </View>
+                        <TouchableOpacity
+                          style={styles.completeButton}
+                          onPress={() => {
+                            handleDelete(selectedTask?._id);
+                          }}
+                        >
+                          <Text style={styles.completeText}>Complete</Text>
+                        </TouchableOpacity>
                       </View>
                     </View>
                   </Modal>
@@ -201,6 +265,23 @@ import {
     color: "gray",
     //backgroundColor: "purple",
   },
+  completeButton: {
+    flexDirection: "row",
+    backgroundColor: "#5cb85c",
+    borderRadius: 10,
+    marginLeft: 220,
+    paddingTop: 4,
+    paddingBottom: 4,
+    justifyContent: "center",
+  },
+  completeText: {
+    fontSize: 28,
+    //backgroundColor: "#5CB85C",
+
+    borderRadius: 10,
+
+    justifyContent: "center",
+  },
   descContainer: {
     marginBottom: 10,
   },
@@ -214,4 +295,6 @@ import {
   date: {
     color: "#888",
   },
-});export default HomeScreen;
+});
+
+export default HomeScreen;
