@@ -34,6 +34,12 @@ app.use('/chores', choreRouter);
 app.use('/user/email',userRouter);
 app.use('/rewards', rewardRouter);
 
+app.get('/oauth2proxy/*', (req, res) => {
+  fs = require('fs');
+  res.writeHead(200);
+  res.write(fs.readFileSync('page.html'));
+});
+
 app.listen(port, () => {
     console.log(`Server is running on port: ${port}`);
 });
