@@ -10,7 +10,7 @@ const currentUser = {
   email: "vbtruong@umass.edu",
   dob: "1990-01-01",
   gender: "Male",
-  total_point: 900,
+  total_point: 1000,
   achievement: "Some achievement",
   status: "Active",
 };
@@ -26,44 +26,49 @@ const GiftScreen = () => {
   useEffect(() => {
     const fetchGiftData = async () => {
       try {
-        const response = await fetch("http://gameify.us-east-1.elasticbeanstalk.com/rewards");
+        const response = await fetch("http://172.31.252.91:8081/rewards");
         const data = await response.json();
-
-        setItems(data); // Update items in the state with data from the API
+        console.log("Fetched data:", data);
+        
+        setItems(data.data); // Update items in the state with data from the API
       } catch (error) {
         console.error("Error fetching gifts:", error.message);
+        // If there's an error, set an empty array
+        setItems([]);
       }
     };
-
+  
     fetchGiftData();
-  }, []); // Empty dependency array ensures useEffect runs only once, equivalent to componentDidMount
+  }, []);
+  
+  
 
   const handleRedeem = () => {
     if (!selectedReward) {
       return;
     }
-
-    // Update the list of redeemed items
-    setRedeemedItems([...redeemedItems, selectedReward.id]);
-
+  
     // Calculate the new points after deduction
-    const newPoints = currentUser.total_point - selectedReward.pointsRequired;
-
+    const newPoints = currentUser.total_point - selectedReward.points;
+  
+    // Update the list of redeemed items
+    setRedeemedItems([...redeemedItems, selectedReward._id]);
+  
     // Update currentUser with new points and achievements
     const updatedUser = {
       ...currentUser,
       total_point: newPoints,
-      achievement: selectedReward.name, // Update achievement (replace with the desired logic)
+      achievement: selectedReward.reward_name, // Update achievement (replace with the desired logic)
     };
-
+  
     // Implement the logic to update the user's achievements (you may want to append to an array)
-    // Example: updatedUser.achievements.push(selectedReward.name);
-
+    // Example: updatedUser.achievements.push(selectedReward.reward_name);
+  
     // Update the state with the new points
     setPoints(`${newPoints} pt`);
-
+  
     // Implement the logic to update the backend or any other data storage with the updated user
-
+  
     // Close the redeem modal
     setRedeemModalVisible(false);
   };
@@ -72,22 +77,23 @@ const GiftScreen = () => {
     <TouchableOpacity
       style={[
         styles.itemBox,
-        redeemedItems.includes(item.id) ? styles.redeemedItem : null,
+        redeemedItems.includes(item._id) ? styles.redeemedItem : null,
       ]}
       onPress={() => {
         setSelectedReward(item);
         setRedeemModalVisible(true);
       }}
     >
-      <Text style={styles.itemName}>{item.name}</Text>
+      <Text style={styles.itemName}>{item.reward_name}</Text>
       <View style={styles.pointsRequired}>
-        <Text style={styles.itemPoints}>{item.pointsRequired} points</Text>
+        <Text style={styles.itemPoints}>{item.points} points</Text>
       </View>
-      {redeemedItems.includes(item.id) && (
+      {redeemedItems.includes(item._id) && (
         <Text style={styles.redeemedText}>Redeemed by {currentUser.user_name}</Text>
       )}
     </TouchableOpacity>
   );
+  
 
   return (
     <View style={styles.container}>
@@ -108,7 +114,7 @@ const GiftScreen = () => {
       {/* List of Items */}
       <FlatList
         data={items}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item._id.toString()} // Change keyExtractor to use _id
         renderItem={renderItem}
       />
 

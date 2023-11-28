@@ -29,7 +29,8 @@ const teamRouter = require('./route/teamRoute.js')
 app.use('/teams', teamRouter)
 app.use('/users', userRouter);
 app.use('/chores', choreRouter);
-app.use('/user/email',userRouter)
+app.use('/user/email',userRouter);
+app.use('/rewards', rewardRouter);
 app.listen(port, () => {
     console.log(`Server is running on port: ${port}`);
 });
