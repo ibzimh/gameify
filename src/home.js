@@ -35,7 +35,9 @@ const HomeScreen = ({ setUser: setUser }) => {
   useEffect(() => {
     const fetchChores = async () => {
       try {
-        const response = await fetch("http://172.31.129.224:8081/chores");
+        const response = await fetch(
+          "http://gameify.us-east-1.elasticbeanstalk.com/chores"
+        );
         const data = await response.json();
         setTasks(data.data);
       } catch (error) {
@@ -59,7 +61,9 @@ const HomeScreen = ({ setUser: setUser }) => {
     // Fetch chores every time refreshKey changes
     const fetchChores = async () => {
       try {
-        const response = await fetch("http://172.31.129.224:8081/chores");
+        const response = await fetch(
+          "http://gameify.us-east-1.elasticbeanstalk.com/chores"
+        );
         const data = await response.json();
         setTasks(data.data);
       } catch (error) {
@@ -73,13 +77,16 @@ const HomeScreen = ({ setUser: setUser }) => {
 
   const handleDelete = async (itemID) => {
     try {
-      await fetch(`http://172.31.129.224:8081/chores/${itemID}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id: itemID }),
-      });
+      await fetch(
+        `http://gameify.us-east-1.elasticbeanstalk.com/chores/${itemID}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id: itemID }),
+        }
+      );
       setRefreshKey((prevKey) => prevKey + 1);
       setSelectedTask(null); // Clear the selected task after deletion
       setIsModalVisible(false); // Close the modal after deletion

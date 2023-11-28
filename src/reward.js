@@ -1,60 +1,145 @@
-import React, { Component } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal, Button } from "react-native";
 
-class GiftScreen extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      points: "100 pt",
-      items: [
-        { id: 1, name: "Item 1", pointsRequired: 20 },
-        { id: 2, name: "Item 2", pointsRequired: 30 },
-        { id: 3, name: "Item 3", pointsRequired: 40 },
-      ],
+
+const currentUser = {
+  _id: "655130639407a73e835e4ac3",
+  user_name: "Viet Truong",
+  teamIds: ["655d3e1b6669b07181c0a468"],
+  role: "admin",
+  email: "vbtruong@umass.edu",
+  dob: "1990-01-01",
+  gender: "Male",
+  total_point: 1000,
+  achievement: "Some achievement",
+  status: "Active",
+};
+
+const GiftScreen = () => {
+
+  const [points, setPoints] = useState(currentUser ? `${currentUser.total_point} pt` : "0 pt");
+  const [items, setItems] = useState([]);
+  const [selectedReward, setSelectedReward] = useState(null);
+  const [redeemModalVisible, setRedeemModalVisible] = useState(false);
+  const [redeemedItems, setRedeemedItems] = useState([]);
+
+  useEffect(() => {
+    const fetchGiftData = async () => {
+      try {
+        const response = await fetch("http://172.31.252.91:8081/rewards");
+        const data = await response.json();
+        console.log("Fetched data:", data);
+        
+        setItems(data.data); // Update items in the state with data from the API
+      } catch (error) {
+        console.error("Error fetching gifts:", error.message);
+        // If there's an error, set an empty array
+        setItems([]);
+      }
     };
-  }
+  
+    fetchGiftData();
+  }, []);
+  
+  
 
-  render() {
-    return (
-      <View style={styles.container}>
-        {/* Outer Circle */}
-        <View style={styles.outerCircle}>
-          {/* Inner Circle */}
-          <View style={styles.innerCircle}>
-            <Text style={styles.score}>Your Score</Text>
-            <Text style={styles.points}>{this.state.points}</Text>
-          </View>
-        </View>
+  const handleRedeem = () => {
+    if (!selectedReward) {
+      return;
+    }
+  
+    // Calculate the new points after deduction
+    const newPoints = currentUser.total_point - selectedReward.points;
+  
+    // Update the list of redeemed items
+    setRedeemedItems([...redeemedItems, selectedReward._id]);
+  
+    // Update currentUser with new points and achievements
+    const updatedUser = {
+      ...currentUser,
+      total_point: newPoints,
+      achievement: selectedReward.reward_name, // Update achievement (replace with the desired logic)
+    };
+  
+    // Implement the logic to update the user's achievements (you may want to append to an array)
+    // Example: updatedUser.achievements.push(selectedReward.reward_name);
+  
+    // Update the state with the new points
+    setPoints(`${newPoints} pt`);
+  
+    // Implement the logic to update the backend or any other data storage with the updated user
+  
+    // Close the redeem modal
+    setRedeemModalVisible(false);
+  };
 
-        {/* Section Title */}
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>Available Items:</Text>
-        </View>
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      style={[
+        styles.itemBox,
+        redeemedItems.includes(item._id) ? styles.redeemedItem : null,
+      ]}
+      onPress={() => {
+        setSelectedReward(item);
+        setRedeemModalVisible(true);
+      }}
+    >
+      <Text style={styles.itemName}>{item.reward_name}</Text>
+      <View style={styles.pointsRequired}>
+        <Text style={styles.itemPoints}>{item.points} points</Text>
+      </View>
+      {redeemedItems.includes(item._id) && (
+        <Text style={styles.redeemedText}>Redeemed by {currentUser.user_name}</Text>
+      )}
+    </TouchableOpacity>
+  );
+  
 
-        {/* List of Items */}
-        <FlatList
-          data={this.state.items}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <View style={styles.itemBox}>
-              <Text style={styles.itemName}>{item.name}</Text>
-              <View style={styles.pointsRequired}>
-                <Text style={styles.itemPoints}>
-                  {item.pointsRequired} points
-                </Text>
-              </View>
-            </View>
-          )}
-        />
-
-        {/* Box that displays total points with "Points" inside */}
-        <View style={styles.totalPointsBox}>
-          <Text style={styles.itemPoints}>Points</Text>
+  return (
+    <View style={styles.container}>
+      {/* Outer Circle */}
+      <View style={styles.outerCircle}>
+        {/* Inner Circle */}
+        <View style={styles.innerCircle}>
+          <Text style={styles.score}>Your Score</Text>
+          <Text style={styles.points}>{points}</Text>
         </View>
       </View>
-    );
-  }
-}
+
+      {/* Section Title */}
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>Available Items:</Text>
+      </View>
+
+      {/* List of Items */}
+      <FlatList
+        data={items}
+        keyExtractor={(item) => item._id.toString()} // Change keyExtractor to use _id
+        renderItem={renderItem}
+      />
+
+      {/* Redeem Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={redeemModalVisible}
+        onRequestClose={() => {
+          setRedeemModalVisible(false);
+        }}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>
+              Are you sure you want to redeem {selectedReward ? selectedReward.name : ""}?
+            </Text>
+            <Button title="Redeem" onPress={handleRedeem} />
+            <Button title="Cancel" onPress={() => setRedeemModalVisible(false)} />
+          </View>
+        </View>
+      </Modal>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -152,7 +237,31 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginHorizontal: 16,
     marginTop: 20,    
-  },    
+  }, 
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 10,
+    elevation: 5,
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 20,
+    textAlign: "center",
+  },   
+  redeemedItem: {
+    backgroundColor: "#FF69B4", // Change the color to pink for redeemed items
+  },
+  redeemedText: {
+    color: "#FFF",
+    fontSize: 12,
+    marginTop: 5,
+  },
 });
 
 export default GiftScreen;
