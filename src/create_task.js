@@ -41,8 +41,8 @@ const TaskScreen = () => {
     console.log("Task:", data);
 
     try {
-      const response = await fetch("http://172.31.215.6:8081/chores/add", {
-        method: "POST",
+      const response = await fetch('http://172.31.139.117:8081/chores/add', {
+        method: 'POST',
         headers: {
           "Content-Type": "application/json",
         },
