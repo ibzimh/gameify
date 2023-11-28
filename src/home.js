@@ -7,9 +7,32 @@ import {
   Modal,
   StyleSheet,
   TouchableOpacity,
-} from "react-native";const HomeScreen = ({ setUser: setUser }) => {
+  Alert,
+} from "react-native";
+
+const HomeScreen = ({ setUser: setUser }) => {
   const [tasks, setTasks] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);  useEffect(() => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [selectedTask, setSelectedTask] = useState(null);
+
+  // useEffect(() => {
+  //   const fetchChores = async () => {
+  //     try {
+  //       const response = await fetch("http://172.31.215.6:8081/chores");
+  //       //const response = await fetch(
+  //       //   "http://gameify.us-east-1.elasticbeanstalk.com/chores"
+  //       // );
+  //       const data = await response.json();
+  //       setTasks(data.data);
+  //     } catch (error) {
+  //       console.error("Error fetching chores:", error.message);
+  //     }
+  //   };
+  //   fetchChores();
+  // }, []);
+
+  useEffect(() => {
     const fetchChores = async () => {
       try {
         const response = await fetch("http://172.31.215.6:8081/chores");
@@ -159,7 +182,9 @@ import {
       ))}
     </ScrollView>
   );
-};const styles = StyleSheet.create({
+};
+
+const styles = StyleSheet.create({
   container: {
     padding: 16,
   },
@@ -172,7 +197,7 @@ import {
   },
   taskContainer: {
     marginBottom: 20,
-    backgroundColor: "#F0F0F0",
+    backgroundColor: "#f0f0f0",
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#ccc",
