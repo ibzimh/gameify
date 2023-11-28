@@ -34,23 +34,14 @@ Follow these steps to run the React Native app:
    node server.js
    ```
 
-5. **Start the Expo Go App (if logged into eas):**
+5. **Start the Expo Go App:**
 
    ```bash
    cd ../src
-   npx expo start --go
+   npx expo start
    ```
 
-6. Logging into eas:
-
-   ```bash
-   cd ../src
-   npm install -g eas-cli
-   eas login
-   # see slack for username and password
-   ```
-
-8. **Start the Development Build:**
+5. **Start the Development Build:**
 
    ```bash
    cd ../src
