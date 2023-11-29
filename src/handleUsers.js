@@ -1,18 +1,24 @@
-import axios from 'axios';
-
 const apiUrl = 'http://localhost:8084/auth';
 
 const createUser = async (email, password) => {
   try {
-    const response = await axios.post(apiUrl, {
-      auth_provider: email,
-      access_token: password,
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        auth_provider: email,
+        access_token: password,
+      })
     });
 
+    const data = await response.json();
+
     if (response.status === 201) {
-      console.log('User created successfully:', response.data.data);
+      console.log('User created successfully:', data.data);
     } else {
-      console.log('Failed to create user:', response.data.message);
+      console.log('Failed to create user:', data.message);
     }
   } catch (error) {
     console.error('Error creating user:', error.message);
@@ -21,19 +27,18 @@ const createUser = async (email, password) => {
 
 const checkUserAuthentication = async (email, password) => {
   try {
-    const response = await axios.get(apiUrl);
+    const response = await fetch(apiUrl);
 
-    if (response.status === 200) {
-      const authentications = response.data.data;
-      const userExists = authentications.some(auth => auth.email === email && auth.password === password);
+    if (response.status === 200) { 
+      const data = await response.json();
+      const authentications = data.data;
+      const userExists = authentications.some(auth => auth.auth_provider === email && auth.access_token === password);
 
       return userExists;
     } else {
       console.error('Server responded with status:', response.status);
       return false;
     }
-
-    return userExists;
   } catch (error) {
     console.log(error.message);
     throw error;
