@@ -6,7 +6,8 @@ import randomString from "random-string";
 import URL from "url-parse";
 
 import Config from "./env";
-import { createUser, checkUserAuthentication } from "./handleUsers";
+import RegisterView from "./RegisterView";
+// import { checkUserAuthentication } from "./handleUsers";
 
 const loginProviders = {
   google: {
@@ -20,9 +21,32 @@ const loginProviders = {
   },
 };
 
+const apiUrl = 'http://localhost:8084/auth';
+
+const checkUserAuthentication = async (email, password) => {
+  try {
+    const response = await fetch(apiUrl);
+
+    if (response.status === 200) { 
+      const data = await response.json();
+      const authentications = data.data;
+      const userExists = authentications.some(auth => auth.auth_provider === email && auth.access_token === password);
+
+      return userExists;
+    } else {
+      console.error('Server responded with status:', response.status);
+      return false;
+    }
+  } catch (error) {
+    console.log(error.message);
+    throw error;
+  }
+};
+
 function LoginView({setUser: setUser}) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [registerScreen, setRegisterScreen] = useState(false);
 
   const styles = StyleSheet.create({
     container: {
@@ -49,11 +73,11 @@ function LoginView({setUser: setUser}) {
       alignItems: 'center',
       justifyContent: 'center',
       backgroundColor: 'white',
-      marginBottom: 20,
+      marginBottom: 10,
       color: '#2b2684',
       transition: 0.5,
       // width: 20,
-      // marginRight: 10,
+      marginTop: 10,
       paddingTop: 5,
       paddingRight: 15,
       paddingBottom: 5,
@@ -75,6 +99,7 @@ function LoginView({setUser: setUser}) {
       paddingRight: 15,
       paddingBottom: 5,
       paddingLeft: 15,
+      marginLeft: 10,
     },
     googleButton: {
       width: 20,
@@ -181,7 +206,7 @@ function LoginView({setUser: setUser}) {
     Linking.openURL(authorizationUrl);
   };
 
-  const handleManualLogin = (username, password) => {
+  async function handleManualLogin (username, password) {
     checkUserAuthentication(username, password)
       .then((userExists) => {
         if (userExists) {
@@ -193,9 +218,14 @@ function LoginView({setUser: setUser}) {
       });
   }
 
+  if (registerScreen) {
+    return (
+      <RegisterView setUser={setUser} />
+    );
+  }
+
   return (
     <View style={styles.container}>
-        
         <View style={{ flexDirection: 'column' }}>
           {/* Username */}
           <TextInput
@@ -217,6 +247,14 @@ function LoginView({setUser: setUser}) {
               <Text style={styles.loginText}>Submit</Text>
             </TouchableOpacity>
           </View>
+        </View>
+
+        {/* Register */}
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.loginText}>Don't have an account?</Text>
+          <TouchableOpacity style={styles.register} onPress={() => {setRegisterScreen(true)}}>
+              <Text style={styles.registerText}>Register</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Google and Sneak in Buttons */}
