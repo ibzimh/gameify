@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, Button, Linking, StyleSheet, TouchableOpacity } from "react-native";;
+import { Text, View, Button, Linking, StyleSheet, TouchableOpacity, TextInput } from "react-native";;
 
 import qs from "qs";
 import randomString from "random-string";
@@ -20,6 +20,8 @@ const loginProviders = {
 };
 
 function LoginView({setUser: setUser}) {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const styles = StyleSheet.create({
     container: {
@@ -88,6 +90,38 @@ function LoginView({setUser: setUser}) {
       textAlign: 'center',
       fontWeight: 'bold',
     },
+    input: {
+      height: 40,
+      borderWidth: 1,
+      borderStyle: 'solid',
+      borderColor: '#2b2684',
+      borderRadius: 15,
+      fontWeight: 'bold',
+      marginBottom: 20,
+      color: '#2b2684',
+      paddingLeft: 15,
+    },
+    submit: {
+      height: 40,
+      borderWidth: 1,
+      borderStyle: 'solid',
+      borderColor:'#2b2684',
+      borderRadius: 15,
+      fontWeight: 'bold',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: 'white',
+      marginBottom: 20,
+      color: '#2b2684',
+      transition: 0.5,
+      // width: 20,
+      marginLeft: 10,
+      paddingTop: 5,
+      paddingRight: 15,
+      paddingBottom: 5,
+      paddingLeft: 15,
+    },
   });
 
   useEffect(() => {
@@ -149,6 +183,31 @@ function LoginView({setUser: setUser}) {
 
   return (
     <View style={styles.container}>
+        
+        <View style={{ flexDirection: 'column' }}>
+          {/* Username */}
+          <TextInput
+            style={styles.input}
+            placeholder="Username"
+            value={username}
+            onChangeText={(text) => setUsername(text)}
+          />
+          {/* Password and Submit */}
+          <View style={{ flexDirection: 'row' }}>
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              secureTextEntry
+              value={password}
+              onChangeText={(text) => setPassword(text)}
+            />  
+            <TouchableOpacity style={styles.submit} onPress={() => handleLogin('manual')} disabled={!username || !password}>
+              <Text style={styles.loginText}>Submit</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Google and Sneak in Buttons */}
         <TouchableOpacity style={styles.login} onPress={() => handleLogin('google')}>
           <Text style={styles.loginText}>Login with Google</Text>
         </TouchableOpacity>
