@@ -6,6 +6,7 @@ import randomString from "random-string";
 import URL from "url-parse";
 
 import Config from "./env";
+import { createUser, checkUserAuthentication } from "./handleUsers";
 
 const loginProviders = {
   google: {
@@ -166,7 +167,6 @@ function LoginView({setUser: setUser}) {
     handleRedirectUri(url);
   };
 
-
   const handleLogin = (key) => {
     const loginProvider = loginProviders[key];
     const { client_id, redirect_uri, response_type, scope, authorization_endpoint } = loginProvider;
@@ -180,6 +180,18 @@ function LoginView({setUser: setUser}) {
     console.log(redirect_uri);
     Linking.openURL(authorizationUrl);
   };
+
+  const handleManualLogin = (username, password) => {
+    checkUserAuthentication(username, password)
+      .then((userExists) => {
+        if (userExists) {
+          setUser(true);
+        }
+      })
+      .catch((err) => {
+        console.log("Error checking user authentication:", err.message);
+      });
+  }
 
   return (
     <View style={styles.container}>
@@ -201,7 +213,7 @@ function LoginView({setUser: setUser}) {
               value={password}
               onChangeText={(text) => setPassword(text)}
             />  
-            <TouchableOpacity style={styles.submit} onPress={() => handleLogin('manual')} disabled={!username || !password}>
+            <TouchableOpacity style={styles.submit} onPress={() => handleManualLogin(username, password)} disabled={!username || !password}>
               <Text style={styles.loginText}>Submit</Text>
             </TouchableOpacity>
           </View>
