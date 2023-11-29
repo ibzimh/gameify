@@ -7,7 +7,6 @@ import URL from "url-parse";
 
 import Config from "./env";
 import RegisterView from "./RegisterView";
-// import { checkUserAuthentication } from "./handleUsers";
 
 const loginProviders = {
   google: {
@@ -23,6 +22,7 @@ const loginProviders = {
 
 const apiUrl = 'http://localhost:8084/auth';
 
+// check if the user is authenticated
 const checkUserAuthentication = async (email, password) => {
   try {
     const response = await fetch(apiUrl);
@@ -192,6 +192,7 @@ function LoginView({setUser: setUser}) {
     handleRedirectUri(url);
   };
 
+  // for logging in with google
   const handleLogin = (key) => {
     const loginProvider = loginProviders[key];
     const { client_id, redirect_uri, response_type, scope, authorization_endpoint } = loginProvider;
@@ -206,16 +207,36 @@ function LoginView({setUser: setUser}) {
     Linking.openURL(authorizationUrl);
   };
 
+  // for logging in with username and password
   async function handleManualLogin (username, password) {
-    checkUserAuthentication(username, password)
-      .then((userExists) => {
-        if (userExists) {
-          setUser(true);
+    async function getUserByEmail(email) {
+      try {
+        const response = await fetch('http://localhost:8084/users', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+    
+        if (!response.ok) {
+          throw new Error('Failed to fetch users from the server');
         }
-      })
-      .catch((err) => {
-        console.log("Error checking user authentication:", err.message);
-      });
+    
+        const data = await response.json();
+        const users = data.data;
+        const userWithEmail = users.find(user => user.email === email); // find the user
+    
+        return userWithEmail || null;
+      } catch (error) {
+        console.error(error.message);
+        return null;
+      }
+    }
+
+    checkUserAuthentication(username, password) // check if the user is authenticated
+      .then((userExists) => { return getUserByEmail(username); }) // get the user by their email
+      .then((user) => { setUser(user); }) // set the user
+      .catch((err) => console.log("Error checking user authentication:", err.message));
   }
 
   if (registerScreen) {
