@@ -42,24 +42,6 @@ class ProfileScreen extends Component {
             </Text>
           </View>
         </View>
-        <ScrollView style={styles.achievementsContainer}>
-          <Text style={styles.achievementsTitle}>Achievements</Text>
-          <View style={styles.achievementContainer}>
-            <View style={styles.achievementIcon} />
-            <View style={styles.achievementBackground} />
-            <View style={styles.achievementDetails}>
-              <Text style={styles.achievementTitle}>Legendary</Text>
-              <Text style={styles.achievementDescription}>
-                Complete 5 legendary tasks
-              </Text>
-              <View style={styles.progressBarContainer}>
-                <View style={styles.progressBarBackground} />
-                <View style={styles.progressBarFill} />
-              </View>
-            </View>
-          </View>
-          {/* Add more achievement containers as needed */}
-        </ScrollView>
       </ScrollView>
     );
   }
@@ -128,90 +110,8 @@ const styles = StyleSheet.create({
   lighterText: {
     fontSize: 14,
     color: "lightgray",
-  },
-  achievementsContainer: {
-    width: Dimensions.get("window").width,
-    padding: 12,
-    borderRadius: 20,
-    borderColor: "lightgray", 
-  },
-  achievementsTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  achievementContainer: {
-    width: Dimensions.get("window").width,
-    height: 154,
-    backgroundColor: "white",
-    marginBottom: 10,
-    position: "relative",
-  },
-  achievementsTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  achievementIcon: {
-    width: 100,
-    height: 91,
-    left: 28,
-    top: 26,
-    position: "absolute",
-    borderRadius: 20,
-  },
-  achievementBackground: {
-    width: 100,
-    height: 100,
-    left: 28,
-    top: 25,
-    position: "absolute",
-    backgroundColor: "rgba(142.82, 84.88, 245.44, 0.59)",
-    borderRadius: 20,
-  },
-  achievementDetails: {
-    width: Dimensions.get("window").width/2,
-    height: 120,
-    left: 150,
-    top: 26,
-    position: "absolute",
-  },
-  achievementTitle: {
-    color: "black",
-    fontSize: 20,
-    fontWeight: "700",
-    marginBottom: 8,
-    wordWrap: "break-word",
-  },
-  achievementDescription: {
-    color: "black",
-    fontSize: 15,
-    fontWeight: "400",
-    wordWrap: "break-word",
-  },
-  progressBarContainer: {
-    height: 16,
-    position: "relative",
-    marginTop: 8,
-    borderRadius: 20,
-    border: "1px #A0AAB8 solid",
-  },
-  progressBarBackground: {
-    width: Dimensions.get("window").width/2,
-    height: 16,
-    position: "absolute",
-    backgroundColor: "white",
-    borderRadius: 20,
-    border: "1px #A0AAB8 solid",
-  },
-  progressBarFill: {
-    width: Dimensions.get("window").width/3,
-    height: 16,
-    position: "absolute",
-    backgroundColor: "rgba(142.82, 84.88, 245.44, 0.59)",
-    borderRadius: 20,
-    border: "1px #A0AAB8 solid",
-  },
+  }, 
 });
 
 export default ProfileScreen;
+

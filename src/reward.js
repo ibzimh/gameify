@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal, Button } from "react-native";
-
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  Button,
+} from "react-native";
+import { Dropdown } from "react-native-element-dropdown";
 
 const currentUser = {
   _id: "655130639407a73e835e4ac3",
@@ -16,20 +24,45 @@ const currentUser = {
 };
 
 const GiftScreen = () => {
-
-  const [points, setPoints] = useState(currentUser ? `${currentUser.total_point} pt` : "0 pt");
+  const [selectedTeam, setSelectedTeam] = useState(currentUser.teamIds[0]); // Default team is first team
+  const [teamPoints, setTeamPoints] = useState(0); // Each team has its own points, default is 0
+  const [teamTasks, setTeamTasks] = useState([]); // Each team has its own tasks, default is empty array
+  const [points, setPoints] = useState(`${0} pt`);
   const [items, setItems] = useState([]);
   const [selectedReward, setSelectedReward] = useState(null);
   const [redeemModalVisible, setRedeemModalVisible] = useState(false);
   const [redeemedItems, setRedeemedItems] = useState([]);
 
   useEffect(() => {
+    // Fetch team data when selectedTeam changes
+    const fetchTeamData = async () => {
+      try {
+        const response = await fetch(
+          `http://172.31.252.91:8081/team/${selectedTeam}`
+        );
+        const teamData = await response.json();
+        console.log("Fetched team data:", teamData);
+
+        setTeamPoints(teamData.totalPoints);
+        setTeamTasks(teamData.tasks);
+      } catch (error) {
+        console.error("Error fetching team data:", error.message);
+        setTeamPoints(0);
+        setTeamTasks([]);
+      }
+    };
+
+    fetchTeamData();
+  }, [selectedTeam]);
+
+  // Fetch gift data when the component mounts
+  useEffect(() => {
     const fetchGiftData = async () => {
       try {
         const response = await fetch("http://172.31.252.91:8081/rewards");
         const data = await response.json();
         console.log("Fetched data:", data);
-        
+
         setItems(data.data); // Update items in the state with data from the API
       } catch (error) {
         console.error("Error fetching gifts:", error.message);
@@ -37,38 +70,36 @@ const GiftScreen = () => {
         setItems([]);
       }
     };
-  
+
     fetchGiftData();
   }, []);
-  
-  
 
   const handleRedeem = () => {
     if (!selectedReward) {
       return;
     }
-  
+
     // Calculate the new points after deduction
     const newPoints = currentUser.total_point - selectedReward.points;
-  
+
     // Update the list of redeemed items
     setRedeemedItems([...redeemedItems, selectedReward._id]);
-  
+
     // Update currentUser with new points and achievements
     const updatedUser = {
       ...currentUser,
       total_point: newPoints,
       achievement: selectedReward.reward_name, // Update achievement (replace with the desired logic)
     };
-  
+
     // Implement the logic to update the user's achievements (you may want to append to an array)
     // Example: updatedUser.achievements.push(selectedReward.reward_name);
-  
+
     // Update the state with the new points
     setPoints(`${newPoints} pt`);
-  
+
     // Implement the logic to update the backend or any other data storage with the updated user
-  
+
     // Close the redeem modal
     setRedeemModalVisible(false);
   };
@@ -89,11 +120,21 @@ const GiftScreen = () => {
         <Text style={styles.itemPoints}>{item.points} points</Text>
       </View>
       {redeemedItems.includes(item._id) && (
-        <Text style={styles.redeemedText}>Redeemed by {currentUser.user_name}</Text>
+        <Text style={styles.redeemedText}>
+          Redeemed by {currentUser.user_name}
+        </Text>
       )}
     </TouchableOpacity>
   );
-  
+
+  //dropdown meny
+  const renderTeamDropdown = () => (
+    <Dropdown
+      data={currentUser.teamIds.map((teamId) => ({ label: `Team ${teamId}`, value: teamId }))}
+      value={selectedTeam}
+      onChange={(value) => setSelectedTeam(value)}
+    />
+  );
 
   return (
     <View style={styles.container}>
@@ -111,6 +152,9 @@ const GiftScreen = () => {
         <Text style={styles.title}>Available Items:</Text>
       </View>
 
+      {/* Team Dropdown */}
+      {renderTeamDropdown()}
+      
       {/* List of Items */}
       <FlatList
         data={items}
@@ -130,10 +174,14 @@ const GiftScreen = () => {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalText}>
-              Are you sure you want to redeem {selectedReward ? selectedReward.name : ""}?
+              Are you sure you want to redeem{" "}
+              {selectedReward ? selectedReward.name : ""}?
             </Text>
             <Button title="Redeem" onPress={handleRedeem} />
-            <Button title="Cancel" onPress={() => setRedeemModalVisible(false)} />
+            <Button
+              title="Cancel"
+              onPress={() => setRedeemModalVisible(false)}
+            />
           </View>
         </View>
       </Modal>
@@ -236,8 +284,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginHorizontal: 16,
-    marginTop: 20,    
-  }, 
+    marginTop: 20,
+  },
   modalContainer: {
     flex: 1,
     justifyContent: "center",
@@ -253,7 +301,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 20,
     textAlign: "center",
-  },   
+  },
   redeemedItem: {
     backgroundColor: "#FF69B4", // Change the color to pink for redeemed items
   },
