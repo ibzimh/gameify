@@ -9,9 +9,14 @@ const  userSchema = new mongoose.Schema(
         },
         email: {
             type:String,
-        },dob: {
+        },
+        password:{
             type:String,
-        },gender:{
+        },
+        dob: {
+            type:String,
+        },
+        gender:{
             type: String,
         },
         total_point:{
@@ -22,7 +27,7 @@ const  userSchema = new mongoose.Schema(
         },
         status:{
             type:String,
-        }
+        }, 
     },
     {timestamps:true}
 )
