@@ -40,12 +40,13 @@ router.route('/').get( async (request, response) => {
   
   //Add user
   router.route('/add').post((req, res) => {
-    const { user_name,role, email, dob, gender, total_point, achievement, status } = req.body;
+    const { user_name,role, email, password, dob, gender, total_point, achievement, status } = req.body;
   
     const newUser = new User({
       user_name,
       role,
       email,
+      password,
       dob,
       gender,
       total_point,
