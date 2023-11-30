@@ -2,7 +2,7 @@ const express = require('express');
 const Authentication = require('../model/authentication.model.js');
 const router = express.Router();
 
-//get all authentication 
+// get all authentication 
 router.route('/').get(async (req, res) => {
   try {
     const authentications = await Authentication.find();

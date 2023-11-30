@@ -155,7 +155,7 @@ function RegisterView({setUser: setUser}) {
               secureTextEntry
               value={password}
               onChangeText={(text) => setPassword(text)}
-            />  
+            />
             <TouchableOpacity style={styles.submit} onPress={() => createUser(username, password)} disabled={!username || !password}>
               <Text style={styles.loginText}>Submit</Text>
             </TouchableOpacity>
