@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { createContext, useState } from 'react';
+
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
@@ -12,18 +13,24 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import { Calendar } from 'react-native-calendars';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 
 import LoginView from "./LoginView";
 import HomeScreen from "./home";
 import UsersScreen from "./team";
+import ProfileScreen from "./Profile";
 import { FontAwesome5 } from '@expo/vector-icons';
 import Leaderboard from './leaderboard';
 import GiftScreen from './reward';
 import TaskScreen from './create_task'; 
+import Dashboard from './dashboard';
+
+
 const Tab = createBottomTabNavigator();
+const UserContext = createContext();
+
 
 const CustomTabBarButton = ({ children, onPress, focused }) => (
   <TouchableOpacity
@@ -42,54 +49,63 @@ const CustomTabBarButton = ({ children, onPress, focused }) => (
   </TouchableOpacity>
 );
 
-const CustomTabScreen = (name, component) => {
-  return <Tab.Screen
-    name={name}
-    component={component}
-    options={({ navigation, route }) => ({
-      tabBarButton: (props) => (
-        <CustomTabBarButton
-          {...props}
-          onPress={() => navigation.navigate(route.name)}
-        >
-          <FontAwesome5 name={name.toLowerCase()} size={30} color="#000" />
-        </CustomTabBarButton>
-      ),
-    })}
-  />;
+const CustomTabScreen = (name, component, iconName) => {
+  return (
+    <Tab.Screen
+      name={name}
+      component={component}
+      options={({ navigation, route }) => ({
+        tabBarButton: (props) => (
+          <CustomTabBarButton
+            {...props}
+            onPress={() => navigation.navigate(route.name)}
+          >
+            {/* Use the provided iconName instead of converting the name to lowercase */}
+            <FontAwesome5 name={iconName} size={30} color="#000" />
+          </CustomTabBarButton>
+        ),
+      })}
+    />
+  );
 };
 
 
 const App = () => {
+
   const [user, setUser] = useState(null);
 
-  if (!user) {
+  if (!user) { 
     return (
       <View style={styles.container}>
-        <LoginView />
-        <Button title={"secretly sneak into the app"} onPress={() => { // temporary button to skip login
-          setUser(true);
-          console.log("done");
-        }}/>
+        <LoginView setUser={setUser}/>
       </View>
     );
   }
 
+  console.log(user)
+  
+
   return (
+    
+    <UserContext.Provider>
     <SafeAreaProvider>
+       
     <NavigationContainer>
       <Tab.Navigator
         tabBarOptions={{ showLabel: false }}
         screenOptions={{ headerShown: false }}
       >
-      {CustomTabScreen("Home", HomeScreen)}
-      {CustomTabScreen("Users", UsersScreen)}
-      {CustomTabScreen("Tasks", TaskScreen)}
-      {CustomTabScreen("Trophy", Leaderboard)}
-      {CustomTabScreen("Gift", GiftScreen)}
+      {CustomTabScreen("Dashboard", Dashboard, "tachometer-alt")}
+      {CustomTabScreen("Home", HomeScreen, "home")}
+      {CustomTabScreen("Users", UsersScreen, "users")}
+      {CustomTabScreen("Tasks", TaskScreen, "tasks")}
+      {CustomTabScreen("Trophy", Leaderboard, "trophy")}
+      {CustomTabScreen("Gift", GiftScreen, "gift")}
+      {CustomTabScreen("Profile", ProfileScreen, "user-alt")}
       </Tab.Navigator>
     </NavigationContainer>
     </SafeAreaProvider>
+    </UserContext.Provider>
   );
 };
 
