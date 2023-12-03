@@ -15,7 +15,6 @@ import {
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
 
 import LoginView from "./LoginView";
 import HomeScreen from "./home";
@@ -26,6 +25,9 @@ import Leaderboard from './leaderboard';
 import GiftScreen from './reward';
 import TaskScreen from './create_task'; 
 import Dashboard from './dashboard';
+import { GroupProvider } from './team_context'; 
+
+
 
 
 const Tab = createBottomTabNavigator();
@@ -73,6 +75,13 @@ const CustomTabScreen = (name, component, iconName) => {
 const App = () => {
 
   const [user, setUser] = useState(null);
+  const handleIntermediateAction = () => {
+    // Handle intermediate action
+    // This function will be passed as a prop to IntermediateScreen
+    // For example:
+    // Perform some action and then navigate to another screen
+  };
+
 
   if (!user) { 
     return (
@@ -82,15 +91,17 @@ const App = () => {
     );
   }
 
-  console.log(user)
+
   
 
   return (
-    
+    <GroupProvider>
+
     <UserContext.Provider>
     <SafeAreaProvider>
        
     <NavigationContainer>
+      
       <Tab.Navigator
         tabBarOptions={{ showLabel: false }}
         screenOptions={{ headerShown: false }}
@@ -106,6 +117,8 @@ const App = () => {
     </NavigationContainer>
     </SafeAreaProvider>
     </UserContext.Provider>
+    </GroupProvider>
+
   );
 };
 

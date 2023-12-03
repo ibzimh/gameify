@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useContext } from "react";
 import {
   View,
   ScrollView,
@@ -8,54 +8,40 @@ import {
   TextInput,
   Modal,
 } from "react-native";
+import { GroupContext } from './team_context'; 
 
 import { FontAwesome5 } from '@expo/vector-icons';
 
-const currentUser = {
-  _id: "655130639407a73e835e4ac3",
-  user_name: "Viet Truong",
-  teamIds: ["656012a3cb5dbe885bfc9ee1"],
-  role: "admin",
-  email: "vbtruong@umass.edu",
-  dob: "1990-01-01",
-  gender: "Male",
-  total_point: 100,
-  achievement: "Some achievement",
-  status: "Active",
-};
-const currentTeam = {
-  _id: "6563b623779f11fb0b7d594d",
-  team_name: "CS 320",
-  usersList: []
-}
 
 const currT = async () => {
-  const res = await fetch("http://10.0.0.218:8081/teams/6563b623779f11fb0b7d594d");
+  const res = await fetch("http://192.168.1.37:8084/teams/6563b623779f11fb0b7d594d");
   const da= await res.json();
   return  da;
 }
 
+
 const UsersScreen = () => {
+  const {currentGroup, setCurrentGroup } = useContext(GroupContext);
+
   const [users, setUsers] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [memberEmail, setMemberEmail] = useState('');
-
   useEffect(() => {
     const fetchUsersInCurrentTeam = async () => {
       try {
-        const response = await fetch("http://10.0.0.218:8081/users"); // Update the URL
+        const response = await fetch("http://192.168.1.37:8084/users"); // Update the URL
         const data = await response.json();
-        const res = await fetch("http://10.0.0.218:8081/teams/6563b623779f11fb0b7d594d");
-        const da =  await res.json();
+
         if (response.ok) {
-          const currentTeamUserIds = da.data.usersList; // IDs of users in the current team
-          // Filter users based on IDs present in the current team's usersList
-          const usersInTeam = data.data.filter(user => currentTeamUserIds.includes(user._id));
+          const usersInTeam = data.data.filter(user => currentGroup.usersList.includes(user._id));
+
           setUsers(usersInTeam); // Set state with users only in the current team
+          console.log(usersInTeam);
         } else {
 
           console.error("Error fetching user:", data.message);
+
 
         }
 
@@ -65,7 +51,7 @@ const UsersScreen = () => {
     };
 
     fetchUsersInCurrentTeam();
-  }, []); 
+  }, [currentGroup]); 
 
   const toggleEditMode = () => {
     setEditMode(!editMode);
@@ -75,28 +61,28 @@ const UsersScreen = () => {
       const userToDelete = users[index];
       const currentT = await currT();
       // Remove the user ID from the current team's usersList
-      const updatedUsersList = currentT.usersList.filter(
+      const updatedUsersList = currentGroup.usersList.filter(
         userId => userId !== userToDelete._id
       );
-      console.log(updatedUsersList)
-      const res = await fetch("http://10.0.0.218:8081/teams/6563b623779f11fb0b7d594d");
-      const da =  await res.json();
       // Update the current team's usersList without the deleted user ID
-      await fetch(`http://10.0.0.218:8081/teams/${da.data._id}`, {
+      await fetch(`http://192.168.1.37:8084/teams/${currentGroup._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ usersList: updatedUsersList }),
-      });
-  
-      // Update the state to reflect the changes in usersList
-      setUsers(users.filter((_, idx) => idx !== index)); // Remove the user from the displayed user list
+      });  
+      const currentGroupState = currentGroup; // Replace this line with the actual way you access currentGroup state
 
-      const updatedTeamIds = userToDelete.teamIds.filter(
-        teamId => teamId !== currentTeam._id
-      );
-      await fetch(`http://10.0.0.218:8081/users/${userToDelete._id}`, {
+      const updatedCurrentGroup = {
+        ...currentGroupState, // Maintain existing properties
+        usersList: updatedUsersList, // Update usersList with the new value
+      };
+      console.log(updatedCurrentGroup)
+      setCurrentGroup(updatedCurrentGroup);
+      const updatedTeamIds = userToDelete.teamIds.filter(team => updatedCurrentGroup._id !== team.team_id)
+      console.log(updatedTeamIds)
+      await fetch(`http://192.168.1.37:8084/users/${userToDelete._id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -110,7 +96,7 @@ const UsersScreen = () => {
  
   const handleConfirmAddMember = async () => {
     const currentT = await currT();
-    const response = await fetch(`http://10.0.0.218:8081/users/email/${memberEmail}`);
+    const response = await fetch(`http://192.168.1.37:8084/users/email/${memberEmail}`);
     const data = await response.json();
     console.log(data); // Inspect the structure of the response data
 
@@ -122,32 +108,44 @@ const UsersScreen = () => {
       return;
     }
     const userId = data.data._id; // Retrieve the userId from the response data
-    console.log(userId)
     // Check if userId already exists in the current team's usersList
-    if (currentT.data.usersList.includes(userId)) {
+    if (currentGroup.usersList.includes(userId)) {
         console.log("Member already exists in the team");
     // Notify the user that the member already exists in the team
     // Handle accordingly (show a message, prevent duplicate addition, etc.)
     }else{
 
-      const updatedUsersList = [...currentT.data.usersList, userId];
+      const updatedUsersList = [...currentGroup.usersList, userId];
       console.log(updatedUsersList)
       // Update the current team's usersList with the new userId
-      await fetch(`http://10.0.0.218:8081/teams/${currentTeam._id}`, {
+      await fetch(`http://192.168.1.37:8084/teams/${currentGroup._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ usersList: updatedUsersList }),
       });
-      const updatedResponse = await fetch("http://10.0.0.218:8081/users");
+      const currentGroupState = currentGroup; // Replace this line with the actual way you access currentGroup state
+      const updatedCurrentGroup = {
+        ...currentGroupState, // Maintain existing properties
+        usersList: updatedUsersList, // Update usersList with the new value
+      };
+      setCurrentGroup(updatedCurrentGroup);
+      const updatedResponse = await fetch("http://192.168.1.37:8084/users");
       const updatedUserData = await updatedResponse.json();
+      const newTeamIds = {
+        team_id: updatedCurrentGroup._id,
+        role:"Player",
+        total_points:0,
+        achievement:null,
+        status:"Active"
+      }
 
       // Update the user's teamIds by adding the team ID to their teamIds array
-    const updatedTeamIds = [...data.data.teamIds, currentTeam._id];
+    const updatedTeamIds = [...data.data.teamIds, newTeamIds];
 
     // Update the user's teamIds field with the new team ID
-    await fetch(`http://10.0.0.218:8081/users/${userId}`, {
+    await fetch(`http://192.168.1.37:8084/users/${userId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -156,8 +154,8 @@ const UsersScreen = () => {
     });
 
       if (updatedResponse.ok) {
-        const usersInTeam = updatedUserData.data.filter(user => updatedUsersList.includes(user._id));
-        setUsers(usersInTeam);
+        const usersInTeam = updatedUserData.data.filter(user => updatedCurrentGroup.usersList.includes(user._id));
+        //setUsers(usersInTeam);
       } else {
         console.error("Error fetching updated users:", updatedUserData.message);
       }
@@ -171,16 +169,25 @@ const UsersScreen = () => {
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.headerContainer}>
         <Text style={styles.header}>Team Management</Text>
-   
           <TouchableOpacity onPress={toggleEditMode} style={styles.editButton}>
             <FontAwesome5 name={editMode ? 'check' : 'user-edit'} size={25} color="black" />
           </TouchableOpacity>
+          <View style={styles.teamInfo}>
+          <Text style={styles.teamHeader}>Name</Text>
+          <Text style={styles.pointsHeader}>Points</Text>
+          </View>
       </View>
       {users.map((user, index) => (
         <View key={index} style={styles.memberContainer}>
           <Text style={styles.memberName}>{user.user_name}</Text>
-          <Text style={styles.memberRole}>{user.role}</Text>
-          <Text>{user.total_point}</Text>
+          {user.teamIds.filter(team => team.team_id === currentGroup._id).map((team, teamIndex) => (
+            
+            <View key={teamIndex}>
+              <Text>{team.total_points}</Text>
+              <Text>{team.role}</Text>
+              
+            </View>
+          ))}
           {editMode && (
             <TouchableOpacity onPress={() => deleteUser(index)} style={styles.deleteButton}>
               <FontAwesome5 name={'minus-circle'} size={20} color="black" />
@@ -267,6 +274,29 @@ const styles = StyleSheet.create({
   avatarText: {
     fontSize: 20,
     fontWeight: "bold",
+  },
+  teamInfo: {
+    marginTop:20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    fontSize: 10,
+    fontWeight: 'bold',
+    marginBottom: -10,
+    paddingHorizontal: 10,
+    borderColor: '#ccc', 
+  },
+  teamHeader: {
+    marginLeft:20,
+    fontWeight: 'bold',
+    flex: 2, 
+    fontSize:15,
+  },
+  pointsHeader: {
+    fontSize:15,
+    marginRight:20,
+    flex: 1, 
+    textAlign: 'right', 
+    fontWeight: 'bold',
   },
   memberName: {
     flex: 2,

@@ -26,7 +26,7 @@ const GiftScreen = () => {
   useEffect(() => {
     const fetchGiftData = async () => {
       try {
-        const response = await fetch("http://172.31.252.91:8081/rewards");
+        const response = await fetch("http://gameify.us-east-1.elasticbeanstalk.com/rewards");
         const data = await response.json();
         console.log("Fetched data:", data);
         

@@ -1,45 +1,37 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState ,createContext, useContext} from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Modal, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { GroupContext } from './team_context'; // Adjust the import path accordingly
 
-const currentUser = {
-  _id: "655130639407a73e835e4ac3",
-  user_name: "Viet Truong",
-  teamIds: ["655d3e1b6669b07181c0a468"], // Example team IDs associated with the user
-  role: "admin",
-  email: "vbtruong@umass.edu",
-  dob: "1990-01-01",
-  gender: "Male",
-  total_point: 100,
-  achievement: "Some achievement",
-  status: "Active",
-};
 const Dashboard = () => {
   const navigation = useNavigation(); 
   const [modalVisible, setModalVisible] = useState(false);
   const [teamName, setTeamName] = useState('');
   const [team,setTeam] = useState([]);
- 
+  const { currentGroup,setCurrentGroup } = useContext(GroupContext);
+
 
   useEffect(() => {
     
     const fetchTeam = async () =>{
       try{
-        const respond = await fetch("http://10.0.0.218:8081/users/656012a3cb5dbe885bfc9ee1");
+        const respond = await fetch("http://192.168.1.37:8084/users/656c067a87765679dbdc93eb");
     if (!respond.ok) {
       throw new Error(`Failed to fetch user data. Status: ${respond.status}`);
     }
     const data = await respond.json();
-
-    const respond1 = await fetch("http://10.0.0.218:8081/teams");
+    const respond1 = await fetch("http://192.168.1.37:8084/teams");
     if (!respond1.ok) {
       throw new Error(`Failed to fetch teams. Status: ${respond1.status}`);
     }
     const data1 = await respond1.json();
 
-    const team_id = data.data.teamIds;
-    const currentTeam = data1.data.filter(team => team_id.includes(team._id));
+    const teamIds = data.data.teamIds.map(teamIdObj => teamIdObj.team_id);
+    const currentTeam = data1.data.filter(team => teamIds.includes(team._id));
+
     setTeam(currentTeam);
+    console.log(currentGroup)
+
   } catch (error) {
     console.error("Error fetching data:", error.message);
     }
@@ -47,23 +39,44 @@ const Dashboard = () => {
   
 
     fetchTeam();
-  }, [team]);
+  }, []);
   // Function to handle navigation
   const openGroup = (groupName) => {
     // Navigate to TeamManagement screen with parameters
     navigation.navigate('TeamManagement', { groupName });
   };
 
-  const handleGroupPress = (groupName) => {
+
+  const handleGroupPress = (group) => {
+    if (
+      currentGroup &&
+      currentGroup._id === group._id &&
+      !currentGroup.id
+    ) {
+      group = currentGroup;
+    }
+  
+    // Update the team when the group changes (only update usersList for the selected team)
+    setTeam(prevTeam => {
+      return prevTeam.map(item => {
+        if (currentGroup && (item._id === currentGroup._id)  ) {
+          return { ...item, usersList: currentGroup.usersList };
+        }
+        return item;
+      });
+    });
+    console.log(team)
+    setCurrentGroup(group)
+
     // Navigate to Users screen with parameters
-    navigation.navigate('Users', { groupName });
+    navigation.navigate('Users',{currentTeam: group});
   };
   const handleCreateTeamPress = () => {
     setModalVisible(true);
   };
   const handleConfirmCreateTeam = async () => {
     try {
-      const response = await fetch("http://10.0.0.218:8081/teams/add", {
+      const response = await fetch("http://192.168.1.37:8084/teams/add", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -74,7 +87,7 @@ const Dashboard = () => {
       if (!response.ok) {
         throw new Error('Failed to add team');
       }
-      const respond1 = await fetch("http://10.0.0.218:8081/users/656012a3cb5dbe885bfc9ee1")
+      const respond1 = await fetch("http://192.168.1.37:8084/users/656012a3cb5dbe885bfc9ee1")
       const data = await respond1.json();
       const user = data.data;      // Get the newly created team data
       const newTeamData = await response.json();
@@ -90,7 +103,7 @@ const Dashboard = () => {
       };
   
       // Update the teamIds field for the current user
-      await fetch(`http://10.0.0.218:8081/users/${user._id}`, {
+      await fetch(`http://192.168.1.37:8084/users/${user._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -114,7 +127,7 @@ const Dashboard = () => {
         <TouchableOpacity
           key={group._id}
           style={[styles.groupContainer, { backgroundColor: group.color }]}
-          onPress={() => handleGroupPress(group.team_name)}
+          onPress={() => handleGroupPress(group)}
         >
           <Text style={styles.groupName}>{group.team_name}</Text>
         </TouchableOpacity>
@@ -163,6 +176,7 @@ const Dashboard = () => {
         <Text style={styles.createButtonText}>Create Team</Text>
       </TouchableOpacity>
     </ScrollView>
+
   );
 };
 

@@ -18,14 +18,12 @@ router.route("/").get(async (request, response) => {
   });
 
   router.route('/add').post((req, res) => {
-    const { chore_name, description, due_date, assign_to, category, points,teamId } = req.body;
+    const { chore_name, description, due_date, points,teamId } = req.body;
   
     const newChore = new Chore({
       chore_name,
       description,
       due_date,
-      assign_to,
-      category,
       points,
       teamId
     });

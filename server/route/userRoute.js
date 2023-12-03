@@ -80,18 +80,14 @@ router.route('/team/:teamId').get(async (request, response) => {
   
   //Add user
   router.route('/add').post((req, res) => {
-    const { user_name,teamIds,role, email, dob, gender, total_point, achievement, status } = req.body;
+    const { user_name,teamIds, email, dob, gender } = req.body;
   
     const newUser = new User({
       user_name,
       teamIds,
-      role,
       email,
       dob,
-      gender,
-      total_point,
-      achievement,
-      status,
+      gender
     });
   
     newUser.save()

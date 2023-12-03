@@ -1,19 +1,34 @@
 const mongoose = require("mongoose");
+const teamIds = {
+    team_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Team',
+    },
+    role:{
+        type: String,
+        default: "Admin"
+    },
+    total_points:{
+        type: Number,
+        default: 0
+    },
+    achievement:{
+        type: String,
+        default:null
+    },
+    status:{
+        type: String,
+        default:"Active"
+    }
+}
 
 const  userSchema = new mongoose.Schema(
     {
         user_name: {
             type:String,
         },
-        teamIds: [
-            {
-              type: mongoose.Schema.Types.ObjectId,
-              ref: 'Team',
-            },
+        teamIds: [teamIds
         ],
-        role:{
-            type:String,
-        },
         email: {
             type:String,
         },dob: {
@@ -21,14 +36,8 @@ const  userSchema = new mongoose.Schema(
         },gender:{
             type: String,
         },
-        total_point:{
-            type:Number,
-        },
-        achievement:{
-            type:String,
-        },
-        status:{
-            type:String,
+        password:{
+            type:String
         }
     },
     {timestamps:true}

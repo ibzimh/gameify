@@ -7,7 +7,7 @@ const Leaderboard = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch("http://172.31.252.91:8081/users");
+        const response = await fetch("http://192.168.1.37:8084/users");
         const data = await response.json();
 
         // Sorting users based on total points in descending order

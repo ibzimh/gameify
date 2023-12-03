@@ -7,6 +7,7 @@ import URL from "url-parse";
 
 import Config from "./env";
 
+
 const loginProviders = {
   google: {
     title: "Google",
