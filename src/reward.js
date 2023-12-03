@@ -28,19 +28,19 @@ const GiftScreen = () => {
         const response = await fetch("http://172.31.252.91:8081/rewards");
         const data = await response.json();
         console.log("Fetched data:", data);
-        setItems(data.data); // Update items in the state with data from the API
+        setItems(data.data); 
 
-        // Fetch team points and completed tasks
-        const teamPointsResponse = await fetch(`http://your-api-url/team/${currentUser.teamIds[0]}/points`);
+        // fetch team points and completed tasks
+        const teamPointsResponse = await fetch(`http://172.31.252.91:8081/team/${currentUser.teamIds[0]}/points`);
         const teamPointsData = await teamPointsResponse.json();
         setTeamPoints(teamPointsData.points);
 
-        const completedTasksResponse = await fetch(`http://your-api-url/user/${currentUser._id}/tasks`);
+        const completedTasksResponse = await fetch(`http://172.31.252.91:8081/user/${currentUser._id}/tasks`);
         const completedTasksData = await completedTasksResponse.json();
         setCompletedTasks(completedTasksData.tasks);
       } catch (error) {
         console.error("Error fetching gifts:", error.message);
-        // If there's an error, set an empty array
+        // if there's an error, set an empty array
         setItems([]);
       }
     };
@@ -53,28 +53,23 @@ const GiftScreen = () => {
       return;
     }
 
-    // Calculate the new points after deduction
+    // calculate the new points after deduction
     const newPoints = currentUser.total_point - selectedReward.points;
 
-    // Update the list of redeemed items
+    // update the list of redeemed items
     setRedeemedItems([...redeemedItems, selectedReward._id]);
 
-    // Update currentUser with new points and achievements
+    // update currentUser with new points and achievements
     const updatedUser = {
       ...currentUser,
       total_point: newPoints,
       achievement: selectedReward.reward_name, // Update achievement (replace with the desired logic)
     };
 
-    // Implement the logic to update the user's achievements (you may want to append to an array)
-    // Example: updatedUser.achievements.push(selectedReward.reward_name);
-
-    // Update the state with the new points
+    // update the state with the new points
     setTeamPoints(newPoints);
 
-    // Implement the logic to update the backend or any other data storage with the updated user
-
-    // Close the redeem modal
+    // close the redeem modal
     setRedeemModalVisible(false);
   };
 
