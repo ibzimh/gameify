@@ -63,7 +63,7 @@ const GiftScreen = () => {
     const updatedUser = {
       ...currentUser,
       total_point: newPoints,
-      achievement: selectedReward.reward_name, // Update achievement (replace with the desired logic)
+      achievement: selectedReward.reward_name, 
     };
 
     // update the state with the new points
