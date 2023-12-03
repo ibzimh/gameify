@@ -15,22 +15,25 @@ const HomeScreen = ({ setUser: setUser }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [selectedTask, setSelectedTask] = useState(null);
+  // const [user, setUser] = useState(null);
 
-  // useEffect(() => {
-  //   const fetchChores = async () => {
-  //     try {
-  //       const response = await fetch("http://172.31.215.6:8081/chores");
-  //       //const response = await fetch(
-  //       //   "http://gameify.us-east-1.elasticbeanstalk.com/chores"
-  //       // );
-  //       const data = await response.json();
-  //       setTasks(data.data);
-  //     } catch (error) {
-  //       console.error("Error fetching chores:", error.message);
-  //     }
-  //   };
-  //   fetchChores();
-  // }, []);
+  const currentUser = {
+    _id: "655130639407a73e835e4ac3",
+    user_name: "Viet Truong",
+    teamIds: ["656012a3cb5dbe885bfc9ee1"],
+    role: "admin",
+    email: "vbtruong@umass.edu",
+    dob: "1990-01-01",
+    gender: "Male",
+    total_point: 100,
+    achievement: "Some achievement",
+    status: "Active",
+  };
+  const currentTeam = {
+    _id: "6563b623779f11fb0b7d594d",
+    team_name: "CS 320",
+    usersList: [],
+  };
 
   useEffect(() => {
     const fetchChores = async () => {
@@ -87,12 +90,37 @@ const HomeScreen = ({ setUser: setUser }) => {
           body: JSON.stringify({ id: itemID }),
         }
       );
+
+      // const newPoints = currentUser.total_point + taskPoints;
+      // const updatedUser = {
+      //   ...currentUser,
+      //   total_point: newPoints,
+      // };
+
       setRefreshKey((prevKey) => prevKey + 1);
       setSelectedTask(null); // Clear the selected task after deletion
       setIsModalVisible(false); // Close the modal after deletion
     } catch (error) {
       console.error("Error:", error);
       Alert.alert("Error", "An unexpected error occurred. Please try again.");
+    }
+  };
+
+  const updatePoints = async (userId, points) => {
+    try {
+      await fetch(`http://gameify.us-east-1.elasticbeanstalk.com/users`, {
+        method: "PUT", // Assuming you have a route to update points
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: userId,
+          points: points + currentUser.total_point,
+        }),
+      });
+    } catch (error) {
+      console.error("Error updating points:", error);
+      // Handle errors related to updating points
     }
   };
 
@@ -168,6 +196,7 @@ const HomeScreen = ({ setUser: setUser }) => {
                           style={styles.completeButton}
                           onPress={() => {
                             handleDelete(selectedTask?._id);
+                            updatePoints(currentUser, selectedTask?.points);
                           }}
                         >
                           <Text style={styles.completeText}>Complete</Text>
