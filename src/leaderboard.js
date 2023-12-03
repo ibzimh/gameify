@@ -4,20 +4,28 @@ import { ScrollView, View, Text, StyleSheet } from "react-native";
 const Leaderboard = () => {
   const [users, setUsers] = useState([]);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await fetch("http://172.31.252.91:8081/users");
-        const data = await response.json();
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch("http://172.31.252.91:8084/users");
+      const data = await response.json();
 
-        // Sorting users based on total points in descending order
-        const sortedUsers = data.data.sort((a, b) => b.total_point - a.total_point);
-        setUsers(sortedUsers);
-      } catch (error) {
-        console.error("Error fetching users:", error.message);
-      }
-    };
+      // Sorting users based on total points in descending order
+      const sortedUsers = data.data.sort((a, b) => b.total_point - a.total_point);
+      setUsers(sortedUsers);
+    } catch (error) {
+      console.error("Error fetching users:", error.message);
+    }
+  };
+
+  useEffect(() => {
+    // Fetch users when the component mounts
     fetchUsers();
+
+    // Set up an interval to fetch users every 5 minutes (adjust as needed)
+    const intervalId = setInterval(fetchUsers, 0.05 * 60 * 1000);
+
+    // Clean up the interval when the component unmounts
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
