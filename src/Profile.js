@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import { StyleSheet, Pressable, View, Image, Text, ImageBackground } from "react-native";
+import UploadImage from "./ImageUpload";
+
 export default class UserProfileView extends Component {
+
   render() {
     return (
       
@@ -12,10 +15,7 @@ export default class UserProfileView extends Component {
               <Text style={styles.userInfo}>John Doe</Text>
             </View>
             <View>
-              <Image
-                style={styles.avatar}
-                source={require("/Users/juliaepshtein/Desktop/CS 320/gameify/src/assets/defaultProfile.png")}
-              />
+              <UploadImage />
             </View>
           </View>
           <View>
