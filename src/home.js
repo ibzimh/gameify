@@ -10,6 +10,8 @@ import {
   Alert,
 } from "react-native";
 
+import Config from "./env";
+
 const HomeScreen = ({ setUser: setUser }) => {
   const [tasks, setTasks] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -100,7 +102,7 @@ const HomeScreen = ({ setUser: setUser }) => {
         title={"Logout"}
         onPress={() => {
           // temporary button to skip login
-          setUser(false);
+          console.log(setUser(null));
         }}
       />
       <View style={styles.headerContainer}>

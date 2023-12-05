@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
+// import { createStackNavigator } from '@react-navigation/stack';
 
 import LoginView from "./LoginView";
 import HomeScreen from "./home";
@@ -49,26 +49,22 @@ const CustomTabBarButton = ({ children, onPress, focused }) => (
   </TouchableOpacity>
 );
 
-const CustomTabScreen = (name, component, iconName) => {
-  return (
-    <Tab.Screen
-      name={name}
-      component={component}
-      options={({ navigation, route }) => ({
-        tabBarButton: (props) => (
-          <CustomTabBarButton
-            {...props}
-            onPress={() => navigation.navigate(route.name)}
-          >
-            {/* Use the provided iconName instead of converting the name to lowercase */}
-            <FontAwesome5 name={iconName} size={30} color="#000" />
-          </CustomTabBarButton>
-        ),
-      })}
-    />
-  );
+const CustomTabScreen = (name, Component, iconName, props) => {
+  return <Tab.Screen
+    name={name}
+    children={(screenProps) => <Component {...screenProps} {...props} />}
+    options={({ navigation, route }) => ({
+      tabBarButton: (screenProps) => (
+        <CustomTabBarButton
+          {...screenProps}
+          onPress={() => navigation.navigate(route.name)}
+        >
+          <FontAwesome5 name={iconName} size={30} color="#000" />
+        </CustomTabBarButton>
+      ),
+    })}
+  />;
 };
-
 
 const App = () => {
 
@@ -96,7 +92,7 @@ const App = () => {
         screenOptions={{ headerShown: false }}
       >
       {CustomTabScreen("Dashboard", Dashboard, "tachometer-alt")}
-      {CustomTabScreen("Home", HomeScreen, "home")}
+      {CustomTabScreen("Home", HomeScreen, "home", {setUser: setUser})}
       {CustomTabScreen("Users", UsersScreen, "users")}
       {CustomTabScreen("Tasks", TaskScreen, "tasks")}
       {CustomTabScreen("Trophy", Leaderboard, "trophy")}
