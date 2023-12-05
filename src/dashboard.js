@@ -2,6 +2,7 @@ import React, { useEffect, useState ,createContext, useContext} from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Modal, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { GroupContext } from './team_context'; // Adjust the import path accordingly
+import { useIsFocused } from '@react-navigation/native';
 
 const Dashboard = () => {
   const navigation = useNavigation(); 
@@ -9,18 +10,19 @@ const Dashboard = () => {
   const [teamName, setTeamName] = useState('');
   const [team,setTeam] = useState([]);
   const { currentGroup,setCurrentGroup } = useContext(GroupContext);
-
+  const isFocused = useIsFocused(); // Check if the screen is focused
+  const [teamSelected, setTeamSelected] = useState(false);
 
   useEffect(() => {
     
     const fetchTeam = async () =>{
       try{
-        const respond = await fetch("http://192.168.1.37:8084/users/656c067a87765679dbdc93eb");
+        const respond = await fetch("http://172.31.221.50:8084/users/656c067a87765679dbdc93eb");
     if (!respond.ok) {
       throw new Error(`Failed to fetch user data. Status: ${respond.status}`);
     }
     const data = await respond.json();
-    const respond1 = await fetch("http://192.168.1.37:8084/teams");
+    const respond1 = await fetch("http://172.31.221.50:8084/teams");
     if (!respond1.ok) {
       throw new Error(`Failed to fetch teams. Status: ${respond1.status}`);
     }
@@ -39,15 +41,21 @@ const Dashboard = () => {
   
 
     fetchTeam();
+
   }, []);
-  // Function to handle navigation
-  const openGroup = (groupName) => {
-    // Navigate to TeamManagement screen with parameters
-    navigation.navigate('TeamManagement', { groupName });
-  };
+  useEffect(() => {
+    // Whenever the screen is focused and a team is selected, show the bottom tab bar
+    if (isFocused && teamSelected) {
+      navigation.setOptions({ tabBarVisible: true });
+    } else {
+      navigation.setOptions({ tabBarVisible: false });
+    }
+  }, [isFocused, teamSelected, navigation]);
 
-
+  
   const handleGroupPress = (group) => {
+    setTeamSelected(true);
+
     if (
       currentGroup &&
       currentGroup._id === group._id &&
@@ -76,34 +84,39 @@ const Dashboard = () => {
   };
   const handleConfirmCreateTeam = async () => {
     try {
-      const response = await fetch("http://192.168.1.37:8084/teams/add", {
+      const response = await fetch("http://172.31.221.50:8084/teams/add", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ team_name: teamName,usersList: ["656012a3cb5dbe885bfc9ee1"] }),
+        body: JSON.stringify({ team_name: teamName,usersList: ["656c067a87765679dbdc93eb"] }),
       });
   
       if (!response.ok) {
         throw new Error('Failed to add team');
       }
-      const respond1 = await fetch("http://192.168.1.37:8084/users/656012a3cb5dbe885bfc9ee1")
+      const respond1 = await fetch("http://172.31.221.50:8084/users/656c067a87765679dbdc93eb")
       const data = await respond1.json();
       const user = data.data;      // Get the newly created team data
       const newTeamData = await response.json();
       const newTeam = newTeamData.data;
-
       // Update the dashboard with the new team
       setTeam(prevTeam => [...prevTeam, newTeam]);
-  
+      const newGroup = {
+        team_id: newTeam._id,
+        role:"Admin",
+        total_points:0,
+        achievement:null,
+        status:"Active"
+      }
       // Update the teamIds field of the current user
       const updatedUser = {
-        ...user, // Assuming currentUser holds the current user's data
-        teamIds: [...user.teamIds, newTeam._id], // Add the new team ID to the user's teamIds
+        ...user, // Assuming user holds the current user's data
+        teamIds: [...user.teamIds, newGroup], // Add the new team ID to the user's teamIds
       };
   
       // Update the teamIds field for the current user
-      await fetch(`http://192.168.1.37:8084/users/${user._id}`, {
+      await fetch(`http://172.31.221.50:8084/users/${user._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -75,13 +75,7 @@ const CustomTabScreen = (name, component, iconName) => {
 const App = () => {
 
   const [user, setUser] = useState(null);
-  const handleIntermediateAction = () => {
-    // Handle intermediate action
-    // This function will be passed as a prop to IntermediateScreen
-    // For example:
-    // Perform some action and then navigate to another screen
-  };
-
+ 
 
   if (!user) { 
     return (
@@ -90,7 +84,7 @@ const App = () => {
       </View>
     );
   }
-
+  
 
   
 
@@ -103,8 +97,11 @@ const App = () => {
     <NavigationContainer>
       
       <Tab.Navigator
-        tabBarOptions={{ showLabel: false }}
-        screenOptions={{ headerShown: false }}
+         screenOptions={{
+          tabBarStyle: { /* Your tab bar styles */ },
+          tabBarShowLabel: false,
+          headerShown: false,
+        }}
       >
       {CustomTabScreen("Dashboard", Dashboard, "tachometer-alt")}
       {CustomTabScreen("Home", HomeScreen, "home")}
