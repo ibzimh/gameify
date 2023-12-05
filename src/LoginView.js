@@ -20,28 +20,7 @@ const loginProviders = {
   },
 };
 
-const apiUrl = 'http://localhost:8084/auth';
-
-// check if the user is authenticated
-const checkUserAuthentication = async (email, password) => {
-  try {
-    const response = await fetch(apiUrl);
-
-    if (response.status === 200) { 
-      const data = await response.json();
-      const authentications = data.data;
-      const userExists = authentications.some(auth => auth.auth_provider === email && auth.access_token === password);
-
-      return userExists;
-    } else {
-      console.error('Server responded with status:', response.status);
-      return false;
-    }
-  } catch (error) {
-    console.log(error.message);
-    throw error;
-  }
-};
+const apiUrl = 'http://localhost:8084/users';
 
 function LoginView({setUser: setUser}) {
   const [username, setUsername] = useState("");
@@ -208,10 +187,11 @@ function LoginView({setUser: setUser}) {
   };
 
   // for logging in with username and password
+
   async function handleManualLogin (username, password) {
-    async function getUserByEmail(email) {
+    async function getUserByEmail(email, password) {
       try {
-        const response = await fetch('http://localhost:8084/users', {
+        const response = await fetch(apiUrl, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -225,6 +205,7 @@ function LoginView({setUser: setUser}) {
         const data = await response.json();
         const users = data.data;
         const userWithEmail = users.find(user => user.email === email); // find the user
+        // const userWithEmail = users.find(user => user.email === email && user.password === password); // find the user
     
         return userWithEmail || null;
       } catch (error) {
@@ -233,9 +214,8 @@ function LoginView({setUser: setUser}) {
       }
     }
 
-    checkUserAuthentication(username, password) // check if the user is authenticated
-      .then((userExists) => { return getUserByEmail(username); }) // get the user by their email
-      .then((user) => { setUser(user); }) // set the user
+    getUserByEmail(username, password) // check if the user is authenticated
+      .then((user) => { console.log(user) }) // set the user
       .catch((err) => console.log("Error checking user authentication:", err.message));
   }
 

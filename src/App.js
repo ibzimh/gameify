@@ -72,6 +72,13 @@ const App = () => {
     );
   }
 
+  console.log(user);
+  return (
+    <View style={styles.container}>
+        <LoginView setUser={setUser}/>
+    </View>
+  )
+
   return (
     <SafeAreaProvider>
     <NavigationContainer>

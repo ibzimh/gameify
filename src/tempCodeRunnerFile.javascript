@@ -1,27 +1,35 @@
-const axios = require('axios');
+const apiUrl = 'http://localhost:8084/users';
 
-const apiUrl = 'http://localhost:8084/auth';
-
-const checkUserAuthentication = async (email, password) => {
-  try {
-    const response = await axios.get(apiUrl);
-    const authentications = response.data.data;
-
-    const userExists = authentications.some(
-      (authentication) => authentication.auth_provider === email && authentication.access_token === password
-    );
-
-    if (response.status === 201) {
-      console.log('User created successfully:', response.data.data);
-    } else {
-      console.log('Failed to create user:', response.data.message);
+async function handleManualLogin (username, password) {
+    async function getUserByEmail(email, password) {
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+    
+        if (!response.ok) {
+          throw new Error('Failed to fetch users from the server');
+        }
+    
+        const data = await response.json();
+        const users = data.data;
+        const userWithEmail = users.find(user => user.email === email); // find the user
+        // const userWithEmail = users.find(user => user.email === email && user.password === password); // find the user
+    
+        return userWithEmail || null;
+      } catch (error) {
+        console.error(error.message);
+        return null;
+      }
     }
 
-    return userExists;
-  } catch (error) {
-    console.log(error.message);
-    throw error;
+    getUserByEmail(username, password) // check if the user is authenticated
+      .then((user) => { console.log(user) }) // set the user
+      .catch((err) => console.log("Error checking user authentication:", err.message));
   }
-};
 
-checkUserAuthentication("ibzimh@gmail.com", '123456').then((userExists) => console.log(userExists));
+handleManualLogin('ihasaan@umass.edu', '12345678');
+
