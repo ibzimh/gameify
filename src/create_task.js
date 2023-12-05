@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import { Calendar } from "react-native-calendars";
 
+import Config from "./env";
+
 const TaskScreen = () => {
   const [task, setTask] = useState({
     title: "",
@@ -41,7 +43,7 @@ const TaskScreen = () => {
     console.log("Task:", data);
 
     try {
-      const response = await fetch('http://172.31.139.117:8081/chores/add', {
+      const response = await fetch(Config.BACKEND + 'chores/add', {
         method: 'POST',
         headers: {
           "Content-Type": "application/json",

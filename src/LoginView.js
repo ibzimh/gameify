@@ -11,16 +11,16 @@ import Config from "./env";
 const loginProviders = {
   google: {
     title: "Google",
-    redirect_uri: Config.BACKEND, // where google will send the user back to
+    redirect_uri: Config.BACKEND + "oauth2proxy/google", // where google will send the user back to
     client_id: Config.GOOGLE_CLIENT_ID,
     response_type: "code",
     scope: "profile email",
-    token_endpoint: Config.BACKEND + "/oauth2/google/token",
+    token_endpoint: Config.BACKEND + "oauth2proxy/google/oauth2/google/token",
     authorization_endpoint: "https://accounts.google.com/o/oauth2/v2/auth",
   },
 };
 
-const apiUrl = 'http://gameify.us-east-1.elasticbeanstalk.com/users';
+const apiUrl = Config.BACKEND + 'users';
 
 function LoginView({setUser: setUser}) {
   const [username, setUsername] = useState("");

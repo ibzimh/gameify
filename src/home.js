@@ -19,9 +19,9 @@ const HomeScreen = ({ setUser: setUser }) => {
   // useEffect(() => {
   //   const fetchChores = async () => {
   //     try {
-  //       const response = await fetch("http://172.31.215.6:8081/chores");
+  //       const response = await fetch(Config.BACKEND + "/chores");
   //       //const response = await fetch(
-  //       //   "http://gameify.us-east-1.elasticbeanstalk.com/chores"
+  //       //   Config.BACKEND + "chores"
   //       // );
   //       const data = await response.json();
   //       setTasks(data.data);
@@ -35,7 +35,7 @@ const HomeScreen = ({ setUser: setUser }) => {
   useEffect(() => {
     const fetchChores = async () => {
       try {
-        const response = await fetch("http://gameify.us-east-1.elasticbeanstalk.com/chores");
+        const response = await fetch(Config.BACKEND + "chores");
         const data = await response.json();
         setTasks(data.data);
       } catch (error) {
@@ -59,7 +59,7 @@ const HomeScreen = ({ setUser: setUser }) => {
     // Fetch chores every time refreshKey changes
     const fetchChores = async () => {
       try {
-        const response = await fetch("http://gameify.us-east-1.elasticbeanstalk.com/chores");
+        const response = await fetch(Config.BACKEND + "chores");
         const data = await response.json();
         setTasks(data.data);
       } catch (error) {
@@ -73,7 +73,7 @@ const HomeScreen = ({ setUser: setUser }) => {
 
   const handleDelete = async (itemID) => {
     try {
-      await fetch(`http://gameify.us-east-1.elasticbeanstalk.com/chores/${itemID}`, {
+      await fetch(Config.BACKEND + `chores/${itemID}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
