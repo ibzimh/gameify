@@ -7,11 +7,11 @@ const Leaderboard = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch("http://gameify.us-east-1.elasticbeanstalk.com/users");
+        const response = await fetch("http://172.31.252.91:8081/users");
         const data = await response.json();
 
         // Sorting users based on total points in descending order
-        const sortedUsers = data.data.sort((a, b) => b.total_points - a.total_points);
+        const sortedUsers = data.data.sort((a, b) => b.total_point - a.total_point);
         setUsers(sortedUsers);
       } catch (error) {
         console.error("Error fetching users:", error.message);
@@ -41,7 +41,7 @@ const Leaderboard = () => {
             <Text style={styles.email}>{user.email}</Text>
           </View>
           <View style={styles.pointsContainer}>
-            <Text style={styles.pointsText}>{user.total_points}pt</Text>
+            <Text style={styles.pointsText}>{user.total_point}pt</Text>
           </View>
         </View>
       ))}
