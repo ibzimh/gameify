@@ -8,15 +8,37 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
+
+
+import Config from "./env";
+
 const HomeScreen = ({ setUser: setUser }) => {
   const [tasks, setTasks] = useState([]);
   const [refreshKey, setRefreshKey] = useState(0);
   const [isModalVisible, setIsModalVisible] = useState(false);  
   const [selectedTask, setSelectedTask] = useState(null);
+
+
+  // useEffect(() => {
+  //   const fetchChores = async () => {
+  //     try {
+  //       const response = await fetch(Config.BACKEND + "/chores");
+  //       //const response = await fetch(
+  //       //   Config.BACKEND + "chores"
+  //       // );
+  //       const data = await response.json();
+  //       setTasks(data.data);
+  //     } catch (error) {
+  //       console.error("Error fetching chores:", error.message);
+  //     }
+  //   };
+  //   fetchChores();
+  // }, []);
+
   useEffect(() => {
     const fetchChores = async () => {
       try {
-        const response = await fetch("http://gameify.us-east-1.elasticbeanstalk.com/chores");
+        const response = await fetch(Config.BACKEND + "chores");
         const data = await response.json();
         setTasks(data.data);
       } catch (error) {
@@ -41,7 +63,8 @@ const HomeScreen = ({ setUser: setUser }) => {
     // Fetch chores every time refreshKey changes
     const fetchChores = async () => {
       try {
-        const response = await fetch("http://172.31.221.50:8084/chores");
+
+        const response = await fetch(Config.BACKEND + "chores");
         const data = await response.json();
         setTasks(data.data);
       } catch (error) {
@@ -57,7 +80,9 @@ const HomeScreen = ({ setUser: setUser }) => {
 
   const handleDelete = async (itemID) => {
     try {
-      await fetch(`http://172.31.221.50:8084/chores/${itemID}`, {
+
+      await fetch(Config.BACKEND + `chores/${itemID}`, {
+
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -84,7 +109,7 @@ const HomeScreen = ({ setUser: setUser }) => {
         title={"Logout"}
         onPress={() => {
           // temporary button to skip login
-          setUser(false);
+          console.log(setUser(null));
         }}
       />
       <View style={styles.headerContainer}>

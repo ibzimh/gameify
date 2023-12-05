@@ -14,7 +14,8 @@ const currentUser = {
   status: "Active",
 };
 
-const GiftScreen = () => {
+const GiftScreen = ({user: user, setUser: setUser}) => {
+  // setUser is just the react state hook for updating the user object in react; it won't update it in the database
   const [teamPoints, setTeamPoints] = useState(0);
   const [completedTasks, setCompletedTasks] = useState([]);
   const [items, setItems] = useState([]);

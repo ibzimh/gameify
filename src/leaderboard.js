@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { ScrollView, View, Text, StyleSheet } from "react-native";
+import Config from "./env";
 
 const Leaderboard = () => {
   
@@ -8,7 +9,8 @@ const Leaderboard = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch("http://172.31.221.50:8084/users");
+
+        const response = await fetch(Config.BACKEND + "/users");
         const data = await response.json();
 
         // Sorting users based on total points in descending order

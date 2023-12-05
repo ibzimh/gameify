@@ -4,6 +4,21 @@ import { useNavigation } from '@react-navigation/native';
 import { GroupContext } from './team_context'; // Adjust the import path accordingly
 import { useIsFocused } from '@react-navigation/native';
 
+
+import Config from "./env";
+
+const currentUser = {
+  _id: "655130639407a73e835e4ac3",
+  user_name: "Viet Truong",
+  teamIds: ["655d3e1b6669b07181c0a468"], // Example team IDs associated with the user
+  role: "admin",
+  email: "vbtruong@umass.edu",
+  dob: "1990-01-01",
+  gender: "Male",
+  total_point: 100,
+  achievement: "Some achievement",
+  status: "Active",
+};
 const Dashboard = () => {
   const navigation = useNavigation(); 
   const [modalVisible, setModalVisible] = useState(false);
@@ -17,12 +32,14 @@ const Dashboard = () => {
     
     const fetchTeam = async () =>{
       try{
-        const respond = await fetch("http://172.31.221.50:8084/users/656c067a87765679dbdc93eb");
+
+        const respond = await fetch(Config.BACKEND + "/users/656012a3cb5dbe885bfc9ee1");
     if (!respond.ok) {
       throw new Error(`Failed to fetch user data. Status: ${respond.status}`);
     }
     const data = await respond.json();
-    const respond1 = await fetch("http://172.31.221.50:8084/teams");
+
+    const respond1 = await fetch(Config.BACKEND + "/teams");
     if (!respond1.ok) {
       throw new Error(`Failed to fetch teams. Status: ${respond1.status}`);
     }
@@ -84,7 +101,8 @@ const Dashboard = () => {
   };
   const handleConfirmCreateTeam = async () => {
     try {
-      const response = await fetch("http://172.31.221.50:8084/teams/add", {
+
+      const response = await fetch(Config.BACKEND + "/teams/add", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -95,7 +113,8 @@ const Dashboard = () => {
       if (!response.ok) {
         throw new Error('Failed to add team');
       }
-      const respond1 = await fetch("http://172.31.221.50:8084/users/656c067a87765679dbdc93eb")
+
+      const respond1 = await fetch(Config.BACKEND + "/users/656012a3cb5dbe885bfc9ee1")
       const data = await respond1.json();
       const user = data.data;      // Get the newly created team data
       const newTeamData = await response.json();
@@ -116,7 +135,8 @@ const Dashboard = () => {
       };
   
       // Update the teamIds field for the current user
-      await fetch(`http://172.31.221.50:8084/users/${user._id}`, {
+
+      await fetch(Config.BACKEND + `/users/${user._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
