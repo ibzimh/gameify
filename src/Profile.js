@@ -6,15 +6,9 @@ export default class UserProfileView extends Component {
       
       <View style={styles.container}>
         <View style={styles.header}>
-          <View>
-            <Image
-              style={styles.location}
-              source={require("/Users/juliaepshtein/Desktop/CS 320/gameify/src/assets/locationSvg.svg")}
-            />
-          </View>
           <View style={styles.headerContent}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.name}>Welcome</Text>
+              <Text style={styles.name}>Dashboard</Text>
               <Text style={styles.userInfo}>John Doe</Text>
             </View>
             <View>

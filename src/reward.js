@@ -21,21 +21,35 @@ const GiftScreen = () => {
   const [selectedReward, setSelectedReward] = useState(null);
   const [redeemModalVisible, setRedeemModalVisible] = useState(false);
   const [redeemedItems, setRedeemedItems] = useState([]);
+  const [selectedTeam, setSelectedTeam] = useState(null);
 
   useEffect(() => {
     const fetchGiftData = async () => {
       try {
-        const response = await fetch("http://172.31.252.91:8081/rewards");
-        const data = await response.json();
-        console.log("Fetched data:", data);
-        setItems(data.data); 
+        // Fetch user data including teamIds
+        const userResponse = await fetch(`http://10.0.0.218:8081/users/${currentUser._id}`);
+        const userData = await userResponse.json();
+        const userTeamIds = userData.data.teamIds;
 
-        // fetch team points and completed tasks
-        const teamPointsResponse = await fetch(`http://172.31.252.91:8081/team/${currentUser.teamIds[0]}/points`);
+        // Fetch teams data
+        const teamsResponse = await fetch("http://10.0.0.218:8081/teams");
+        const teamsData = await teamsResponse.json();
+
+        // Find the selected team based on user's teamIds
+        const selectedTeamData = teamsData.data.find(team => userTeamIds.includes(team._id));
+        setSelectedTeam(selectedTeamData);
+
+        // Fetch rewards data for the selected team
+        const rewardsResponse = await fetch(`http://10.0.0.218:8081/rewards/team/${selectedTeamData._id}`);
+        const rewardsData = await rewardsResponse.json();
+        setItems(rewardsData.data);
+
+        // Fetch team points and completed tasks
+        const teamPointsResponse = await fetch(`http://10.0.0.218:8081/team/${selectedTeamData._id}/points`);
         const teamPointsData = await teamPointsResponse.json();
         setTeamPoints(teamPointsData.points);
 
-        const completedTasksResponse = await fetch(`http://172.31.252.91:8081/user/${currentUser._id}/tasks`);
+        const completedTasksResponse = await fetch(`http://10.0.0.218:8081/user/${currentUser._id}/tasks`);
         const completedTasksData = await completedTasksResponse.json();
         setCompletedTasks(completedTasksData.tasks);
       } catch (error) {
