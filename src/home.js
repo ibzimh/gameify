@@ -7,16 +7,17 @@ import {
   Modal,
   StyleSheet,
   TouchableOpacity,
-  Alert,
 } from "react-native";
+
 
 import Config from "./env";
 
 const HomeScreen = ({ setUser: setUser }) => {
   const [tasks, setTasks] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [isModalVisible, setIsModalVisible] = useState(false);  
   const [selectedTask, setSelectedTask] = useState(null);
+
 
   // useEffect(() => {
   //   const fetchChores = async () => {
@@ -53,6 +54,7 @@ const HomeScreen = ({ setUser: setUser }) => {
     // Fetch chores on mount
     fetchChores();
 
+
     // Clean up the timer when the component is unmounted
     return () => clearInterval(refreshTimer);
   }, []); // Empty dependency array ensures the effect runs only once on mount
@@ -61,6 +63,7 @@ const HomeScreen = ({ setUser: setUser }) => {
     // Fetch chores every time refreshKey changes
     const fetchChores = async () => {
       try {
+
         const response = await fetch(Config.BACKEND + "chores");
         const data = await response.json();
         setTasks(data.data);
@@ -69,13 +72,17 @@ const HomeScreen = ({ setUser: setUser }) => {
       }
     };
 
+
     // Fetch chores every time refreshKey changes
     fetchChores();
   }, [refreshKey]);
 
+
   const handleDelete = async (itemID) => {
     try {
+
       await fetch(Config.BACKEND + `chores/${itemID}`, {
+
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -184,9 +191,7 @@ const HomeScreen = ({ setUser: setUser }) => {
       ))}
     </ScrollView>
   );
-};
-
-const styles = StyleSheet.create({
+};const styles = StyleSheet.create({
   container: {
     padding: 16,
   },
@@ -199,7 +204,7 @@ const styles = StyleSheet.create({
   },
   taskContainer: {
     marginBottom: 20,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#F0F0F0",
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#ccc",

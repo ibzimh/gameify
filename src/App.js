@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-// import { createStackNavigator } from '@react-navigation/stack';
+
 
 import LoginView from "./LoginView";
 import HomeScreen from "./home";
@@ -26,6 +26,9 @@ import Leaderboard from './leaderboard';
 import GiftScreen from './reward';
 import TaskScreen from './create_task'; 
 import Dashboard from './dashboard';
+import { GroupProvider } from './team_context'; 
+
+
 
 
 const Tab = createBottomTabNavigator();
@@ -69,6 +72,7 @@ const CustomTabScreen = (name, Component, iconName, props) => {
 const App = () => {
 
   const [user, setUser] = useState(null);
+ 
 
   if (!user) { 
     return (
@@ -77,19 +81,24 @@ const App = () => {
       </View>
     );
   }
+  
 
-  console.log(user)
   
 
   return (
-    
+    <GroupProvider>
+
     <UserContext.Provider>
     <SafeAreaProvider>
        
     <NavigationContainer>
+      
       <Tab.Navigator
-        tabBarOptions={{ showLabel: false }}
-        screenOptions={{ headerShown: false }}
+         screenOptions={{
+          tabBarStyle: { /* Your tab bar styles */ },
+          tabBarShowLabel: false,
+          headerShown: false,
+        }}
       >
       {CustomTabScreen("Dashboard", Dashboard, "tachometer-alt")}
       {CustomTabScreen("Home", HomeScreen, "home", {setUser: setUser})}
@@ -102,6 +111,8 @@ const App = () => {
     </NavigationContainer>
     </SafeAreaProvider>
     </UserContext.Provider>
+    </GroupProvider>
+
   );
 };
 

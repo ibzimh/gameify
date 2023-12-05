@@ -3,11 +3,13 @@ import { ScrollView, View, Text, StyleSheet } from "react-native";
 import Config from "./env";
 
 const Leaderboard = () => {
+  
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
+
         const response = await fetch(Config.BACKEND + "/users");
         const data = await response.json();
 

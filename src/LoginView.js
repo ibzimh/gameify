@@ -8,6 +8,7 @@ import URL from "url-parse";
 import Config from "./env";
 // import RegisterView from "./RegisterView";
 
+
 const loginProviders = {
   google: {
     title: "Google",

@@ -8,11 +8,6 @@ const  choreSchema = new mongoose.Schema(
             type:String,
         },due_date: {
             type:String,
-        },assign_to:{
-            type: Number,
-        },
-        category:{
-            type:Number,
         },
         points:{
             type:Number,
