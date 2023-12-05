@@ -6,7 +6,7 @@ import randomString from "random-string";
 import URL from "url-parse";
 
 import Config from "./env";
-import RegisterView from "./RegisterView";
+// import RegisterView from "./RegisterView";
 
 const loginProviders = {
   google: {
@@ -20,7 +20,7 @@ const loginProviders = {
   },
 };
 
-const apiUrl = 'http://localhost:8084/users';
+const apiUrl = 'http://gameify.us-east-1.elasticbeanstalk.com/users';
 
 function LoginView({setUser: setUser}) {
   const [username, setUsername] = useState("");
@@ -144,8 +144,6 @@ function LoginView({setUser: setUser}) {
     const url = new URL(urlString, true);
     const { code, state } = url.query;
 
-    console.log("App url: " + url);
-
     if (!code) return;
 
     const providerName = url.pathname.split("/")[2];
@@ -188,7 +186,7 @@ function LoginView({setUser: setUser}) {
 
   // for logging in with username and password
 
-  async function handleManualLogin (username, password) {
+  async function handleManualLogin(username, password, setUser) {
     async function getUserByEmail(email, password) {
       try {
         const response = await fetch(apiUrl, {
@@ -204,8 +202,8 @@ function LoginView({setUser: setUser}) {
     
         const data = await response.json();
         const users = data.data;
-        const userWithEmail = users.find(user => user.email === email); // find the user
-        // const userWithEmail = users.find(user => user.email === email && user.password === password); // find the user
+        // const userWithEmail = users.find(user => user.email === email); // find the user
+        const userWithEmail = users.find(user => user.email === email && user.password === password); // find the user 
     
         return userWithEmail || null;
       } catch (error) {
@@ -215,7 +213,7 @@ function LoginView({setUser: setUser}) {
     }
 
     getUserByEmail(username, password) // check if the user is authenticated
-      .then((user) => { console.log(user) }) // set the user
+      .then((user) => { setUser(user); }) // set the user
       .catch((err) => console.log("Error checking user authentication:", err.message));
   }
 
@@ -244,7 +242,7 @@ function LoginView({setUser: setUser}) {
               value={password}
               onChangeText={(text) => setPassword(text)}
             />  
-            <TouchableOpacity style={styles.submit} onPress={() => handleManualLogin(username, password)} disabled={!username || !password}>
+            <TouchableOpacity style={styles.submit} onPress={() => handleManualLogin(username, password, setUser)} disabled={!username || !password}>
               <Text style={styles.loginText}>Submit</Text>
             </TouchableOpacity>
           </View>
