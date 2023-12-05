@@ -96,7 +96,7 @@ const App = () => {
       {CustomTabScreen("Users", UsersScreen, "users")}
       {CustomTabScreen("Tasks", TaskScreen, "tasks")}
       {CustomTabScreen("Trophy", Leaderboard, "trophy")}
-      {CustomTabScreen("Gift", GiftScreen, "gift")}
+      {CustomTabScreen("Gift", GiftScreen, "gift", {user: user, setUser: setUser})}
       {CustomTabScreen("Profile", ProfileScreen, "user-alt")}
       </Tab.Navigator>
     </NavigationContainer>
