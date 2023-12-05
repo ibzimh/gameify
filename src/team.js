@@ -14,7 +14,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 
 
 const currT = async () => {
-  const res = await fetch("http://172.31.221.50:8084/teams/6563b623779f11fb0b7d594d");
+  const res = await fetch(Config.BACKEND + "teams/6563b623779f11fb0b7d594d");
   const da= await res.json();
   return  da;
 }
@@ -31,7 +31,7 @@ const UsersScreen = () => {
   useEffect(() => {
     const fetchUsersInCurrentTeam = async () => {
       try {
-        const response = await fetch("http://172.31.221.50:8084/users"); // Update the URL
+        const response = await fetch(Config.BACKEND + "users"); // Update the URL
         const data = await response.json();
         if (response.ok) {
           const usersInTeam = data.data.filter(user => currentGroup.usersList.includes(user._id));
@@ -66,7 +66,7 @@ const UsersScreen = () => {
         userId => userId !== userToDelete._id
       );
       // Update the current team's usersList without the deleted user ID
-      await fetch(`http://172.31.221.50:8084/teams/${currentGroup._id}`, {
+      await fetch(Config.BACKEND + `teams/${currentGroup._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ const UsersScreen = () => {
       setCurrentGroup(updatedCurrentGroup);
       const updatedTeamIds = userToDelete.teamIds.filter(team => updatedCurrentGroup._id !== team.team_id)
       console.log(updatedTeamIds)
-      await fetch(`http://172.31.221.50:8084/users/${userToDelete._id}`, {
+      await fetch(Config.BACKEND + `users/${userToDelete._id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -98,7 +98,7 @@ const UsersScreen = () => {
  
   const handleConfirmAddMember = async () => {
     const currentT = await currT();
-    const response = await fetch(`http://172.31.221.50:8084/users/email/${memberEmail}`);
+    const response = await fetch(Config.BACKEND + `users/email/${memberEmail}`);
     const data = await response.json();
     console.log(data); // Inspect the structure of the response data
 
@@ -122,7 +122,7 @@ const UsersScreen = () => {
       const updatedUsersList = [...currentGroup.usersList, userId];
       console.log(updatedUsersList)
       // Update the current team's usersList with the new userId
-      await fetch(`http://172.31.221.50:8084/teams/${currentGroup._id}`, {
+      await fetch(Config.BACKEND + `teams/${currentGroup._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -135,7 +135,7 @@ const UsersScreen = () => {
         usersList: updatedUsersList, // Update usersList with the new value
       };
       setCurrentGroup(updatedCurrentGroup);
-      const updatedResponse = await fetch("http://172.31.221.50:8084/users");
+      const updatedResponse = await fetch(Config.BACKEND + "users");
       const updatedUserData = await updatedResponse.json();
       const newTeamIds = {
         team_id: updatedCurrentGroup._id,
@@ -149,7 +149,7 @@ const UsersScreen = () => {
     const updatedTeamIds = [...data.data.teamIds, newTeamIds];
 
     // Update the user's teamIds field with the new team ID
-    await fetch(`http://172.31.221.50:8084/users/${userId}`, {
+    await fetch(Config.BACKEND + `users/${userId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
