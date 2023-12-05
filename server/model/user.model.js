@@ -31,14 +31,20 @@ const  userSchema = new mongoose.Schema(
         ],
         email: {
             type:String,
-        },dob: {
+        },
+        password:{
             type:String,
-        },gender:{
+        },
+        dob: {
+            type:String,
+        },
+        gender:{
             type: String,
         },
         password:{
             type:String
         }
+
     },
     {timestamps:true}
 )
