@@ -22,12 +22,12 @@ connection.once('open', () => {
 
 const choreRouter = require('./route/choreRoute.js');
 const userRouter = require('./route/userRoute.js');
-const authRouter = require('./route/authenticationRoute.js')
-const rewardRouter = require('./route/rewardRoute.js')
-const categoryRouter = require('./route/categoryRoute.js')
-// const teamRouter = require('./route/teamRoute.js')
+const authRouter = require('./route/authenticationRoute.js');
+const rewardRouter = require('./route/rewardRoute.js');
+const categoryRouter = require('./route/categoryRoute.js');
+const teamRouter = require('./route/teamRoute.js');
 
-// app.use('/teams', teamRouter)
+app.use('/teams', teamRouter);
 app.use('/users', userRouter);
 app.use('/auth', authRouter);
 app.use('/chores', choreRouter);
