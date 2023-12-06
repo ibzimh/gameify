@@ -146,6 +146,13 @@ function RegisterView({setUser: setUser}) {
             value={username}
             onChangeText={(text) => setUsername(text)}
           />
+          {/* Email Address */}
+          <TextInput
+            style={styles.input}
+            placeholder="Email Address"
+            value={email}
+            onChangeText={(text) => setEmail(text)}
+          />
           {/* Password and Submit */}
           <View style={{ flexDirection: 'row' }}>
             <TextInput
