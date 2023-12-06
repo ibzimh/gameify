@@ -33,6 +33,11 @@ const createUser = async (email, password) => {
 function RegisterView({setUser: setUser}) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [dob, setDob] = useState("");
+  const [gender, setGender] = useState("");
+
+  const genders = ["Male", "Female", "Transgender", "Nonbinary"];
 
   const styles = StyleSheet.create({
     container: {
@@ -134,6 +139,32 @@ function RegisterView({setUser: setUser}) {
       paddingBottom: 5,
       paddingLeft: 15,
     },
+    genderButton: {
+      height: 25, // 30
+      borderWidth: 1,
+      borderStyle: 'solid',
+      borderColor:'#2b2684',
+      borderRadius: 10, // 10
+      fontWeight: 'bold',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: 'white',
+      marginBottom: 5,
+      color: '#2b2684',
+      transition: 0.5,
+      marginTop: 5,
+      paddingTop: 5,
+      paddingRight: 15, // 10
+      paddingBottom: 5,
+      paddingLeft: 15, // 10
+      marginLeft: 10,
+    },
+    genderButtonText: {
+      fontSize: 12,
+      textAlign: 'center',
+      fontWeight: 'bold',
+    },
   });
 
   return (
@@ -166,6 +197,18 @@ function RegisterView({setUser: setUser}) {
               <Text style={styles.loginText}>Submit</Text>
             </TouchableOpacity>
           </View>
+        </View>
+        {/* Gender Buttons */}
+        <View style={{ flexDirection: 'column' }}>
+          {genders.map((g, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[styles.genderButton, gender === g ? {backgroundColor: '#2b2684'} : {}]}
+              onPress={() => setGender(g)}
+            >
+              <Text style={[styles.genderButtonText, gender === g ? {color: 'white'} : {color: '#2b2684'}]}>{g}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
      </View>
    );
