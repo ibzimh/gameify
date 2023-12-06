@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
+
 
 import LoginView from "./LoginView";
 import HomeScreen from "./home";
@@ -26,6 +26,9 @@ import Leaderboard from './leaderboard';
 import GiftScreen from './reward';
 import TaskScreen from './create_task'; 
 import Dashboard from './dashboard';
+import { GroupProvider } from './team_context'; 
+
+
 
 
 const Tab = createBottomTabNavigator();
@@ -49,30 +52,27 @@ const CustomTabBarButton = ({ children, onPress, focused }) => (
   </TouchableOpacity>
 );
 
-const CustomTabScreen = (name, component, iconName) => {
-  return (
-    <Tab.Screen
-      name={name}
-      component={component}
-      options={({ navigation, route }) => ({
-        tabBarButton: (props) => (
-          <CustomTabBarButton
-            {...props}
-            onPress={() => navigation.navigate(route.name)}
-          >
-            {/* Use the provided iconName instead of converting the name to lowercase */}
-            <FontAwesome5 name={iconName} size={30} color="#000" />
-          </CustomTabBarButton>
-        ),
-      })}
-    />
-  );
+const CustomTabScreen = (name, Component, iconName, props) => {
+  return <Tab.Screen
+    name={name}
+    children={(screenProps) => <Component {...screenProps} {...props} />}
+    options={({ navigation, route }) => ({
+      tabBarButton: (screenProps) => (
+        <CustomTabBarButton
+          {...screenProps}
+          onPress={() => navigation.navigate(route.name)}
+        >
+          <FontAwesome5 name={iconName} size={30} color="#000" />
+        </CustomTabBarButton>
+      ),
+    })}
+  />;
 };
-
 
 const App = () => {
 
   const [user, setUser] = useState(null);
+ 
 
   if (!user) { 
     return (
@@ -81,31 +81,38 @@ const App = () => {
       </View>
     );
   }
+  
 
-  console.log(user)
   
 
   return (
-    
+    <GroupProvider>
+
     <UserContext.Provider>
     <SafeAreaProvider>
        
     <NavigationContainer>
+      
       <Tab.Navigator
-        tabBarOptions={{ showLabel: false }}
-        screenOptions={{ headerShown: false }}
+         screenOptions={{
+          tabBarStyle: { /* Your tab bar styles */ },
+          tabBarShowLabel: false,
+          headerShown: false,
+        }}
       >
       {CustomTabScreen("Dashboard", Dashboard, "tachometer-alt")}
-      {CustomTabScreen("Home", HomeScreen, "home")}
+      {CustomTabScreen("Home", HomeScreen, "home", {setUser: setUser})}
       {CustomTabScreen("Users", UsersScreen, "users")}
       {CustomTabScreen("Tasks", TaskScreen, "tasks")}
       {CustomTabScreen("Trophy", Leaderboard, "trophy")}
-      {CustomTabScreen("Gift", GiftScreen, "gift")}
+      {CustomTabScreen("Gift", GiftScreen, "gift", {user: user, setUser: setUser})}
       {CustomTabScreen("Profile", ProfileScreen, "user-alt")}
       </Tab.Navigator>
     </NavigationContainer>
     </SafeAreaProvider>
     </UserContext.Provider>
+    </GroupProvider>
+
   );
 };
 

@@ -1,26 +1,27 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, Button, Linking, StyleSheet, TouchableOpacity, TextInput } from "react-native";;
+import { Text, View, Button, Linking, StyleSheet, TouchableOpacity, TextInput } from "react-native";
 
 import qs from "qs";
 import randomString from "random-string";
 import URL from "url-parse";
 
 import Config from "./env";
-// import RegisterView from "./RegisterView";
+import RegisterView from "./RegisterView";
+
 
 const loginProviders = {
   google: {
     title: "Google",
-    redirect_uri: Config.BACKEND, // where google will send the user back to
+    redirect_uri: Config.BACKEND + "oauth2proxy/google", // where google will send the user back to
     client_id: Config.GOOGLE_CLIENT_ID,
     response_type: "code",
     scope: "profile email",
-    token_endpoint: Config.BACKEND + "/oauth2/google/token",
+    token_endpoint: Config.BACKEND + "oauth2proxy/google/oauth2/google/token",
     authorization_endpoint: "https://accounts.google.com/o/oauth2/v2/auth",
   },
 };
 
-const apiUrl = 'http://gameify.us-east-1.elasticbeanstalk.com/users';
+const apiUrl = Config.BACKEND + 'users';
 
 function LoginView({setUser: setUser}) {
   const [username, setUsername] = useState("");
