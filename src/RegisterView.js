@@ -35,6 +35,9 @@ function RegisterView({setUser: setUser}) {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [dob, setDob] = useState("");
+  const [year, setYear] = useState("");
+  const [month, setMonth] = useState("");
+  const [day, setDay] = useState("");
   const [gender, setGender] = useState("");
 
   const genders = ["Male", "Female", "Transgender", "Nonbinary"];
@@ -132,7 +135,6 @@ function RegisterView({setUser: setUser}) {
       marginBottom: 20,
       color: '#2b2684',
       transition: 0.5,
-      // width: 20,
       marginLeft: 10,
       paddingTop: 5,
       paddingRight: 15,
@@ -158,12 +160,34 @@ function RegisterView({setUser: setUser}) {
       paddingRight: 15, // 10
       paddingBottom: 5,
       paddingLeft: 15, // 10
-      marginLeft: 10,
+      marginRight: 20,
     },
     genderButtonText: {
       fontSize: 12,
       textAlign: 'center',
       fontWeight: 'bold',
+    },
+    date: {
+      width: 100,
+      height: 20,
+      borderWidth: 1,
+      borderStyle: 'solid',
+      borderColor:'#2b2684',
+      borderRadius: 10,
+      fontWeight: 'bold',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: 'white',
+      marginBottom: 5,
+      color: '#2b2684',
+      transition: 0.5,
+      marginTop: 5,
+      paddingTop: 5,
+      paddingRight: 10,
+      paddingBottom: 5,
+      paddingLeft: 10,
+      fontSize: 12,
     },
   });
 
@@ -199,16 +223,39 @@ function RegisterView({setUser: setUser}) {
           </View>
         </View>
         {/* Gender Buttons */}
-        <View style={{ flexDirection: 'column' }}>
-          {genders.map((g, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[styles.genderButton, gender === g ? {backgroundColor: '#2b2684'} : {}]}
-              onPress={() => setGender(g)}
-            >
-              <Text style={[styles.genderButtonText, gender === g ? {color: 'white'} : {color: '#2b2684'}]}>{g}</Text>
-            </TouchableOpacity>
-          ))}
+        <View style={{ flexDirection: 'row' }}>
+          <View style={{ flexDirection: 'column' }}>
+            {genders.map((g, index) => (
+              <TouchableOpacity
+                key={index}
+                style={[styles.genderButton, gender === g ? {backgroundColor: '#2b2684'} : {}]}
+                onPress={() => setGender(g)}
+              >
+                <Text style={[styles.genderButtonText, gender === g ? {color: 'white'} : {color: '#2b2684'}]}>{g}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          {/* Date of birth */}
+          <View style={{ flexDirection: 'column' }}>
+            <TextInput
+              style={styles.date}
+              placeholder="Year"
+              value={year}
+              onChangeText={(text) => setYear(text)}
+            />
+            <TextInput
+              style={styles.date}
+              placeholder="Month"
+              value={month}
+              onChangeText={(text) => setMonth(text)}
+            />
+            <TextInput
+              style={styles.date}
+              placeholder="Day"
+              value={day}
+              onChangeText={(text) => setDay(text)}
+            />
+          </View>
         </View>
      </View>
    );
