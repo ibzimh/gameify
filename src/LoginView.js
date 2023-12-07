@@ -7,7 +7,7 @@ import URL from "url-parse";
 
 import Config from "./env";
 // import RegisterView from "./RegisterView";
-
+import Dashboard from "./dashboard";
 
 const loginProviders = {
   google: {
@@ -27,7 +27,7 @@ function LoginView({setUser: setUser}) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [registerScreen, setRegisterScreen] = useState(false);
-
+  const [dashboardScreen, setDashBoardScreen] = useState(false);
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -214,7 +214,9 @@ function LoginView({setUser: setUser}) {
     }
 
     getUserByEmail(username, password) // check if the user is authenticated
-      .then((user) => { setUser(user); }) // set the user
+      .then((user) => { 
+        setUser(user);
+       }) // set the user
       .catch((err) => console.log("Error checking user authentication:", err.message));
   }
 
@@ -222,6 +224,11 @@ function LoginView({setUser: setUser}) {
     return (
       <RegisterView setUser={setUser} />
     );
+  }
+  if (dashboardScreen) {
+    return (
+      <Dashboard setUser={setUser}/>
+    )
   }
 
   return (

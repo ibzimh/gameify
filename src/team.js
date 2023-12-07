@@ -11,34 +11,30 @@ import {
 import { GroupContext } from './team_context'; 
 
 import { FontAwesome5 } from '@expo/vector-icons';
+import Config from "./env";
 
 
-const currT = async () => {
-  const res = await fetch("http://172.31.221.50:8084/teams/6563b623779f11fb0b7d594d");
-  const da= await res.json();
-  return  da;
-}
-const currentUser = "Admin"
-const UsersScreen = () => {
+const UsersScreen = ({user: user, setUser: setUser}) => {
   const {currentGroup, setCurrentGroup } = useContext(GroupContext);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const [users, setUsers] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [memberEmail, setMemberEmail] = useState('');
-  const [memberExistsMessage, setMemberExistsMessage] = useState(''); // State for member exists message
-
+  const [memberExistsMessage, setMemberExistsMessage] = useState('');
+  const isAdmin = user.teamIds.filter(team => team.team_id == currentGroup._id)[0].role == "Admin"
   useEffect(() => {
     const fetchUsersInCurrentTeam = async () => {
       try {
-        const response = await fetch("http://172.31.221.50:8084/users"); // Update the URL
+        const response = await fetch(Config.BACKEND + "users"); // Update the URL
         const data = await response.json();
         if (response.ok) {
           const usersInTeam = data.data.filter(user => currentGroup.usersList.includes(user._id));
 
           setUsers(usersInTeam); // Set state with users only in the current team
           setMemberExistsMessage("");
-          setMemberEmail("");
+     
         } else {
 
           console.error("Error fetching user:", data.message);
@@ -50,9 +46,15 @@ const UsersScreen = () => {
         console.error("Error fetching user:", error.message);
       }
     };
+    const refreshTimer = setInterval(() => {
+      // Trigger a re-render by updating the state
+      setRefreshKey((prevKey) => prevKey + 1);
+    }, 500);
 
     fetchUsersInCurrentTeam();
-  }, [currentGroup]); 
+    return () => clearInterval(refreshTimer);
+
+  }, [refreshKey]); 
 
   const toggleEditMode = () => {
     setEditMode(!editMode);
@@ -60,13 +62,12 @@ const UsersScreen = () => {
   const deleteUser = async (index) => {
     try {
       const userToDelete = users[index];
-      const currentT = await currT();
       // Remove the user ID from the current team's usersList
       const updatedUsersList = currentGroup.usersList.filter(
         userId => userId !== userToDelete._id
       );
       // Update the current team's usersList without the deleted user ID
-      await fetch(`http://172.31.221.50:8084/teams/${currentGroup._id}`, {
+      await fetch(Config.BACKEND + `teams/${currentGroup._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -83,7 +84,7 @@ const UsersScreen = () => {
       setCurrentGroup(updatedCurrentGroup);
       const updatedTeamIds = userToDelete.teamIds.filter(team => updatedCurrentGroup._id !== team.team_id)
       console.log(updatedTeamIds)
-      await fetch(`http://172.31.221.50:8084/users/${userToDelete._id}`, {
+      await fetch(  Config.BACKEND + `users/${userToDelete._id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -97,19 +98,17 @@ const UsersScreen = () => {
   };
  
   const handleConfirmAddMember = async () => {
-    const currentT = await currT();
-    const response = await fetch(`http://172.31.221.50:8084/users/email/${memberEmail}`);
-    const data = await response.json();
-    console.log(data); // Inspect the structure of the response data
-
-    if (!response.ok) {
+    const res = await fetch(Config.BACKEND + "users");
+    const da = await res.json();
+    const addedUser = da.data.filter(user => user.email === memberEmail)
+    if (addedUser.length == 0) {
       console.log("User not found with this email");
       // Handle the case where the user is not found with the entered email
       setModalVisible(false); // Close the modal after handling
       setMemberEmail(''); // Clear the email input
       return;
     }
-    const userId = data.data._id; // Retrieve the userId from the response data
+    const userId = addedUser[0]._id; // Retrieve the userId from the response data
     // Check if userId already exists in the current team's usersList
     if (currentGroup.usersList.includes(userId)) {
         console.log("Member already exists in the team");
@@ -122,7 +121,7 @@ const UsersScreen = () => {
       const updatedUsersList = [...currentGroup.usersList, userId];
       console.log(updatedUsersList)
       // Update the current team's usersList with the new userId
-      await fetch(`http://172.31.221.50:8084/teams/${currentGroup._id}`, {
+      await fetch( `${Config.BACKEND}teams/${currentGroup._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -135,7 +134,7 @@ const UsersScreen = () => {
         usersList: updatedUsersList, // Update usersList with the new value
       };
       setCurrentGroup(updatedCurrentGroup);
-      const updatedResponse = await fetch("http://172.31.221.50:8084/users");
+      const updatedResponse = await fetch(Config.BACKEND + "users");
       const updatedUserData = await updatedResponse.json();
       const newTeamIds = {
         team_id: updatedCurrentGroup._id,
@@ -146,10 +145,10 @@ const UsersScreen = () => {
       }
 
       // Update the user's teamIds by adding the team ID to their teamIds array
-    const updatedTeamIds = [...data.data.teamIds, newTeamIds];
+    const updatedTeamIds = [...addedUser[0].teamIds, newTeamIds];
 
     // Update the user's teamIds field with the new team ID
-    await fetch(`http://172.31.221.50:8084/users/${userId}`, {
+    await fetch(`${Config.BACKEND}users/${userId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -173,7 +172,7 @@ const UsersScreen = () => {
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.headerContainer}>
         <Text style={styles.header}>Team Management</Text>
-          {(currentUser == "Admin") &&(<TouchableOpacity onPress={toggleEditMode} style={styles.editButton}>
+          {(isAdmin) &&(<TouchableOpacity onPress={toggleEditMode} style={styles.editButton}>
             <FontAwesome5 name={editMode ? 'check' : 'user-edit'} size={25} color="black" />
           </TouchableOpacity>)}
           <View style={styles.teamInfo}>
@@ -184,9 +183,11 @@ const UsersScreen = () => {
       {users.map((user, index) => (
         <View key={index} style={styles.memberContainer}>
           <Text style={styles.memberName}>{user.user_name}</Text>
+
           {user.teamIds.filter(team => team.team_id === currentGroup._id).map((team, teamIndex) => (
-            
+
             <View key={teamIndex}>
+
               <Text>{team.total_points}</Text>
               <Text>{team.role}</Text>
               

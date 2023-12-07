@@ -2,7 +2,6 @@ import React, { useEffect, useState ,createContext, useContext} from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Modal, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { GroupContext } from './team_context'; // Adjust the import path accordingly
-import { useIsFocused } from '@react-navigation/native';
 
 
 import Config from "./env";
@@ -19,12 +18,6 @@ const Dashboard = ({user:user, setUser: setUser}) => {
     
     const fetchTeam = async () =>{
       try{
-        console.log(Config.BACKEND)
-        const respond = await fetch(Config.BACKEND + "users/656c067a87765679dbdc93eb");
-    if (!respond.ok) {
-      throw new Error(`Failed to fetch user data. Status: ${respond.status}`);
-    }
-    const data = await respond.json();
 
     const respond1 = await fetch(Config.BACKEND + "teams");
     if (!respond1.ok) {
@@ -71,7 +64,7 @@ const Dashboard = ({user:user, setUser: setUser}) => {
     setCurrentGroup(group)
 
     // Navigate to Users screen with parameters
-    navigation.navigate('Users',{currentTeam: group});
+   // navigation.navigate('Users',{currentTeam: group});
   };
   const handleCreateTeamPress = () => {
     setModalVisible(true);

@@ -16,7 +16,7 @@ import {
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-
+import { createStackNavigator } from '@react-navigation/stack';
 import LoginView from "./LoginView";
 import HomeScreen from "./home";
 import UsersScreen from "./team";
@@ -33,6 +33,7 @@ import { GroupProvider } from './team_context';
 
 const Tab = createBottomTabNavigator();
 const UserContext = createContext();
+const Stack = createStackNavigator(); // Import createStackNavigator from '@react-navigation/stack'
 
 
 const CustomTabBarButton = ({ children, onPress, focused }) => (
@@ -86,13 +87,14 @@ const App = () => {
   
 
   return (
+    
     <GroupProvider>
 
     <UserContext.Provider>
     <SafeAreaProvider>
        
     <NavigationContainer>
-      
+    
       <Tab.Navigator
          screenOptions={{
           tabBarStyle: { /* Your tab bar styles */ },
@@ -100,10 +102,10 @@ const App = () => {
           headerShown: false,
         }}
       >
-      {CustomTabScreen("Dashboard", Dashboard, "tachometer-alt")}
+      {CustomTabScreen("Dashboard", Dashboard, "tachometer-alt",{user:user, setUser: setUser})}
       {CustomTabScreen("Home", HomeScreen, "home", {setUser: setUser})}
-      {CustomTabScreen("Users", UsersScreen, "users")}
-      {CustomTabScreen("Tasks", TaskScreen, "tasks")}
+      {CustomTabScreen("Users", UsersScreen, "users",{user:user, setUser:setUser})}
+      {CustomTabScreen("Tasks", TaskScreen, "tasks",{user:user, setUser: setUser})}
       {CustomTabScreen("Trophy", Leaderboard, "trophy")}
       {CustomTabScreen("Gift", GiftScreen, "gift", {user: user, setUser: setUser})}
       {CustomTabScreen("Profile", ProfileScreen, "user-alt")}
