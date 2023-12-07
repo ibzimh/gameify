@@ -44,6 +44,7 @@ function RegisterView({setUser: setUser}) {
   const genders = ["Male", "Female", "Transgender", "Nonbinary"];
 
   const submit = () => {
+    console.log("Submitting registration form...");
     function isValidDate(str) {
       let [day, month, year] = str.split("/");
       return /^(\d{2})\/(\d{2})\/(\d{4})$/.test(str) && day <= 31 && month <= 12;
@@ -239,7 +240,7 @@ function RegisterView({setUser: setUser}) {
               value={password}
               onChangeText={(text) => setPassword(text)}
             />
-            <TouchableOpacity style={styles.submit} onPress={() => submit()} disabled={!username || !password}>
+            <TouchableOpacity style={styles.submit} onPress={submit} disabled={!username || !password}>
               <Text style={styles.loginText}>Submit</Text>
             </TouchableOpacity>
           </View>
