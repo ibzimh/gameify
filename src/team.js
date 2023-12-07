@@ -14,7 +14,13 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import Config from "./env";
 
 
-const UsersScreen = ({user: user, setUser: setUser}) => {
+const currT = async () => {
+  const res = await fetch(Config.BACKEND + "teams/6563b623779f11fb0b7d594d");
+  const da= await res.json();
+  return  da;
+}
+const currentUser = "Admin"
+const UsersScreen = () => {
   const {currentGroup, setCurrentGroup } = useContext(GroupContext);
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -84,7 +90,7 @@ const UsersScreen = ({user: user, setUser: setUser}) => {
       setCurrentGroup(updatedCurrentGroup);
       const updatedTeamIds = userToDelete.teamIds.filter(team => updatedCurrentGroup._id !== team.team_id)
       console.log(updatedTeamIds)
-      await fetch(  Config.BACKEND + `users/${userToDelete._id}`, {
+      await fetch(Config.BACKEND + `users/${userToDelete._id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -98,10 +104,12 @@ const UsersScreen = ({user: user, setUser: setUser}) => {
   };
  
   const handleConfirmAddMember = async () => {
-    const res = await fetch(Config.BACKEND + "users");
-    const da = await res.json();
-    const addedUser = da.data.filter(user => user.email === memberEmail)
-    if (addedUser.length == 0) {
+    const currentT = await currT();
+    const response = await fetch(Config.BACKEND + `users/email/${memberEmail}`);
+    const data = await response.json();
+    console.log(data); // Inspect the structure of the response data
+
+    if (!response.ok) {
       console.log("User not found with this email");
       // Handle the case where the user is not found with the entered email
       setModalVisible(false); // Close the modal after handling
@@ -121,7 +129,7 @@ const UsersScreen = ({user: user, setUser: setUser}) => {
       const updatedUsersList = [...currentGroup.usersList, userId];
       console.log(updatedUsersList)
       // Update the current team's usersList with the new userId
-      await fetch( `${Config.BACKEND}teams/${currentGroup._id}`, {
+      await fetch(Config.BACKEND + `teams/${currentGroup._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -148,7 +156,7 @@ const UsersScreen = ({user: user, setUser: setUser}) => {
     const updatedTeamIds = [...addedUser[0].teamIds, newTeamIds];
 
     // Update the user's teamIds field with the new team ID
-    await fetch(`${Config.BACKEND}users/${userId}`, {
+    await fetch(Config.BACKEND + `users/${userId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
