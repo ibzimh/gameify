@@ -1,20 +1,15 @@
 import React, { useEffect, useState ,createContext, useContext} from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Modal, TextInput } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { GroupContext } from './team_context'; // Adjust the import path accordingly
-import { useIsFocused } from '@react-navigation/native';
 
 
 import Config from "./env";
 
-const Dashboard = ({user:user, setUser: setUser}) => {
- const navigation = useNavigation(); 
+const DashboardScreen = ({user:user, setUser: setUser, setTeams: setTeams}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [teamName, setTeamName] = useState('');
   const [team,setTeam] = useState([]);
-  const { currentGroup,setCurrentGroup } = useContext(GroupContext);
-  
-
+  const {setCurrentGroup } = useContext(GroupContext);
   useEffect(() => {
     
     const fetchTeam = async () =>{
@@ -37,36 +32,15 @@ const Dashboard = ({user:user, setUser: setUser}) => {
     console.error("Error fetching data:", error.message);
     }
   };
-  
 
     fetchTeam();
-
   }, []);
   
   const handleGroupPress = (group) => {
+    
+    setTeams(true)
+   setCurrentGroup(group)
 
-    if (
-      currentGroup &&
-      currentGroup._id === group._id &&
-      !currentGroup.id
-    ) {
-      group = currentGroup;
-    }
-  
-    // Update the team when the group changes (only update usersList for the selected team)
-    setTeam(prevTeam => {
-      return prevTeam.map(item => {
-        if (currentGroup && (item._id === currentGroup._id)  ) {
-          return { ...item, usersList: currentGroup.usersList };
-        }
-        return item;
-      });
-    });
-    console.log(team)
-    setCurrentGroup(group)
-
-    // Navigate to Users screen with parameters
-    navigation.navigate('Users',{currentTeam: group});
   };
   const handleCreateTeamPress = () => {
     setModalVisible(true);
@@ -98,6 +72,7 @@ const Dashboard = ({user:user, setUser: setUser}) => {
         achievement:null,
         status:"Active"
       }
+
       // Update the teamIds field of the current user
       const updatedUser = {
         ...user, // Assuming user holds the current user's data
@@ -119,6 +94,7 @@ const Dashboard = ({user:user, setUser: setUser}) => {
     } catch (error) {
       console.error('Error creating team:', error.message);
     }
+
   };
 
   return (
@@ -285,4 +261,4 @@ const styles = StyleSheet.create({
   // ...add any other styles you might need
 });
 
-export default Dashboard;
+export default DashboardScreen;

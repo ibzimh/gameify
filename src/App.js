@@ -16,7 +16,7 @@ import {
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-
+import { createStackNavigator } from '@react-navigation/stack';
 import LoginView from "./LoginView";
 import HomeScreen from "./home";
 import UsersScreen from "./team";
@@ -27,7 +27,7 @@ import GiftScreen from './reward';
 import TaskScreen from './create_task'; 
 import Dashboard from './dashboard';
 import { GroupProvider } from './team_context'; 
-
+import DashBoardScreen from './dashboardScreen';
 
 
 
@@ -72,7 +72,7 @@ const CustomTabScreen = (name, Component, iconName, props) => {
 const App = () => {
 
   const [user, setUser] = useState(null);
- 
+  const [teams,setTeams] = useState(null)
 
   if (!user) { 
     return (
@@ -81,18 +81,29 @@ const App = () => {
       </View>
     );
   }
-  
+  if (!teams) {
+    return (
+      <GroupProvider>
+
+      <View style={styles.container}>
+        <DashBoardScreen user = {user} setUser={setUser} setTeams = {setTeams}/>
+      </View>
+      </GroupProvider>
+    )
+  }
+
 
   
 
   return (
+    
     <GroupProvider>
 
     <UserContext.Provider>
     <SafeAreaProvider>
        
     <NavigationContainer>
-      
+    
       <Tab.Navigator
          screenOptions={{
           tabBarStyle: { /* Your tab bar styles */ },
@@ -100,10 +111,10 @@ const App = () => {
           headerShown: false,
         }}
       >
-      {CustomTabScreen("Dashboard", Dashboard, "tachometer-alt")}
+      {CustomTabScreen("Dashboard", Dashboard, "tachometer-alt",{user:user, setUser: setUser})}
       {CustomTabScreen("Home", HomeScreen, "home", {setUser: setUser})}
-      {CustomTabScreen("Users", UsersScreen, "users")}
-      {CustomTabScreen("Tasks", TaskScreen, "tasks")}
+      {CustomTabScreen("Users", UsersScreen, "users",{user:user, setUser:setUser})}
+      {CustomTabScreen("Tasks", TaskScreen, "tasks",{user:user, setUser: setUser})}
       {CustomTabScreen("Trophy", Leaderboard, "trophy")}
       {CustomTabScreen("Gift", GiftScreen, "gift", {user: user, setUser: setUser})}
       {CustomTabScreen("Profile", ProfileScreen, "user-alt")}
