@@ -42,7 +42,7 @@ const CustomTabBarButton = ({ children, onPress, focused }) => (
       height: 70,
       justifyContent: "center",
       alignItems: "center",
-      backgroundColor: focused ? "#FF69B4" : "#ADD8E6",
+      backgroundColor: focused ? "#f0f0f0" : "#ADD8E6",
       borderRadius: 15,
       marginHorizontal: 5,
     }}

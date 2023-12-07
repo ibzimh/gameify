@@ -54,7 +54,8 @@ const Leaderboard = () => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    padding: 24,
+    marginTop: 24,
   },
   headerContainer: {
     marginBottom: 20,

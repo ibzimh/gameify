@@ -32,6 +32,13 @@ export default class UserProfileView extends Component {
             <Text style={styles.headtText}>Team Burger</Text>
             <Text style={styles.SubjectText}>Total Points: 500 </Text>
           </Pressable>
+          {/*Logout Button*/}
+          <Pressable style={styles.btn}>
+            <Text style={styles.text}>Logout</Text>
+          </Pressable>
+          <Pressable style={styles.btn}>
+            <Text style={styles.text}>Change Password</Text>
+          </Pressable>
         </View>
       </View>
     );
@@ -102,14 +109,15 @@ const styles = StyleSheet.create({
     fontWeight: "600"
   },
   btn: {
-    marginTop: 20,
-    backgroundColor: "#3B525F",
+    marginTop: 80,
+    backgroundColor: "#6495ed",
     borderRadius: 10,
     width: 200,
     height: 50,
     alignItems: "center",
     padding: "6px",
-    elevation: 3
+    justifyContent: "center",
+    elevation: 3,
   },
   body: {
     backgroundColor: "white",
@@ -118,7 +126,9 @@ const styles = StyleSheet.create({
   },
   text: {
     color: "white",
-    margin: 10
+    margin: 10,
+    fontWeight: "bold",
+    fontSize: 20,
   },
   RectangleShapeView: {
     marginTop: 20,

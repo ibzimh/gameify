@@ -34,7 +34,7 @@ function LoginView({setUser: setUser}) {
       alignItems: 'center',
       height: 100,
       backgroundColor: '#F5F5F5',
-      borderRadius: 25,
+      borderRadius: 24,
       display: 'flex',
       paddingTop: 20,
       paddingRight: 20,
@@ -46,7 +46,7 @@ function LoginView({setUser: setUser}) {
       borderWidth: 1,
       borderStyle: 'solid',
       borderColor:'#2b2684',
-      borderRadius: 15,
+      borderRadius: 14,
       fontWeight: 'bold',
       display: 'flex',
       alignItems: 'center',
@@ -57,37 +57,19 @@ function LoginView({setUser: setUser}) {
       transition: 0.5,
       // width: 20,
       marginTop: 10,
-      paddingTop: 5,
-      paddingRight: 15,
-      paddingBottom: 5,
-      paddingLeft: 15,
-    },
-    register: {
-      height: 25,
-      display: 'flex',
-      alignItems: 'center',
-      backgroundColor: 'white',
-      borderWidth: 1,
-      borderStyle: 'solid',
-      borderColor:'#2b2684',
-      borderRadius: 10,
-      justifyContent: 'center',
-      color: '#2b2684',
-      transition: 0.5,
-      paddingTop: 5,
-      paddingRight: 15,
-      paddingBottom: 5,
-      paddingLeft: 15,
-      marginLeft: 10,
+      paddingTop: 12,
+      paddingRight: 14,
+      paddingBottom: 12,
+      paddingLeft: 14,
     },
     googleButton: {
       width: 20,
+      height: 20,
       marginRight: 10,
     },
     registerText: {
       color: '#2b2684',
       textAlign: 'center',
-      fontSize: 10,
       fontWeight: 'bold',
     },
     loginText: {
@@ -246,7 +228,9 @@ function LoginView({setUser: setUser}) {
               value={password}
               onChangeText={(text) => setPassword(text)}
             />  
-            <TouchableOpacity style={styles.submit} onPress={() => handleManualLogin(username, password, setUser)} disabled={!username || !password}>
+          </View>
+          <View>
+          <TouchableOpacity style={styles.submit} onPress={() => handleManualLogin(username, password, setUser)} disabled={!username || !password}>
               <Text style={styles.loginText}>Submit</Text>
             </TouchableOpacity>
           </View>
@@ -255,8 +239,8 @@ function LoginView({setUser: setUser}) {
         {/* Register */}
         <View style={{ flexDirection: 'row' }}>
           <Text style={styles.loginText}>Don't have an account?</Text>
-          <TouchableOpacity style={styles.register} onPress={() => {setRegisterScreen(true)}}>
-              <Text style={styles.registerText}>Register</Text>
+          <TouchableOpacity style={styles.loginText} onPress={() => {setRegisterScreen(true)}}>
+              <Text style={styles.registerText}> Register</Text>
           </TouchableOpacity>
         </View>
 
