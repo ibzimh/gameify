@@ -14,8 +14,7 @@ const currentUser = {
   status: "Active",
 };
 
-const GiftScreen = ({user: user, setUser: setUser}) => {
-  // setUser is just the react state hook for updating the user object in react; it won't update it in the database
+const GiftScreen = () => {
   const [teamPoints, setTeamPoints] = useState(0);
   const [completedTasks, setCompletedTasks] = useState([]);
   const [items, setItems] = useState([]);
@@ -111,9 +110,9 @@ const GiftScreen = ({user: user, setUser: setUser}) => {
 
   return (
     <View style={styles.container}>
-      {/* Display Team Points */}
-      <View style={styles.totalPointsBox}>
-        <Text style={styles.totalPointsText}>Team Points: {teamPoints}</Text>
+      {/* Team Points Container */}
+      <View style={styles.teamPointsContainer}>
+        <Text style={styles.teamPointsText}>Team Points: {teamPoints}</Text>
       </View>
 
       {/* Display Completed Tasks */}
@@ -124,11 +123,6 @@ const GiftScreen = ({user: user, setUser: setUser}) => {
             {task.title}
           </Text>
         ))}
-      </View>
-
-      {/* Section Title */}
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>Available Items:</Text>
       </View>
 
       {/* List of Items */}
@@ -160,8 +154,20 @@ const GiftScreen = ({user: user, setUser: setUser}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
     backgroundColor: "#fffeff",
+  },
+  teamPointsContainer: {
+    backgroundColor: "#6495ed",
+    width: "100%",
+    height: "24%",
+    justifyContent: "center",
+    alignItems: "left",
+  },
+  teamPointsText: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: "#fff",
+    marginLeft: 20,
   },
   titleContainer: {
     width: 214,
@@ -178,46 +184,28 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
   },
-  // Outer Circle Styles
-  outerCircle: {
-    width: 190,
-    height: 190,
-    flexShrink: 0,
-    backgroundColor: "#5f43b2",
+  completedTasksBox: {
+    width: 214,
+    height: 54,
+    borderRadius: 20,
+    backgroundColor: "#fffeff",
+    alignItems: "left",
     justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 90,
+    marginHorizontal: 16,
+    marginBottom: 20,
     marginTop: 20,
   },
-  // Inner Circle Styles
-  innerCircle: {
-    width: 160,
-    height: 160,
-    flexShrink: 0,
-    backgroundColor: "#FFF",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 80,
-  },
-  score: {
-    color: "#3a3153",
-    textAlign: "center",
-    fontSize: 32,
-    fontStyle: "normal",
-    fontWeight: "700",
-  },
-  points: {
-    color: "#3a3153",
-    textAlign: "center",
-    fontSize: 20,
-    fontStyle: "normal",
-    fontWeight: "500",
+  completedTasksText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
+    marginTop: 10,
   },
   itemBox: {
     borderWidth: 1,
-    borderColor: "#6C19FF",
+    borderColor: "#6495ed",
     padding: 10,
-    marginTop: 10,
+    marginTop: 12,
     marginBottom: 14,
     backgroundColor: "rgba(255, 255, 255, 0.90)",
     borderRadius: 10,
@@ -244,16 +232,6 @@ const styles = StyleSheet.create({
     fontStyle: "normal",
     fontWeight: "400",
   },
-  totalPointsBox: {
-    backgroundColor: "#FFECFB",
-    width: 214,
-    height: 54,
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    marginHorizontal: 16,
-    marginTop: 20,    
-  }, 
   modalContainer: {
     flex: 1,
     justifyContent: "center",
@@ -269,9 +247,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 20,
     textAlign: "center",
-  },   
+  },
   redeemedItem: {
-    backgroundColor: "#FF69B4", // Change the color to pink for redeemed items
+    backgroundColor: "#FF69B4",
   },
   redeemedText: {
     color: "#FFF",

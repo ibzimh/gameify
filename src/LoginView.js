@@ -98,6 +98,7 @@ function LoginView({setUser: setUser}) {
     input: {
       height: 40,
       borderWidth: 1,
+      width: 200,
       borderStyle: 'solid',
       borderColor: '#2b2684',
       borderRadius: 15,
