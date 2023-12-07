@@ -80,24 +80,30 @@ const HomeScreen = ({ setUser: setUser }) => {
 
   const handleDelete = async (itemID) => {
     try {
-
       await fetch(Config.BACKEND + `chores/${itemID}`, {
-
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ id: itemID }),
       });
+      const completedTask = tasks.find((task) => task._id === itemID);
       setRefreshKey((prevKey) => prevKey + 1);
       setSelectedTask(null); // Clear the selected task after deletion
       setIsModalVisible(false); // Close the modal after deletion
+      setUser((prevUser) => ({
+        ...prevUser,
+        total_point: prevUser.total_point + completedTask.points,
+      }));
     } catch (error) {
       console.error("Error:", error);
-      Alert.alert("Error", "An unexpected error occurred. Please try again.");
+      Alert.alert(
+        "Error",
+        "An unexpected error occurred. Please try again."
+      );
     }
   };
-
+  
   // const toggleModal = (task) => {
   //   setSelectedTask(task);
   //   setIsModalVisible(!isModalVisible);

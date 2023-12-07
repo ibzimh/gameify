@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     fontWeight: "600"
   },
   btn: {
-    marginTop: 80,
+    marginTop: 40,
     backgroundColor: "#6495ed",
     borderRadius: 10,
     width: 200,

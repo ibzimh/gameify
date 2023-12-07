@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal, Button } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  Button,
+} from "react-native";
 
 const currentUser = {
   _id: "655130639407a73e835e4ac3",
@@ -27,7 +35,9 @@ const GiftScreen = () => {
     const fetchGiftData = async () => {
       try {
         // Fetch user data including teamIds
-        const userResponse = await fetch(`http://10.0.0.218:8081/users/${currentUser._id}`);
+        const userResponse = await fetch(
+          `http://10.0.0.218:8081/users/${currentUser._id}`
+        );
         const userData = await userResponse.json();
         const userTeamIds = userData.data.teamIds;
 
@@ -36,29 +46,36 @@ const GiftScreen = () => {
         const teamsData = await teamsResponse.json();
 
         // Find the selected team based on user's teamIds
-        const selectedTeamData = teamsData.data.find(team => userTeamIds.includes(team._id));
+        const selectedTeamData = teamsData.data.find((team) =>
+          userTeamIds.includes(team._id)
+        );
         setSelectedTeam(selectedTeamData);
 
         // Fetch rewards data for the selected team
-        const rewardsResponse = await fetch(`http://10.0.0.218:8081/rewards/team/${selectedTeamData._id}`);
+        const rewardsResponse = await fetch(
+          `http://10.0.0.218:8081/rewards/team/${selectedTeamData._id}`
+        );
         const rewardsData = await rewardsResponse.json();
         setItems(rewardsData.data);
 
         // Fetch team points and completed tasks
-        const teamPointsResponse = await fetch(`http://10.0.0.218:8081/team/${selectedTeamData._id}/points`);
+        const teamPointsResponse = await fetch(
+          `http://10.0.0.218:8081/team/${selectedTeamData._id}/points`
+        );
         const teamPointsData = await teamPointsResponse.json();
         setTeamPoints(teamPointsData.points);
 
-        const completedTasksResponse = await fetch(`http://10.0.0.218:8081/user/${currentUser._id}/tasks`);
+        const completedTasksResponse = await fetch(
+          `http://10.0.0.218:8081/user/${currentUser._id}/tasks`
+        );
         const completedTasksData = await completedTasksResponse.json();
         setCompletedTasks(completedTasksData.tasks);
+                setCompletedTasks(completedTasksData.tasks);
       } catch (error) {
         console.error("Error fetching gifts:", error.message);
-        // if there's an error, set an empty array
         setItems([]);
       }
     };
-
     fetchGiftData();
   }, []);
 
@@ -77,7 +94,7 @@ const GiftScreen = () => {
     const updatedUser = {
       ...currentUser,
       total_point: newPoints,
-      achievement: selectedReward.reward_name, 
+      achievement: selectedReward.reward_name,
     };
 
     // update the state with the new points
@@ -93,17 +110,15 @@ const GiftScreen = () => {
         styles.itemBox,
         redeemedItems.includes(item._id) ? styles.redeemedItem : null,
       ]}
-      onPress={() => {
-        setSelectedReward(item);
-        setRedeemModalVisible(true);
-      }}
     >
       <Text style={styles.itemName}>{item.reward_name}</Text>
       <View style={styles.pointsRequired}>
         <Text style={styles.itemPoints}>{item.points} points</Text>
       </View>
       {redeemedItems.includes(item._id) && (
-        <Text style={styles.redeemedText}>Redeemed by {currentUser.user_name}</Text>
+        <Text style={styles.redeemedText}>
+          Redeemed by {currentUser.user_name}
+        </Text>
       )}
     </TouchableOpacity>
   );
@@ -126,7 +141,11 @@ const GiftScreen = () => {
       </View>
 
       {/* List of Items */}
-      <FlatList data={items} keyExtractor={(item) => item._id.toString()} renderItem={renderItem} />
+      <FlatList
+        data={items}
+        keyExtractor={(item) => item._id.toString()}
+        renderItem={renderItem}
+      />
 
       {/* Redeem Modal */}
       <Modal
@@ -140,10 +159,14 @@ const GiftScreen = () => {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalText}>
-              Are you sure you want to redeem {selectedReward ? selectedReward.name : ""}?
+              Are you sure you want to redeem{" "}
+              {selectedReward ? selectedReward.name : ""}?
             </Text>
             <Button title="Redeem" onPress={handleRedeem} />
-            <Button title="Cancel" onPress={() => setRedeemModalVisible(false)} />
+            <Button
+              title="Cancel"
+              onPress={() => setRedeemModalVisible(false)}
+            />
           </View>
         </View>
       </Modal>
