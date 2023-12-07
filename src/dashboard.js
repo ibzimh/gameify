@@ -8,7 +8,7 @@ import { useIsFocused } from '@react-navigation/native';
 import Config from "./env";
 
 const Dashboard = ({user:user, setUser: setUser}) => {
-  const navigation = useNavigation(); 
+ const navigation = useNavigation(); 
   const [modalVisible, setModalVisible] = useState(false);
   const [teamName, setTeamName] = useState('');
   const [team,setTeam] = useState([]);
@@ -19,12 +19,7 @@ const Dashboard = ({user:user, setUser: setUser}) => {
     
     const fetchTeam = async () =>{
       try{
-        console.log(Config.BACKEND)
-        const respond = await fetch(Config.BACKEND + "users/656c067a87765679dbdc93eb");
-    if (!respond.ok) {
-      throw new Error(`Failed to fetch user data. Status: ${respond.status}`);
-    }
-    const data = await respond.json();
+      
 
     const respond1 = await fetch(Config.BACKEND + "teams");
     if (!respond1.ok) {

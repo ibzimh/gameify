@@ -27,13 +27,12 @@ import GiftScreen from './reward';
 import TaskScreen from './create_task'; 
 import Dashboard from './dashboard';
 import { GroupProvider } from './team_context'; 
-
+import DashBoardScreen from './dashboardScreen';
 
 
 
 const Tab = createBottomTabNavigator();
 const UserContext = createContext();
-const Stack = createStackNavigator(); // Import createStackNavigator from '@react-navigation/stack'
 
 
 const CustomTabBarButton = ({ children, onPress, focused }) => (
@@ -73,7 +72,7 @@ const CustomTabScreen = (name, Component, iconName, props) => {
 const App = () => {
 
   const [user, setUser] = useState(null);
- 
+  const [teams,setTeams] = useState(null)
 
   if (!user) { 
     return (
@@ -82,7 +81,17 @@ const App = () => {
       </View>
     );
   }
-  
+  if (!teams) {
+    return (
+      <GroupProvider>
+
+      <View style={styles.container}>
+        <DashBoardScreen user = {user} setUser={setUser} setTeams = {setTeams}/>
+      </View>
+      </GroupProvider>
+    )
+  }
+
 
   
 

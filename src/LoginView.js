@@ -7,7 +7,6 @@ import URL from "url-parse";
 
 import Config from "./env";
 // import RegisterView from "./RegisterView";
-import Dashboard from "./dashboard";
 
 const loginProviders = {
   google: {
@@ -225,11 +224,7 @@ function LoginView({setUser: setUser}) {
       <RegisterView setUser={setUser} />
     );
   }
-  if (dashboardScreen) {
-    return (
-      <Dashboard setUser={setUser}/>
-    )
-  }
+ 
 
   return (
     <View style={styles.container}>
