@@ -10,8 +10,6 @@ const DashboardScreen = ({user:user, setUser: setUser, setTeams: setTeams}) => {
   const [teamName, setTeamName] = useState('');
   const [team,setTeam] = useState([]);
   const {setCurrentGroup } = useContext(GroupContext);
-  
-
   useEffect(() => {
     
     const fetchTeam = async () =>{
@@ -34,10 +32,8 @@ const DashboardScreen = ({user:user, setUser: setUser, setTeams: setTeams}) => {
     console.error("Error fetching data:", error.message);
     }
   };
-  
 
     fetchTeam();
-
   }, []);
   
   const handleGroupPress = (group) => {
@@ -76,6 +72,7 @@ const DashboardScreen = ({user:user, setUser: setUser, setTeams: setTeams}) => {
         achievement:null,
         status:"Active"
       }
+
       // Update the teamIds field of the current user
       const updatedUser = {
         ...user, // Assuming user holds the current user's data
@@ -91,7 +88,7 @@ const DashboardScreen = ({user:user, setUser: setUser, setTeams: setTeams}) => {
         },
         body: JSON.stringify({ teamIds: updatedUser.teamIds }), // Only send the updated teamIds
       });
-  
+      setUser(updatedUser)
       // Reset the input field and close the modal
       setModalVisible(false);
     } catch (error) {

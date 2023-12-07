@@ -133,6 +133,7 @@ const UsersScreen = ({user: user, setUser: setUser}) => {
         ...currentGroupState, // Maintain existing properties
         usersList: updatedUsersList, // Update usersList with the new value
       };
+      
       setCurrentGroup(updatedCurrentGroup);
       const updatedResponse = await fetch(Config.BACKEND + "users");
       const updatedUserData = await updatedResponse.json();

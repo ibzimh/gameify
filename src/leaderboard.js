@@ -20,7 +20,7 @@ const Leaderboard = () => {
         console.error("Error fetching users:", error.message);
       }
     };
-    fetchUsers();
+    fetchUsers();  
   }, []);
 
   return (

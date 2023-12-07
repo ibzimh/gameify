@@ -113,7 +113,7 @@ const Dashboard = ({user:user, setUser: setUser}) => {
         },
         body: JSON.stringify({ teamIds: updatedUser.teamIds }), // Only send the updated teamIds
       });
-  
+      setUser(updatedUser)
       // Reset the input field and close the modal
       setModalVisible(false);
     } catch (error) {
