@@ -28,6 +28,7 @@ const categoryRouter = require('./route/categoryRoute.js')
 const teamRouter = require('./route/teamRoute.js')
 
 app.use('/teams', teamRouter)
+
 app.use('/users', userRouter);
 app.use('/auth', authRouter);
 app.use('/chores', choreRouter);

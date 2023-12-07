@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import { Text, View, Button, Linking, StyleSheet, TouchableOpacity, TextInput } from "react-native";;
 
 import Config from "./env";
-// import { createUser } from "./handleUsers";
 
-const apiUrl = 'http://localhost:8084/auth';
+const apiUrl = Config.BACKEND + 'users';
 
 const createUser = async (email, password) => {
     try {

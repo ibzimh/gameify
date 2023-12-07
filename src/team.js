@@ -15,6 +15,7 @@ import Config from "./env";
 
 
 const UsersScreen = ({user: user, setUser: setUser}) => {
+
   const {currentGroup, setCurrentGroup } = useContext(GroupContext);
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -84,7 +85,8 @@ const UsersScreen = ({user: user, setUser: setUser}) => {
       setCurrentGroup(updatedCurrentGroup);
       const updatedTeamIds = userToDelete.teamIds.filter(team => updatedCurrentGroup._id !== team.team_id)
       console.log(updatedTeamIds)
-      await fetch(  Config.BACKEND + `users/${userToDelete._id}`, {
+      await fetch(Config.BACKEND + `users/${userToDelete._id}`, {
+
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -102,6 +104,7 @@ const UsersScreen = ({user: user, setUser: setUser}) => {
     const da = await res.json();
     const addedUser = da.data.filter(user => user.email === memberEmail)
     if (addedUser.length == 0) {
+
       console.log("User not found with this email");
       // Handle the case where the user is not found with the entered email
       setModalVisible(false); // Close the modal after handling
@@ -122,6 +125,7 @@ const UsersScreen = ({user: user, setUser: setUser}) => {
       console.log(updatedUsersList)
       // Update the current team's usersList with the new userId
       await fetch( `${Config.BACKEND}teams/${currentGroup._id}`, {
+
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -150,6 +154,7 @@ const UsersScreen = ({user: user, setUser: setUser}) => {
 
     // Update the user's teamIds field with the new team ID
     await fetch(`${Config.BACKEND}users/${userId}`, {
+
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
