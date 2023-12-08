@@ -191,17 +191,21 @@ const UsersScreen = ({user: user, setUser: setUser}) => {
           </View>
           <View style={styles.memberInfo}>
             <Text style={styles.memberName}>{user.user_name}</Text>
-            <Text style={styles.memberRole}>{user.role}</Text>
-          </View>
-          {user.teamIds.filter(team => team.team_id === currentGroup._id).map((team, teamIndex) => (
+            {user.teamIds.filter(team => team.team_id === currentGroup._id).map((team, teamIndex) => (
 
+              <View key={teamIndex}>
+
+                <Text style={styles.memberRole}>{team.role}</Text>
+                
+              </View>
+              ))}
+          </View>
+          
+          {user.teamIds.filter(team => team.team_id === currentGroup._id).map((team, teamIndex) => (
             <View key={teamIndex}>
               <View style={styles.pointsContainer}>
               <Text style={styles.points}>{team.total_points}pt</Text>
-              </View>
-
-              <Text>{team.role}</Text>
-              
+              </View>              
             </View>
           ))}
           {editMode && (
@@ -323,9 +327,10 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   memberRole: {
+    marginTop: 5,
     fontSize: 14,
     color: '#666',
-    marginLeft: 10,
+    justifyContent: 'center', // Center vertically if needed
   },
   footerButtons: {
     flexDirection: "row",
