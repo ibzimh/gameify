@@ -172,19 +172,25 @@ const UsersScreen = ({user: user, setUser: setUser}) => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.headerContainer}>
-        <Text style={styles.header}>Team Management</Text>
+        <Text style={styles.header}>{currentGroup.team_name}</Text>
           {(isAdmin) &&(<TouchableOpacity onPress={toggleEditMode} style={styles.editButton}>
             <FontAwesome5 name={editMode ? 'check' : 'user-edit'} size={25} color="black" />
           </TouchableOpacity>)}
           <View style={styles.teamInfo}>
-          <Text style={styles.teamHeader}>Name</Text>
-          <Text style={styles.pointsHeader}>Points</Text>
           </View>
       </View>
       {users.map((user, index) => (
         <View key={index} style={styles.memberContainer}>
-          <Text style={styles.memberName}>{user.user_name}</Text>
-
+          <View style={styles.avatar}>
+            <Text style={styles.avatarText}>{user.user_name[0]}</Text>
+          </View>
+          <View style={styles.memberInfo}>
+            <Text style={styles.memberName}>{user.user_name}</Text>
+            <Text style={styles.memberRole}>{user.role}</Text>
+          </View>
+          <View style={styles.pointsContainer}>
+            <Text style={styles.points}>{user.points}pt</Text>
+          </View>
           {user.teamIds.filter(team => team.team_id === currentGroup._id).map((team, teamIndex) => (
 
             <View key={teamIndex}>
@@ -263,26 +269,34 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   memberContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 15,
-    padding: 10,
-    borderColor: "#ccc",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    backgroundColor: '#FFF',
+    borderRadius: 30,
+    marginVertical: 8,
     borderWidth: 1,
-    borderRadius: 8,
+    borderColor: '#DDD',
+    elevation: 3,
+    shadowRadius: 2,
+    shadowOpacity: 0.1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 }
   },
   avatar: {
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: "#ddd",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 10,
+    backgroundColor: '#DDD',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   avatarText: {
     fontSize: 20,
     fontWeight: "bold",
+    color: '#555',
   },
   teamInfo: {
     marginTop:20,
@@ -294,35 +308,34 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderColor: '#ccc', 
   },
-  teamHeader: {
-    marginLeft:20,
-    fontWeight: 'bold',
-    flex: 2, 
-    fontSize:15,
-  },
-  pointsHeader: {
-    fontSize:15,
-    marginRight:20,
-    flex: 1, 
-    textAlign: 'right', 
+  points: {
+    fontSize: 16,
+    color: '#555',
     fontWeight: 'bold',
   },
   memberName: {
-    flex: 2,
     fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
   },
   memberRole: {
-    flex: 1,
-    fontSize: 16,
-    color: "#777",
+    fontSize: 14,
+    color: '#666',
+    marginLeft: 10,
   },
   footerButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: 20,
   },
+  memberInfo: {
+    flex: 1,
+    alignItems: 'center', // Center the name and role
+    justifyContent: 'center', // Center vertically if needed
+  },
   editButton: {
-    marginLeft:10,
+    fontSize: 14,
+    color: '#666',
   },
   deleteButton: {
     marginTop:-5,
@@ -342,6 +355,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  pointsContainer: {
+    backgroundColor: '#EAECEE',
+    borderRadius: 15,
+    paddingVertical: 7,
+    paddingHorizontal: 12,
   },
   modalContent: {
     backgroundColor: 'white',
