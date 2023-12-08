@@ -193,14 +193,13 @@ const UsersScreen = ({user: user, setUser: setUser}) => {
             <Text style={styles.memberName}>{user.user_name}</Text>
             <Text style={styles.memberRole}>{user.role}</Text>
           </View>
-          <View style={styles.pointsContainer}>
-            <Text style={styles.points}>{user.points}pt</Text>
-          </View>
           {user.teamIds.filter(team => team.team_id === currentGroup._id).map((team, teamIndex) => (
 
             <View key={teamIndex}>
+              <View style={styles.pointsContainer}>
+              <Text style={styles.points}>{team.total_points}pt</Text>
+              </View>
 
-              <Text>{team.total_points}</Text>
               <Text>{team.role}</Text>
               
             </View>

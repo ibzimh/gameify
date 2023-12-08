@@ -99,7 +99,7 @@ const App = () => {
     
     <GroupProvider>
 
-    <UserContext.Provider>
+    <UserContext.Provider value={{ user, setUser }}>
     <SafeAreaProvider>
        
     <NavigationContainer>
