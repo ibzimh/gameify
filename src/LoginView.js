@@ -8,7 +8,6 @@ import URL from "url-parse";
 import Config from "./env";
 import RegisterView from "./RegisterView";
 
-
 const loginProviders = {
   google: {
     title: "Google",
@@ -27,7 +26,7 @@ function LoginView({setUser: setUser}) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [registerScreen, setRegisterScreen] = useState(false);
-
+  const [dashboardScreen, setDashBoardScreen] = useState(false);
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -214,7 +213,9 @@ function LoginView({setUser: setUser}) {
     }
 
     getUserByEmail(username, password) // check if the user is authenticated
-      .then((user) => { setUser(user); }) // set the user
+      .then((user) => { 
+        setUser(user);
+       }) // set the user
       .catch((err) => console.log("Error checking user authentication:", err.message));
   }
 
@@ -223,6 +224,7 @@ function LoginView({setUser: setUser}) {
       <RegisterView setUser={setUser} />
     );
   }
+ 
 
   return (
     <View style={styles.container}>
