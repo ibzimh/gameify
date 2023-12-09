@@ -7,40 +7,36 @@ import {
   Modal,
   StyleSheet,
   TouchableOpacity,
-  Alert,
 } from "react-native";
+
+import Config from "./env";
 
 const HomeScreen = ({ setUser: setUser }) => {
   const [tasks, setTasks] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
-  // const [user, setUser] = useState(null);
 
-  const currentUser = {
-    _id: "655130639407a73e835e4ac3",
-    user_name: "Viet Truong",
-    teamIds: ["656012a3cb5dbe885bfc9ee1"],
-    role: "admin",
-    email: "vbtruong@umass.edu",
-    dob: "1990-01-01",
-    gender: "Male",
-    total_point: 100,
-    achievement: "Some achievement",
-    status: "Active",
-  };
-  const currentTeam = {
-    _id: "6563b623779f11fb0b7d594d",
-    team_name: "CS 320",
-    usersList: [],
-  };
+  // useEffect(() => {
+  //   const fetchChores = async () => {
+  //     try {
+  //       const response = await fetch(Config.BACKEND + "/chores");
+  //       //const response = await fetch(
+  //       //   Config.BACKEND + "chores"
+  //       // );
+  //       const data = await response.json();
+  //       setTasks(data.data);
+  //     } catch (error) {
+  //       console.error("Error fetching chores:", error.message);
+  //     }
+  //   };
+  //   fetchChores();
+  // }, []);
 
   useEffect(() => {
     const fetchChores = async () => {
       try {
-        const response = await fetch(
-          "http://gameify.us-east-1.elasticbeanstalk.com/chores"
-        );
+        const response = await fetch(Config.BACKEND + "chores");
         const data = await response.json();
         setTasks(data.data);
       } catch (error) {
@@ -64,9 +60,7 @@ const HomeScreen = ({ setUser: setUser }) => {
     // Fetch chores every time refreshKey changes
     const fetchChores = async () => {
       try {
-        const response = await fetch(
-          "http://gameify.us-east-1.elasticbeanstalk.com/chores"
-        );
+        const response = await fetch(Config.BACKEND + "chores");
         const data = await response.json();
         setTasks(data.data);
       } catch (error) {
@@ -80,23 +74,13 @@ const HomeScreen = ({ setUser: setUser }) => {
 
   const handleDelete = async (itemID) => {
     try {
-      await fetch(
-        `http://gameify.us-east-1.elasticbeanstalk.com/chores/${itemID}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ id: itemID }),
-        }
-      );
-
-      // const newPoints = currentUser.total_point + taskPoints;
-      // const updatedUser = {
-      //   ...currentUser,
-      //   total_point: newPoints,
-      // };
-
+      await fetch(Config.BACKEND + `chores/${itemID}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: itemID }),
+      });
       setRefreshKey((prevKey) => prevKey + 1);
       setSelectedTask(null); // Clear the selected task after deletion
       setIsModalVisible(false); // Close the modal after deletion
@@ -135,7 +119,7 @@ const HomeScreen = ({ setUser: setUser }) => {
         title={"Logout"}
         onPress={() => {
           // temporary button to skip login
-          setUser(false);
+          console.log(setUser(null));
         }}
       />
       <View style={styles.headerContainer}>
@@ -219,7 +203,6 @@ const HomeScreen = ({ setUser: setUser }) => {
     </ScrollView>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     padding: 16,
@@ -233,7 +216,7 @@ const styles = StyleSheet.create({
   },
   taskContainer: {
     marginBottom: 20,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#F0F0F0",
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#ccc",

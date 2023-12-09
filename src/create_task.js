@@ -1,22 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   View,
-  TextInput,
-  ScrollView,
-  TouchableOpacity,
-  StyleSheet,
   Text,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  Modal,
+  StyleSheet,
 } from "react-native";
+import Config from "./env";
+
 import { Calendar } from "react-native-calendars";
+import { GroupContext } from "./team_context"; // Adjust the import path accordingly
 
 const TaskScreen = () => {
+  const { currentGroup } = useContext(GroupContext);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [errorModalVisible, setErrorModalVisible] = useState(false); // New state for error modal
+
   const [task, setTask] = useState({
     title: "",
     description: "",
     points: "",
     deadline: "",
-    category: 0,
-    assign_to: 0,
+    teamId: currentGroup._id,
   });
 
   const handleInputChange = (key, value) => {
@@ -24,24 +31,35 @@ const TaskScreen = () => {
   };
 
   const handleDateSelect = (date) => {
-    handleInputChange("deadline", date.dateString);
-  };
+    const currentDate = new Date(); // Get the current date
+    const selectedDate = new Date(date.dateString); // Convert selected date to a Date object
+    // Check if the selected date is before the current date
+    if (selectedDate < currentDate) {
+      // Show an alert or perform any desired action to notify the user
+      console.log("Please select a future date.");
+      setErrorModalVisible(true); // Show error modal
 
+      // You can choose to handle this situation in various ways, such as resetting the deadline or showing an error message to the user.
+      // For example:
+      // setTask({ ...task, deadline: '' }); // Reset the deadline
+    } else {
+      handleInputChange("deadline", date.dateString);
+    }
+  };
   const handleCreateTask = async () => {
     console.log("Sending POST request...");
     const data = {
       chore_name: task.title,
       description: task.description,
       due_date: task.deadline,
-      assign_to: parseInt(task.assign_to),
-      category: parseInt(task.category),
       points: parseInt(task.points),
+      teamId: currentGroup._id,
     };
 
     console.log("Task:", data);
 
     try {
-      const response = await fetch("http://172.31.129.224:8081/chores/add", {
+      await fetch(Config.BACKEND + "chores/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -51,15 +69,13 @@ const TaskScreen = () => {
 
       const responseData = await response.json();
 
-      console.log(responseData);
+      setModalVisible(true);
 
       setTask({
         title: "",
         description: "",
         points: "",
         deadline: "",
-        category: 0,
-        assign_to: 0,
       });
     } catch (error) {
       console.error("Error:", error);
@@ -73,9 +89,9 @@ const TaskScreen = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.headerContainer}>
-        <Text style={styles.header}>Create a New Task</Text>
+        <Text style={styles.header}>Create Task</Text>
       </View>
-      <Text style={styles.taskDescription}>Task Name</Text>
+      <Text style={styles.taskName}>Task Name</Text>
       <TextInput
         style={styles.input}
         placeholder="Task Title"
@@ -110,6 +126,7 @@ const TaskScreen = () => {
         <Text style={styles.deadlineText}>Deadline:</Text>
         <Text style={styles.selectedDeadline}>{task.deadline}</Text>
       </TouchableOpacity>
+
       <Calendar
         onDayPress={handleDateSelect}
         markedDates={
@@ -128,44 +145,92 @@ const TaskScreen = () => {
         multiline
       />
       <TouchableOpacity style={styles.addButton} onPress={handleCreateTask}>
-        <Text style={styles.addButtonText}>+ Add Task</Text>
+        <Text style={styles.addButtonText}>Add</Text>
       </TouchableOpacity>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>Task created successfully!</Text>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => {
+                setModalVisible(!modalVisible);
+              }}
+            >
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={errorModalVisible}
+        onRequestClose={() => {
+          setErrorModalVisible(false);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>Please select a future date!</Text>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => {
+                setErrorModalVisible(false);
+              }}
+            >
+              <Text style={styles.closeButtonText}>OK</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 };
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    padding: 50,
-    backgroundColor: "#f0f0f0",
+    padding: 30,
+    backgroundColor: "white",
+    marginTop: 20,
   },
 
   addButton: {
     backgroundColor: "#007BFF",
     padding: 15,
-    borderRadius: 8,
+    borderRadius: 50,
     marginBottom: 50,
   },
 
   addButtonText: {
     color: "#fff",
-    fontSize: 18,
+    fontSize: 25,
     textAlign: "center",
+    fontWeight: "bold",
   },
 
   header: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: 30,
     textAlign: "center",
+    color: "#273746",
   },
-
   input: {
     height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
+    borderColor: "purple", // Change input border color
+    borderWidth: 2,
     marginBottom: 16,
-    paddingHorizontal: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    fontSize: 16,
   },
 
   pointsContainer: {
@@ -175,8 +240,10 @@ const styles = StyleSheet.create({
   },
 
   pointsText: {
+    color: "#273746",
     fontSize: 16,
     marginRight: 8,
+    fontWeight: "bold",
   },
 
   pointsButton: {
@@ -204,6 +271,8 @@ const styles = StyleSheet.create({
   },
 
   deadlineText: {
+    fontWeight: "bold",
+    color: "#273746",
     fontSize: 16,
     marginRight: 8,
   },
@@ -216,19 +285,71 @@ const styles = StyleSheet.create({
   calendar: {
     height: 300,
     marginBottom: 20,
+    borderRadius: 8,
   },
 
   taskDescription: {
+    color: "#273746",
+    marginTop: 50,
     fontSize: 16,
     marginBottom: 10,
+    fontWeight: "bold",
+  },
+  taskName: {
+    color: "#273746",
+    marginTop: 5,
+    fontSize: 16,
+    marginBottom: 10,
+    fontWeight: "bold",
   },
 
   descriptionInput: {
     height: 100,
     borderColor: "gray",
-    borderWidth: 1,
+    borderWidth: 2,
     marginBottom: 20,
     paddingHorizontal: 8,
+    borderRadius: 8,
+    borderColor: "purple",
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalText: {
+    marginBottom: 20,
+    textAlign: "center",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  closeButton: {
+    backgroundColor: "#007BFF",
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 10,
+  },
+  closeButtonText: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+    fontSize: 16,
   },
 });
 
