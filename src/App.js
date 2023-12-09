@@ -113,13 +113,14 @@ const App = () => {
                 headerShown: false,
               }}
             >
-              {CustomTabScreen("Dashboard", Dashboard, "tachometer-alt", { user, setUser })}
               {CustomTabScreen("Home", HomeScreen, "home", { setUser })}
               {CustomTabScreen("Users", UsersScreen, "users", { user, setUser })}
               {CustomTabScreen("Tasks", TaskScreen, "tasks", { user, setUser })}
               {CustomTabScreen("Trophy", Leaderboard, "trophy")}
               {CustomTabScreen("Gift", GiftScreen, "gift", { user, setUser })}
               {CustomTabScreen("Profile", ProfileScreen, "user-alt")}
+              {CustomTabScreen("Dashboard", Dashboard, "tachometer-alt", { user, setUser })}
+
             </Tab.Navigator>
           </NavigationContainer>
         </SafeAreaProvider>
