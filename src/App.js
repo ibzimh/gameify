@@ -28,6 +28,7 @@ import TaskScreen from './create_task';
 import Dashboard from './dashboard';
 import { GroupProvider } from './team_context'; 
 import DashBoardScreen from './dashboardScreen';
+import WelcomeScreen from './WelcomeScreen'; // Import the WelcomeScreen component
 
 
 
@@ -73,6 +74,11 @@ const App = () => {
 
   const [user, setUser] = useState(null);
   const [teams,setTeams] = useState(null)
+  const [showWelcome, setShowWelcome] = useState(true); // New state for showing the welcome screen
+
+  if (showWelcome) {
+    return <WelcomeScreen setShowWelcome={setShowWelcome} />;
+  }
 
   if (!user) { 
     return (
@@ -96,34 +102,30 @@ const App = () => {
   
 
   return (
-    
     <GroupProvider>
+      <UserContext.Provider value={{ user, setUser }}>
+        <SafeAreaProvider>
+          <NavigationContainer>
+            <Tab.Navigator
+              screenOptions={{
+                tabBarStyle: { /* Your tab bar styles */ },
+                tabBarShowLabel: false,
+                headerShown: false,
+              }}
+            >
+              {CustomTabScreen("Home", HomeScreen, "home", { setUser })}
+              {CustomTabScreen("Users", UsersScreen, "users", { user, setUser })}
+              {CustomTabScreen("Tasks", TaskScreen, "tasks", { user, setUser })}
+              {CustomTabScreen("Trophy", Leaderboard, "trophy")}
+              {CustomTabScreen("Gift", GiftScreen, "gift", { user, setUser })}
+              {CustomTabScreen("Profile", ProfileScreen, "user-alt")}
+              {CustomTabScreen("Dashboard", Dashboard, "tachometer-alt", { user, setUser })}
 
-    <UserContext.Provider>
-    <SafeAreaProvider>
-       
-    <NavigationContainer>
-    
-      <Tab.Navigator
-         screenOptions={{
-          tabBarStyle: { /* Your tab bar styles */ },
-          tabBarShowLabel: false,
-          headerShown: false,
-        }}
-      >
-      {CustomTabScreen("Dashboard", Dashboard, "tachometer-alt",{user:user, setUser: setUser})}
-      {CustomTabScreen("Home", HomeScreen, "home", {setUser: setUser})}
-      {CustomTabScreen("Users", UsersScreen, "users",{user:user, setUser:setUser})}
-      {CustomTabScreen("Tasks", TaskScreen, "tasks",{user:user, setUser: setUser})}
-      {CustomTabScreen("Trophy", Leaderboard, "trophy")}
-      {CustomTabScreen("Gift", GiftScreen, "gift", {user: user, setUser: setUser})}
-      {CustomTabScreen("Profile", ProfileScreen, "user-alt")}
-      </Tab.Navigator>
-    </NavigationContainer>
-    </SafeAreaProvider>
-    </UserContext.Provider>
+            </Tab.Navigator>
+          </NavigationContainer>
+        </SafeAreaProvider>
+      </UserContext.Provider>
     </GroupProvider>
-
   );
 };
 
