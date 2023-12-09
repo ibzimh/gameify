@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     fontSize: 14,
     color: '#666',
-    justifyContent: 'center', // Center vertically if needed
+    justifyContent: 'center', 
   },
   footerButtons: {
     flexDirection: "row",
