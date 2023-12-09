@@ -1,45 +1,38 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState ,createContext, useContext} from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Modal, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { GroupContext } from './team_context'; // Adjust the import path accordingly
+import { useIsFocused } from '@react-navigation/native';
 
-const currentUser = {
-  _id: "655130639407a73e835e4ac3",
-  user_name: "Viet Truong",
-  teamIds: ["655d3e1b6669b07181c0a468"], // Example team IDs associated with the user
-  role: "admin",
-  email: "vbtruong@umass.edu",
-  dob: "1990-01-01",
-  gender: "Male",
-  total_point: 100,
-  achievement: "Some achievement",
-  status: "Active",
-};
-const Dashboard = () => {
-  const navigation = useNavigation(); 
+
+import Config from "./env";
+
+const Dashboard = ({user:user, setUser: setUser}) => {
+ const navigation = useNavigation(); 
   const [modalVisible, setModalVisible] = useState(false);
   const [teamName, setTeamName] = useState('');
   const [team,setTeam] = useState([]);
- 
+  const { currentGroup,setCurrentGroup } = useContext(GroupContext);
+  
 
   useEffect(() => {
     
     const fetchTeam = async () =>{
       try{
-        const respond = await fetch("http://10.0.0.218:8081/users/656012a3cb5dbe885bfc9ee1");
-    if (!respond.ok) {
-      throw new Error(`Failed to fetch user data. Status: ${respond.status}`);
-    }
-    const data = await respond.json();
+      
 
-    const respond1 = await fetch("http://10.0.0.218:8081/teams");
+    const respond1 = await fetch(Config.BACKEND + "teams");
     if (!respond1.ok) {
       throw new Error(`Failed to fetch teams. Status: ${respond1.status}`);
     }
+
     const data1 = await respond1.json();
 
-    const team_id = data.data.teamIds;
-    const currentTeam = data1.data.filter(team => team_id.includes(team._id));
+    const teamIds = user.teamIds.map(teamIdObj => teamIdObj.team_id);
+    const currentTeam = data1.data.filter(team => teamIds.includes(team._id));
+
     setTeam(currentTeam);
+
   } catch (error) {
     console.error("Error fetching data:", error.message);
     }
@@ -47,79 +40,115 @@ const Dashboard = () => {
   
 
     fetchTeam();
-  }, [team]);
-  // Function to handle navigation
-  const openGroup = (groupName) => {
-    // Navigate to TeamManagement screen with parameters
-    navigation.navigate('TeamManagement', { groupName });
-  };
 
-  const handleGroupPress = (groupName) => {
+  }, []);
+  
+  const handleGroupPress = (group) => {
+
+    if (
+      currentGroup &&
+      currentGroup._id === group._id &&
+      !currentGroup.id
+    ) {
+      group = currentGroup;
+    }
+  
+    // Update the team when the group changes (only update usersList for the selected team)
+    setTeam(prevTeam => {
+      return prevTeam.map(item => {
+        if (currentGroup && (item._id === currentGroup._id)  ) {
+          return { ...item, usersList: currentGroup.usersList };
+        }
+        return item;
+      });
+    });
+    console.log(team)
+    setCurrentGroup(group)
+
     // Navigate to Users screen with parameters
-    navigation.navigate('Users', { groupName });
+    navigation.navigate('Users',{currentTeam: group});
   };
   const handleCreateTeamPress = () => {
     setModalVisible(true);
   };
   const handleConfirmCreateTeam = async () => {
     try {
-      const response = await fetch("http://10.0.0.218:8081/teams/add", {
+
+      const response = await fetch(Config.BACKEND + "teams/add", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ team_name: teamName,usersList: ["656012a3cb5dbe885bfc9ee1"] }),
+        body: JSON.stringify({ team_name: teamName,usersList: [user._id] }),
       });
   
       if (!response.ok) {
         throw new Error('Failed to add team');
       }
-      const respond1 = await fetch("http://10.0.0.218:8081/users/656012a3cb5dbe885bfc9ee1")
-      const data = await respond1.json();
-      const user = data.data;      // Get the newly created team data
+
+     
       const newTeamData = await response.json();
       const newTeam = newTeamData.data;
-
       // Update the dashboard with the new team
       setTeam(prevTeam => [...prevTeam, newTeam]);
-  
+      const newGroup = {
+        team_id: newTeam._id,
+        role:"Admin",
+        total_points:0,
+        achievement:null,
+        status:"Active"
+      }
       // Update the teamIds field of the current user
       const updatedUser = {
-        ...user, // Assuming currentUser holds the current user's data
-        teamIds: [...user.teamIds, newTeam._id], // Add the new team ID to the user's teamIds
+        ...user, // Assuming user holds the current user's data
+        teamIds: [...user.teamIds, newGroup], // Add the new team ID to the user's teamIds
       };
   
       // Update the teamIds field for the current user
-      await fetch(`http://10.0.0.218:8081/users/${user._id}`, {
+
+      await fetch(Config.BACKEND + `users/${user._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ teamIds: updatedUser.teamIds }), // Only send the updated teamIds
       });
-  
+      setUser(updatedUser)
       // Reset the input field and close the modal
       setModalVisible(false);
     } catch (error) {
       console.error('Error creating team:', error.message);
     }
   };
-
+  const colors = [
+    '#D6EAF8', // Light Blue
+    '#D1F2EB', // Light Aqua
+    '#D5DBDB', // Light Gray
+    '#FADBD8', // Light Pink
+    '#FDEDEC', // Soft Red
+    '#EAECEE', // Lavender Gray
+    '#F2F3F4', // Whisper Gray
+  ];
   return (
     <ScrollView style={styles.container}>
       <View style={styles.headerContainer}>
         <Text style={styles.header}>Dashboard</Text>
       </View>
-      {team.map((group, index) => (
-        <TouchableOpacity
-          key={group._id}
-          style={[styles.groupContainer, { backgroundColor: group.color }]}
-          onPress={() => handleGroupPress(group.team_name)}
-        >
+    {team.map((group, index) => (
+      <TouchableOpacity
+        key={group._id}
+        onPress={() => handleGroupPress(group)}
+        style={styles.groupContainer}
+      >
+        <View style={[styles.colorHeader, { backgroundColor: colors[index % colors.length] }]}>
+          {/* Icon will go here if needed */}
+        </View>
+        <View style={styles.teamInfo}>
           <Text style={styles.groupName}>{group.team_name}</Text>
-        </TouchableOpacity>
-      ))}
-      
+        </View>
+        <Text style={styles.menuIcon}>≡</Text>
+      </TouchableOpacity>
+    ))}
 
       {/* The Modal is only an overlay and should not replace the existing content */}
       <Modal
@@ -163,6 +192,7 @@ const Dashboard = () => {
         <Text style={styles.createButtonText}>Create Team</Text>
       </TouchableOpacity>
     </ScrollView>
+
   );
 };
 
@@ -181,28 +211,44 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     color: '#ffffff',
+    marginTop: 21,
   },
   groupContainer: {
-    backgroundColor: '#ffffff', // White background for the cards
-    paddingVertical: 70, // Vertical padding inside the cards
-    paddingHorizontal: 20, // Horizontal padding inside the cards
-    marginVertical: 10, // Margin between the cards
-    marginHorizontal: 16, // Margin on the sides of the cards
-    borderRadius: 10, // Rounded corners
-    borderWidth: 1,
-    borderColor: '#e0e0e0', // Border color
-    flexDirection: 'row', // To align the text and the menu icon
-    alignItems: 'center', // To center the content vertically
-    justifyContent: 'space-between', // To create space between the text and the menu icon
-    shadowColor: '#000', // Shadow color for iOS
-    shadowOffset: { width: 0, height: 1 }, // Shadow position for iOS
-    shadowOpacity: 0.2, // Shadow opacity for iOS
-    shadowRadius: 3, // Shadow blur radius for iOS
-    elevation: 3, // Elevation for Android to create shadow
+    marginVertical: 20,
+    marginHorizontal: 16,
+    position: 'relative',
+    borderRadius: 6,
+    overflow: 'hidden', // This keeps the child views within the border radius
+    backgroundColor: '#FFF', // Assuming the body section is white
+    elevation: 3, // for Android shadow
+    shadowOpacity: 0.1, // for iOS shadow
+    shadowRadius: 3, // for iOS shadow
+    shadowColor: '#000', // for iOS shadow
+    shadowOffset: { height: 1, width: 0 }, // for iOS shadow
+    borderWidth: 1, // Add border width
+    borderColor: '#DDD',
   },
-  groupName: {
-    fontSize: 18,
-    fontWeight: 'bold',
+  colorHeader: {
+    height: 100, // Adjust the height as necessary
+    borderTopLeftRadius: 6, // Match the borderRadius of groupContainer if needed
+    borderTopRightRadius: 6, // Match the borderRadius of groupContainer if needed
+    // backgroundColor set dynamically
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    paddingHorizontal: 10,
+  },
+  menuIcon: {
+    position: 'absolute',
+    top: 10, // Distance from the top of the container
+    right: 10, // Distance from the right of the container
+    fontSize: 24, // Size of the icon
+  },
+  teamInfo: {
+    padding: 20, // Padding for the team name
+    paddingHorizontal: 20,
+    borderBottomWidth: 4, // Add border width
+    borderColor: '#DDD',
   },
   createButton: {
     backgroundColor: '#007bff',
@@ -221,6 +267,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  groupName: {
+    fontSize: 18, // Large text for visibility
+    fontWeight: 'bold', // Bold text for the team name
+    // Align the text as needed
   },
   modalContent: {
     backgroundColor: 'white',
@@ -265,7 +316,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  // ...add any other styles you might need
 });
 
 export default Dashboard;

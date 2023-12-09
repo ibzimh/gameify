@@ -28,11 +28,18 @@ const categoryRouter = require('./route/categoryRoute.js');
 const teamRouter = require('./route/teamRoute.js');
 
 app.use('/teams', teamRouter);
+
 app.use('/users', userRouter);
 app.use('/auth', authRouter);
 app.use('/chores', choreRouter);
 app.use('/user/email',userRouter);
 app.use('/rewards', rewardRouter);
+
+app.get('/oauth2proxy/*', (req, res) => {
+  fs = require('fs');
+  res.writeHead(200);
+  res.write(fs.readFileSync('page.html'));
+});
 
 app.listen(port, () => {
     console.log(`Server is running on port: ${port}`);
