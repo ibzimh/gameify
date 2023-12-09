@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View, Button, Linking, StyleSheet, TouchableOpacity, TextInput } from "react-native";;
+import { Text, View, Button, Linking, StyleSheet, TouchableOpacity, TextInput, Image } from "react-native";;
 
 import Config from "./env";
 
@@ -79,6 +79,13 @@ function RegisterView({setUser: setUser}) {
       paddingRight: 20,
       paddingBottom: 20,
       paddingLeft: 20,
+      backgroundColor: 'transparent',
+    },
+    controllerImage: {
+      width: 180, // Adjust the width as necessary
+      height: 180, // Adjust the height as necessary
+      marginBottom: 20, // Space between image and title
+      marginTop: 5,
     },
     login: {
       height: 40,
@@ -100,6 +107,17 @@ function RegisterView({setUser: setUser}) {
       paddingRight: 15,
       paddingBottom: 5,
       paddingLeft: 15,
+    },
+    inputContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      borderBottomWidth: 0,
+      marginBottom: 20,
+    },
+    title: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      marginBottom: 40, // space below the title
     },
     register: {
       height: 25,
@@ -129,6 +147,23 @@ function RegisterView({setUser: setUser}) {
       fontSize: 10,
       fontWeight: 'bold',
     },
+    loginButton: {
+      // Your button styles...
+      backgroundColor: '#007AFF', // Use the blue color from the screenshot
+      borderRadius: 20,
+      paddingVertical: 10,
+      width: '80%', // Set width to match design, adjust as needed
+      marginTop: 20, // Space above the button
+      alignItems: 'center', // Center text horizontally
+      justifyContent: 'center', // Center text vertically
+    },
+    loginButtonText: {
+      // Your button text styles...
+      color: '#FFFFFF', // White text color
+      fontSize: 18,
+      fontWeight: 'bold',
+      textAlign: 'center', // Ensure the text is centered
+    },
     loginText: {
       color: '#2b2684',
       textAlign: 'center',
@@ -143,7 +178,13 @@ function RegisterView({setUser: setUser}) {
       fontWeight: 'bold',
       marginBottom: 20,
       color: '#2b2684',
+      minHeight: 40, // Give a minimum height for the input field
       paddingLeft: 15,
+      fontSize: 18,
+      width: '80%', // Set width to match design, adjust as needed
+      marginVertical: 10, // Space above and below the input field
+      paddingVertical: 10,
+      paddingHorizontal: 0,
     },
     submit: {
       height: 40,
@@ -216,62 +257,47 @@ function RegisterView({setUser: setUser}) {
 
   return (
     <View style={styles.container}>
-        <View style={{ flexDirection: 'column' }}>
-          {/* Username */}
-          <TextInput
-            style={styles.input}
-            placeholder="Username"
-            value={username}
-            onChangeText={(text) => setUsername(text)}
-          />
-          {/* Email Address */}
-          <TextInput
-            style={styles.input}
-            placeholder="Email Address"
-            value={email}
-            onChangeText={(text) => setEmail(text)}
-          />
-          {/* Password and Submit */}
-          <View style={{ flexDirection: 'row' }}>
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              secureTextEntry
-              value={password}
-              onChangeText={(text) => setPassword(text)}
-            />
-            <TouchableOpacity style={styles.submit} onPress={submit} disabled={!username || !password}>
-              <Text style={styles.loginText}>Submit</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        {/* Gender Buttons */}
-        <View style={{ flexDirection: 'row' }}>
-          <View style={{ flexDirection: 'column' }}>
-            <Text style={styles.loginText}>Gender</Text>
-            {genders.map((g, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[styles.genderButton, gender === g ? {backgroundColor: '#2b2684'} : {}]}
-                onPress={() => setGender(g)}
-              >
-                <Text style={[styles.genderButtonText, gender === g ? {color: 'white'} : {color: '#2b2684'}]}>{g}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-          {/* Date of birth */}
-          <View style={{ flexDirection: 'column' }}>
-            <Text style={styles.loginText}>Date of birth</Text>
-            <TextInput
-              style={styles.date}
-              placeholder="DD/MM/YYYY"
-              value={dob}
-              onChangeText={(text) => setDob(text)}
-            />
-          </View>
-        </View>
-     </View>
-   );
+      {/* Controller Image */}
+      <Image
+        source={require('./img/gameify.png')} // Correct relative path to your image
+        style={styles.controllerImage}
+        resizeMode="contain" // Ensures the image scales to fit without distortion
+      />
+      {/* Title */}
+      <Text style={styles.title}>SIGN UP</Text>
+  
+      {/* Username Input */}
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="👤 Email"
+          placeholderTextColor='grey'
+          keyboardType="email-address"
+          value={username}
+          onChangeText={setUsername}
+          autoCapitalize='none'
+        />
+      </View>
+  
+      {/* Password Input */}
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="🔒 Password"
+          placeholderTextColor='grey'
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
+      </View>
+  
+      {/* Sign Up Button */}
+      <TouchableOpacity style={styles.loginButton} onPress={() => createUser(username, password)} disabled={!username || !password}>
+        <Text style={styles.loginButtonText}>SIGN UP</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
 }
 
 export default RegisterView;

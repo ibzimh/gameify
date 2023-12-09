@@ -211,6 +211,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     color: '#ffffff',
+    marginTop: 21,
   },
   groupContainer: {
     marginVertical: 20,
@@ -315,7 +316,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  // ...add any other styles you might need
 });
 
 export default Dashboard;
