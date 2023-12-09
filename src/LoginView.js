@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, Button, Linking, StyleSheet, TouchableOpacity, TextInput } from "react-native";;
+import { Text, View, Button, Linking, StyleSheet, TouchableOpacity, TextInput } from "react-native";
 
 import qs from "qs";
 import randomString from "random-string";
 import URL from "url-parse";
 
 import Config from "./env";
-// import RegisterView from "./RegisterView";
-
+import RegisterView from "./RegisterView";
 
 const loginProviders = {
   google: {
@@ -27,7 +26,7 @@ function LoginView({setUser: setUser}) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [registerScreen, setRegisterScreen] = useState(false);
-
+  const [dashboardScreen, setDashBoardScreen] = useState(false);
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -214,7 +213,9 @@ function LoginView({setUser: setUser}) {
     }
 
     getUserByEmail(username, password) // check if the user is authenticated
-      .then((user) => { setUser(user); }) // set the user
+      .then((user) => { 
+        setUser(user);
+       }) // set the user
       .catch((err) => console.log("Error checking user authentication:", err.message));
   }
 
@@ -223,6 +224,7 @@ function LoginView({setUser: setUser}) {
       <RegisterView setUser={setUser} />
     );
   }
+ 
 
   return (
     <View style={styles.container}>

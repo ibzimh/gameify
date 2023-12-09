@@ -57,7 +57,7 @@ import Config from "./env";
       console.log("Task:", data);
 
       try {
-        await fetch('http://192.168.1.37:8084/chores/add', {
+        await fetch(Config.BACKEND + 'chores/add', {
           method: 'POST',
           headers: {
             "Content-Type": "application/json",

@@ -40,16 +40,15 @@ router.route('/').get( async (request, response) => {
   
   //Add user
   router.route('/add').post((req, res) => {
-    const { user_name,teamIds, email, dob, gender } = req.body;
+    const { user_name, teamIds, email, password, dob, gender } = req.body;
   
     const newUser = new User({
       user_name,
       teamIds,
-
       email,
       password,
       dob,
-      gender
+      gender,
     });
   
     newUser.save()
@@ -75,6 +74,25 @@ router.route('/').get( async (request, response) => {
     } catch (error) {
       console.log(error.message);
       response.status(500).send({ message: error.message });
+    }
+  });
+  // get user by email
+  router.route('/email/:email').get(async (request, response) => {
+    try {
+      const userEmail = request.params.email;
+  
+      const user = await User.findOne({ email: userEmail });
+  
+      if (!user) {
+        return response.status(404).json({ message: 'User not found' });
+      }
+  
+      return response.status(200).json({
+        data: user,
+      });
+    } catch (error) {
+      console.log(error.message);
+      response.status(500).json({ message: error.message });
     }
   });
   //update user by id

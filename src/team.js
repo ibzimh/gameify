@@ -11,23 +11,20 @@ import {
 import { GroupContext } from './team_context'; 
 
 import { FontAwesome5 } from '@expo/vector-icons';
+import Config from "./env";
 
 
-const currT = async () => {
-  const res = await fetch(Config.BACKEND + "teams/6563b623779f11fb0b7d594d");
-  const da= await res.json();
-  return  da;
-}
-const currentUser = "Admin"
-const UsersScreen = () => {
+const UsersScreen = ({user: user, setUser: setUser}) => {
+
   const {currentGroup, setCurrentGroup } = useContext(GroupContext);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const [users, setUsers] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [memberEmail, setMemberEmail] = useState('');
-  const [memberExistsMessage, setMemberExistsMessage] = useState(''); // State for member exists message
-
+  const [memberExistsMessage, setMemberExistsMessage] = useState('');
+  const isAdmin = user.teamIds.filter(team => team.team_id == currentGroup._id)[0].role == "Admin"
   useEffect(() => {
     const fetchUsersInCurrentTeam = async () => {
       try {
@@ -38,7 +35,7 @@ const UsersScreen = () => {
 
           setUsers(usersInTeam); // Set state with users only in the current team
           setMemberExistsMessage("");
-          setMemberEmail("");
+     
         } else {
 
           console.error("Error fetching user:", data.message);
@@ -50,9 +47,15 @@ const UsersScreen = () => {
         console.error("Error fetching user:", error.message);
       }
     };
+    const refreshTimer = setInterval(() => {
+      // Trigger a re-render by updating the state
+      setRefreshKey((prevKey) => prevKey + 1);
+    }, 500);
 
     fetchUsersInCurrentTeam();
-  }, [currentGroup]); 
+    return () => clearInterval(refreshTimer);
+
+  }, [refreshKey]); 
 
   const toggleEditMode = () => {
     setEditMode(!editMode);
@@ -60,7 +63,6 @@ const UsersScreen = () => {
   const deleteUser = async (index) => {
     try {
       const userToDelete = users[index];
-      const currentT = await currT();
       // Remove the user ID from the current team's usersList
       const updatedUsersList = currentGroup.usersList.filter(
         userId => userId !== userToDelete._id
@@ -84,6 +86,7 @@ const UsersScreen = () => {
       const updatedTeamIds = userToDelete.teamIds.filter(team => updatedCurrentGroup._id !== team.team_id)
       console.log(updatedTeamIds)
       await fetch(Config.BACKEND + `users/${userToDelete._id}`, {
+
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -97,19 +100,18 @@ const UsersScreen = () => {
   };
  
   const handleConfirmAddMember = async () => {
-    const currentT = await currT();
-    const response = await fetch(Config.BACKEND + `users/email/${memberEmail}`);
-    const data = await response.json();
-    console.log(data); // Inspect the structure of the response data
+    const res = await fetch(Config.BACKEND + "users");
+    const da = await res.json();
+    const addedUser = da.data.filter(user => user.email === memberEmail)
+    if (addedUser.length == 0) {
 
-    if (!response.ok) {
       console.log("User not found with this email");
       // Handle the case where the user is not found with the entered email
       setModalVisible(false); // Close the modal after handling
       setMemberEmail(''); // Clear the email input
       return;
     }
-    const userId = data.data._id; // Retrieve the userId from the response data
+    const userId = addedUser[0]._id; // Retrieve the userId from the response data
     // Check if userId already exists in the current team's usersList
     if (currentGroup.usersList.includes(userId)) {
         console.log("Member already exists in the team");
@@ -122,7 +124,8 @@ const UsersScreen = () => {
       const updatedUsersList = [...currentGroup.usersList, userId];
       console.log(updatedUsersList)
       // Update the current team's usersList with the new userId
-      await fetch(Config.BACKEND + `teams/${currentGroup._id}`, {
+      await fetch( `${Config.BACKEND}teams/${currentGroup._id}`, {
+
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -134,6 +137,7 @@ const UsersScreen = () => {
         ...currentGroupState, // Maintain existing properties
         usersList: updatedUsersList, // Update usersList with the new value
       };
+      
       setCurrentGroup(updatedCurrentGroup);
       const updatedResponse = await fetch(Config.BACKEND + "users");
       const updatedUserData = await updatedResponse.json();
@@ -146,10 +150,11 @@ const UsersScreen = () => {
       }
 
       // Update the user's teamIds by adding the team ID to their teamIds array
-    const updatedTeamIds = [...data.data.teamIds, newTeamIds];
+    const updatedTeamIds = [...addedUser[0].teamIds, newTeamIds];
 
     // Update the user's teamIds field with the new team ID
-    await fetch(Config.BACKEND + `users/${userId}`, {
+    await fetch(`${Config.BACKEND}users/${userId}`, {
+
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -172,21 +177,29 @@ const UsersScreen = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.headerContainer}>
-        <Text style={styles.header}>Team Management</Text>
-          {(currentUser == "Admin") &&(<TouchableOpacity onPress={toggleEditMode} style={styles.editButton}>
+        <Text style={styles.header}>{currentGroup.team_name}</Text>
+          {(isAdmin) &&(<TouchableOpacity onPress={toggleEditMode} style={styles.editButton}>
             <FontAwesome5 name={editMode ? 'check' : 'user-edit'} size={25} color="black" />
           </TouchableOpacity>)}
           <View style={styles.teamInfo}>
-          <Text style={styles.teamHeader}>Name</Text>
-          <Text style={styles.pointsHeader}>Points</Text>
           </View>
       </View>
       {users.map((user, index) => (
         <View key={index} style={styles.memberContainer}>
-          <Text style={styles.memberName}>{user.user_name}</Text>
+          <View style={styles.avatar}>
+            <Text style={styles.avatarText}>{user.user_name[0]}</Text>
+          </View>
+          <View style={styles.memberInfo}>
+            <Text style={styles.memberName}>{user.user_name}</Text>
+            <Text style={styles.memberRole}>{user.role}</Text>
+          </View>
+          <View style={styles.pointsContainer}>
+            <Text style={styles.points}>{user.points}pt</Text>
+          </View>
           {user.teamIds.filter(team => team.team_id === currentGroup._id).map((team, teamIndex) => (
-            
+
             <View key={teamIndex}>
+
               <Text>{team.total_points}</Text>
               <Text>{team.role}</Text>
               
@@ -261,26 +274,34 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   memberContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 15,
-    padding: 10,
-    borderColor: "#ccc",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    backgroundColor: '#FFF',
+    borderRadius: 30,
+    marginVertical: 8,
     borderWidth: 1,
-    borderRadius: 8,
+    borderColor: '#DDD',
+    elevation: 3,
+    shadowRadius: 2,
+    shadowOpacity: 0.1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 }
   },
   avatar: {
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: "#ddd",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 10,
+    backgroundColor: '#DDD',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   avatarText: {
     fontSize: 20,
     fontWeight: "bold",
+    color: '#555',
   },
   teamInfo: {
     marginTop:20,
@@ -292,35 +313,34 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderColor: '#ccc', 
   },
-  teamHeader: {
-    marginLeft:20,
-    fontWeight: 'bold',
-    flex: 2, 
-    fontSize:15,
-  },
-  pointsHeader: {
-    fontSize:15,
-    marginRight:20,
-    flex: 1, 
-    textAlign: 'right', 
+  points: {
+    fontSize: 16,
+    color: '#555',
     fontWeight: 'bold',
   },
   memberName: {
-    flex: 2,
     fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
   },
   memberRole: {
-    flex: 1,
-    fontSize: 16,
-    color: "#777",
+    fontSize: 14,
+    color: '#666',
+    marginLeft: 10,
   },
   footerButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: 20,
   },
+  memberInfo: {
+    flex: 1,
+    alignItems: 'center', // Center the name and role
+    justifyContent: 'center', // Center vertically if needed
+  },
   editButton: {
-    marginLeft:10,
+    fontSize: 14,
+    color: '#666',
   },
   deleteButton: {
     marginTop:-5,
@@ -340,6 +360,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  pointsContainer: {
+    backgroundColor: '#EAECEE',
+    borderRadius: 15,
+    paddingVertical: 7,
+    paddingHorizontal: 12,
   },
   modalContent: {
     backgroundColor: 'white',
