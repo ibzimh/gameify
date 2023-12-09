@@ -18,23 +18,6 @@ const HomeScreen = ({ setUser: setUser }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);  
   const [selectedTask, setSelectedTask] = useState(null);
 
-
-  // useEffect(() => {
-  //   const fetchChores = async () => {
-  //     try {
-  //       const response = await fetch(Config.BACKEND + "/chores");
-  //       //const response = await fetch(
-  //       //   Config.BACKEND + "chores"
-  //       // );
-  //       const data = await response.json();
-  //       setTasks(data.data);
-  //     } catch (error) {
-  //       console.error("Error fetching chores:", error.message);
-  //     }
-  //   };
-  //   fetchChores();
-  // }, []);
-
   useEffect(() => {
     const fetchChores = async () => {
       try {

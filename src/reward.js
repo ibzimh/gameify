@@ -69,13 +69,15 @@ const GiftScreen = () => {
           `http://10.0.0.218:8081/user/${currentUser._id}/tasks`
         );
         const completedTasksData = await completedTasksResponse.json();
-        setCompletedTasks(completedTasksData.tasks);
+        console.log("Completed Tasks:", completedTasksData.tasks);
+  
+        // Set completed tasks state
         setCompletedTasks(completedTasksData.tasks);
       } catch (error) {
         console.error("Error fetching gifts:", error.message);
         setItems([]);
       }
-    };
+      };
     fetchGiftData();
   }, []);
 

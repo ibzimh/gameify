@@ -40,7 +40,6 @@ const UsersScreen = ({user: user, setUser: setUser}) => {
 
           console.error("Error fetching user:", data.message);
 
-
         }
 
       } catch (error) {
@@ -260,18 +259,23 @@ const UsersScreen = ({user: user, setUser: setUser}) => {
     </ScrollView>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 20,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#D6EAF8",
+    width: '100%',
   },
   headerContainer: {
     marginBottom: 20,
+    width: '100%',
+    height: '20%',
+    justifyContent: "center",
   },
   header: {
-    marginTop:30,
-    fontSize: 24,
+    marginTop:40,
+    fontSize: 40,
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
@@ -282,11 +286,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 15,
     paddingHorizontal: 20,
-    backgroundColor: '#FFF',
-    borderRadius: 30,
     marginVertical: 8,
     borderWidth: 1,
     borderColor: '#DDD',
+    backgroundColor: '#FFF',
     elevation: 3,
     shadowRadius: 2,
     shadowOpacity: 0.1,
@@ -297,7 +300,9 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#DDD',
+    borderWidth: 1,
+    borderColor: '#DDD',
+    backgroundColor: '#D1F2EB',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -307,7 +312,7 @@ const styles = StyleSheet.create({
     color: '#555',
   },
   teamInfo: {
-    marginTop:20,
+    marginTop: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     fontSize: 10,
@@ -366,8 +371,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   pointsContainer: {
-    backgroundColor: '#EAECEE',
-    borderRadius: 15,
+    backgroundColor: '#FBECFF',
+    borderRadius: 14,
     paddingVertical: 7,
     paddingHorizontal: 12,
   },
