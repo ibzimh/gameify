@@ -116,7 +116,7 @@ const App = () => {
               {CustomTabScreen("Home", HomeScreen, "home", { setUser })}
               {CustomTabScreen("Users", UsersScreen, "users", { user, setUser })}
               {CustomTabScreen("Tasks", TaskScreen, "tasks", { user, setUser })}
-              {CustomTabScreen("Trophy", Leaderboard, "trophy")}
+              {CustomTabScreen("Trophy", Leaderboard, "trophy", { user, setUser })}
               {CustomTabScreen("Gift", GiftScreen, "gift", { user, setUser })}
               {CustomTabScreen("Profile", ProfileScreen, "user-alt")}
               {CustomTabScreen("Dashboard", Dashboard, "tachometer-alt", { user, setUser })}
