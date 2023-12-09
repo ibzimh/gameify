@@ -67,8 +67,6 @@ const TaskScreen = () => {
         body: JSON.stringify(data),
       });
 
-      const responseData = await response.json();
-
       setModalVisible(true);
 
       setTask({
