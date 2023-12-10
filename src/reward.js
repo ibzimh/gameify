@@ -1,6 +1,14 @@
 //Arnav Sampigethaya
 import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal, Button } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  Button,
+} from "react-native";
 
 const currentUser = {
   _id: "655130639407a73e835e4ac3",
@@ -15,8 +23,7 @@ const currentUser = {
   status: "Active",
 };
 
-const GiftScreen = ({user: user, setUser: setUser}) => {
-  // setUser is just the react state hook for updating the user object in react; it won't update it in the database
+const GiftScreen = () => {
   const [teamPoints, setTeamPoints] = useState(0);
   const [completedTasks, setCompletedTasks] = useState([]);
   const [items, setItems] = useState([]);
@@ -29,7 +36,9 @@ const GiftScreen = ({user: user, setUser: setUser}) => {
     const fetchGiftData = async () => {
       try {
         // Fetch user data including teamIds
-        const userResponse = await fetch(`http://10.0.0.218:8081/users/${currentUser._id}`);
+        const userResponse = await fetch(
+          `http://10.0.0.218:8081/users/${currentUser._id}`
+        );
         const userData = await userResponse.json();
         const userTeamIds = userData.data.teamIds;
 
@@ -38,29 +47,38 @@ const GiftScreen = ({user: user, setUser: setUser}) => {
         const teamsData = await teamsResponse.json();
 
         // Find the selected team based on user's teamIds
-        const selectedTeamData = teamsData.data.find(team => userTeamIds.includes(team._id));
+        const selectedTeamData = teamsData.data.find((team) =>
+          userTeamIds.includes(team._id)
+        );
         setSelectedTeam(selectedTeamData);
 
         // Fetch rewards data for the selected team
-        const rewardsResponse = await fetch(`http://10.0.0.218:8081/rewards/team/${selectedTeamData._id}`);
+        const rewardsResponse = await fetch(
+          `http://10.0.0.218:8081/rewards/team/${selectedTeamData._id}`
+        );
         const rewardsData = await rewardsResponse.json();
         setItems(rewardsData.data);
 
         // Fetch team points and completed tasks
-        const teamPointsResponse = await fetch(`http://10.0.0.218:8081/team/${selectedTeamData._id}/points`);
+        const teamPointsResponse = await fetch(
+          `http://10.0.0.218:8081/team/${selectedTeamData._id}/points`
+        );
         const teamPointsData = await teamPointsResponse.json();
         setTeamPoints(teamPointsData.points);
 
-        const completedTasksResponse = await fetch(`http://10.0.0.218:8081/user/${currentUser._id}/tasks`);
+        const completedTasksResponse = await fetch(
+          `http://10.0.0.218:8081/user/${currentUser._id}/tasks`
+        );
         const completedTasksData = await completedTasksResponse.json();
+        console.log("Completed Tasks:", completedTasksData.tasks);
+  
+        // Set completed tasks state
         setCompletedTasks(completedTasksData.tasks);
       } catch (error) {
         console.error("Error fetching gifts:", error.message);
-        // if there's an error, set an empty array
         setItems([]);
       }
-    };
-
+      };
     fetchGiftData();
   }, []);
 
@@ -79,7 +97,7 @@ const GiftScreen = ({user: user, setUser: setUser}) => {
     const updatedUser = {
       ...currentUser,
       total_point: newPoints,
-      achievement: selectedReward.reward_name, 
+      achievement: selectedReward.reward_name,
     };
 
     // update the state with the new points
@@ -95,45 +113,48 @@ const GiftScreen = ({user: user, setUser: setUser}) => {
         styles.itemBox,
         redeemedItems.includes(item._id) ? styles.redeemedItem : null,
       ]}
-      onPress={() => {
-        setSelectedReward(item);
-        setRedeemModalVisible(true);
-      }}
     >
       <Text style={styles.itemName}>{item.reward_name}</Text>
       <View style={styles.pointsRequired}>
         <Text style={styles.itemPoints}>{item.points} points</Text>
       </View>
       {redeemedItems.includes(item._id) && (
-        <Text style={styles.redeemedText}>Redeemed by {currentUser.user_name}</Text>
+        <Text style={styles.redeemedText}>
+          Redeemed by {currentUser.user_name}
+        </Text>
       )}
     </TouchableOpacity>
   );
 
   return (
     <View style={styles.container}>
-      {/* Display Team Points */}
-      <View style={styles.totalPointsBox}>
-        <Text style={styles.totalPointsText}>Team Points: {teamPoints}</Text>
+      {/* Team Points Container */}
+      <View style={styles.teamPointsContainer}>
+        <Text style={styles.teamPointsText}>Team Points: {teamPoints}</Text>
       </View>
 
       {/* Display Completed Tasks */}
       <View style={styles.completedTasksBox}>
         <Text style={styles.completedTasksText}>Completed Tasks:</Text>
-        {completedTasks.map((task) => (
-          <Text key={task._id} style={styles.taskName}>
-            {task.title}
-          </Text>
-        ))}
-      </View>
-
-      {/* Section Title */}
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>Available Items:</Text>
+        {completedTasks.length > 0 ? (
+          <FlatList
+            data={completedTasks}
+            keyExtractor={(task) => task._id}
+            renderItem={({ item }) => (
+              <Text style={styles.completedTaskItem}>{item.title}</Text>
+            )}
+          />
+        ) : (
+          <Text style={styles.noCompletedTasksText}>No completed tasks</Text>
+        )}
       </View>
 
       {/* List of Items */}
-      <FlatList data={items} keyExtractor={(item) => item._id.toString()} renderItem={renderItem} />
+      <FlatList
+        data={items}
+        keyExtractor={(item) => item._id.toString()}
+        renderItem={renderItem}
+      />
 
       {/* Redeem Modal */}
       <Modal
@@ -147,10 +168,14 @@ const GiftScreen = ({user: user, setUser: setUser}) => {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalText}>
-              Are you sure you want to redeem {selectedReward ? selectedReward.name : ""}?
+              Are you sure you want to redeem{" "}
+              {selectedReward ? selectedReward.name : ""}?
             </Text>
             <Button title="Redeem" onPress={handleRedeem} />
-            <Button title="Cancel" onPress={() => setRedeemModalVisible(false)} />
+            <Button
+              title="Cancel"
+              onPress={() => setRedeemModalVisible(false)}
+            />
           </View>
         </View>
       </Modal>
@@ -161,8 +186,20 @@ const GiftScreen = ({user: user, setUser: setUser}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
     backgroundColor: "#fffeff",
+  },
+  teamPointsContainer: {
+    backgroundColor: "#6495ed",
+    width: "100%",
+    height: "24%",
+    justifyContent: "center",
+    alignItems: "left",
+  },
+  teamPointsText: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: "#fff",
+    marginLeft: 20,
   },
   titleContainer: {
     width: 214,
@@ -179,46 +216,28 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
   },
-  // Outer Circle Styles
-  outerCircle: {
-    width: 190,
-    height: 190,
-    flexShrink: 0,
-    backgroundColor: "#5f43b2",
+  completedTasksBox: {
+    width: 214,
+    height: 54,
+    borderRadius: 20,
+    backgroundColor: "#fffeff",
+    alignItems: "left",
     justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 90,
+    marginHorizontal: 16,
+    marginBottom: 20,
     marginTop: 20,
   },
-  // Inner Circle Styles
-  innerCircle: {
-    width: 160,
-    height: 160,
-    flexShrink: 0,
-    backgroundColor: "#FFF",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 80,
-  },
-  score: {
-    color: "#3a3153",
-    textAlign: "center",
-    fontSize: 32,
-    fontStyle: "normal",
-    fontWeight: "700",
-  },
-  points: {
-    color: "#3a3153",
-    textAlign: "center",
-    fontSize: 20,
-    fontStyle: "normal",
-    fontWeight: "500",
+  completedTasksText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
+    marginTop: 10,
   },
   itemBox: {
     borderWidth: 1,
-    borderColor: "#6C19FF",
+    borderColor: "#6495ed",
     padding: 10,
-    marginTop: 10,
+    marginTop: 12,
     marginBottom: 14,
     backgroundColor: "rgba(255, 255, 255, 0.90)",
     borderRadius: 10,
@@ -245,16 +264,6 @@ const styles = StyleSheet.create({
     fontStyle: "normal",
     fontWeight: "400",
   },
-  totalPointsBox: {
-    backgroundColor: "#FFECFB",
-    width: 214,
-    height: 54,
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    marginHorizontal: 16,
-    marginTop: 20,    
-  }, 
   modalContainer: {
     flex: 1,
     justifyContent: "center",
@@ -270,9 +279,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 20,
     textAlign: "center",
-  },   
+  },
   redeemedItem: {
-    backgroundColor: "#FF69B4", // Change the color to pink for redeemed items
+    backgroundColor: "#FF69B4",
   },
   redeemedText: {
     color: "#FFF",

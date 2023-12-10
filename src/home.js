@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   ScrollView,
   View,
@@ -8,39 +8,27 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-
+import { GroupContext } from "./team_context";
 
 import Config from "./env";
 
-const HomeScreen = ({ setUser: setUser }) => {
+const HomeScreen = ({ user: user, setUser: setUser }) => {
   const [tasks, setTasks] = useState([]);
   const [refreshKey, setRefreshKey] = useState(0);
-  const [isModalVisible, setIsModalVisible] = useState(false);  
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
-
-
-  // useEffect(() => {
-  //   const fetchChores = async () => {
-  //     try {
-  //       const response = await fetch(Config.BACKEND + "/chores");
-  //       //const response = await fetch(
-  //       //   Config.BACKEND + "chores"
-  //       // );
-  //       const data = await response.json();
-  //       setTasks(data.data);
-  //     } catch (error) {
-  //       console.error("Error fetching chores:", error.message);
-  //     }
-  //   };
-  //   fetchChores();
-  // }, []);
+  const { currentGroup } = useContext(GroupContext);
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
     const fetchChores = async () => {
       try {
         const response = await fetch(Config.BACKEND + "chores");
         const data = await response.json();
-        setTasks(data.data);
+        const choreInTeam = data.data.filter(
+          (chore) => chore.teamId == currentGroup._id
+        );
+        setTasks(choreInTeam);
       } catch (error) {
         console.error("Error fetching chores:", error.message);
       }
@@ -54,7 +42,6 @@ const HomeScreen = ({ setUser: setUser }) => {
     // Fetch chores on mount
     fetchChores();
 
-
     // Clean up the timer when the component is unmounted
     return () => clearInterval(refreshTimer);
   }, []); // Empty dependency array ensures the effect runs only once on mount
@@ -63,26 +50,24 @@ const HomeScreen = ({ setUser: setUser }) => {
     // Fetch chores every time refreshKey changes
     const fetchChores = async () => {
       try {
-
         const response = await fetch(Config.BACKEND + "chores");
         const data = await response.json();
-        setTasks(data.data);
+        const choreInTeam = data.data.filter(
+          (chore) => chore.teamId == currentGroup._id
+        );
+        setTasks(choreInTeam);
       } catch (error) {
         console.error("Error fetching chores:", error.message);
       }
     };
 
-
     // Fetch chores every time refreshKey changes
     fetchChores();
   }, [refreshKey]);
 
-
   const handleDelete = async (itemID) => {
     try {
-
       await fetch(Config.BACKEND + `chores/${itemID}`, {
-
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -98,10 +83,36 @@ const HomeScreen = ({ setUser: setUser }) => {
     }
   };
 
-  // const toggleModal = (task) => {
-  //   setSelectedTask(task);
-  //   setIsModalVisible(!isModalVisible);
-  // };
+  const updatePoints = async (points, teamIdToUpdate) => {
+    try {
+      // console.log("user:" + user + "end user");
+      const updatedTeamIds = user.teamIds.map((team) =>
+        team.team_id === teamIdToUpdate
+          ? { ...team, total_points: team.total_points + points }
+          : team
+      );
+      console.log(user.teamIds);
+
+      await fetch(Config.BACKEND + `users/${user._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          teamIds: updatedTeamIds,
+        }),
+      });
+
+      // Update the user in the current component state
+      setUser((prevUser) => ({
+        ...prevUser,
+        teamIds: updatedTeamIds,
+      }));
+    } catch (error) {
+      console.error("Error updating points:", error);
+      // Handle errors related to updating points
+    }
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -170,6 +181,10 @@ const HomeScreen = ({ setUser: setUser }) => {
                           style={styles.completeButton}
                           onPress={() => {
                             handleDelete(selectedTask?._id);
+                            updatePoints(
+                              selectedTask?.points,
+                              selectedTask?.teamId
+                            );
                           }}
                         >
                           <Text style={styles.completeText}>Complete</Text>
@@ -191,7 +206,8 @@ const HomeScreen = ({ setUser: setUser }) => {
       ))}
     </ScrollView>
   );
-};const styles = StyleSheet.create({
+};
+const styles = StyleSheet.create({
   container: {
     padding: 16,
   },
