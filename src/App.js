@@ -91,9 +91,7 @@ const App = () => {
     return (
       <GroupProvider>
 
-      <View style={styles.container}>
         <DashBoardScreen user = {user} setUser={setUser} setTeams = {setTeams}/>
-      </View>
       </GroupProvider>
     )
   }

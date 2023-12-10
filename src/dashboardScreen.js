@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     color: '#ffffff',
-    marginTop: 5,
+    marginTop: 20,
   },
   groupContainer: {
     marginVertical: 20,
