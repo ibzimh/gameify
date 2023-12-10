@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   ScrollView,
   View,
@@ -8,37 +8,27 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
+import { GroupContext } from "./team_context";
 
 import Config from "./env";
 
-const HomeScreen = ({ setUser: setUser }) => {
+const HomeScreen = ({ user: user, setUser: setUser }) => {
   const [tasks, setTasks] = useState([]);
   const [refreshKey, setRefreshKey] = useState(0);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
-
-  // useEffect(() => {
-  //   const fetchChores = async () => {
-  //     try {
-  //       const response = await fetch(Config.BACKEND + "/chores");
-  //       //const response = await fetch(
-  //       //   Config.BACKEND + "chores"
-  //       // );
-  //       const data = await response.json();
-  //       setTasks(data.data);
-  //     } catch (error) {
-  //       console.error("Error fetching chores:", error.message);
-  //     }
-  //   };
-  //   fetchChores();
-  // }, []);
+  const { currentGroup } = useContext(GroupContext);
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
     const fetchChores = async () => {
       try {
         const response = await fetch(Config.BACKEND + "chores");
         const data = await response.json();
-        setTasks(data.data);
+        const choreInTeam = data.data.filter(
+          (chore) => chore.teamId == currentGroup._id
+        );
+        setTasks(choreInTeam);
       } catch (error) {
         console.error("Error fetching chores:", error.message);
       }
@@ -62,7 +52,10 @@ const HomeScreen = ({ setUser: setUser }) => {
       try {
         const response = await fetch(Config.BACKEND + "chores");
         const data = await response.json();
-        setTasks(data.data);
+        const choreInTeam = data.data.filter(
+          (chore) => chore.teamId == currentGroup._id
+        );
+        setTasks(choreInTeam);
       } catch (error) {
         console.error("Error fetching chores:", error.message);
       }
@@ -90,28 +83,36 @@ const HomeScreen = ({ setUser: setUser }) => {
     }
   };
 
-  const updatePoints = async (userId, points) => {
+  const updatePoints = async (points, teamIdToUpdate) => {
     try {
-      await fetch(`http://gameify.us-east-1.elasticbeanstalk.com/users`, {
-        method: "PUT", // Assuming you have a route to update points
+      // console.log("user:" + user + "end user");
+      const updatedTeamIds = user.teamIds.map((team) =>
+        team.team_id === teamIdToUpdate
+          ? { ...team, total_points: team.total_points + points }
+          : team
+      );
+      console.log(user.teamIds);
+
+      await fetch(Config.BACKEND + `users/${user._id}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId: userId,
-          points: points + currentUser.total_point,
+          teamIds: updatedTeamIds,
         }),
       });
+
+      // Update the user in the current component state
+      setCurrentUser((prevUser) => ({
+        ...prevUser,
+        teamIds: updatedTeamIds,
+      }));
     } catch (error) {
       console.error("Error updating points:", error);
       // Handle errors related to updating points
     }
   };
-
-  // const toggleModal = (task) => {
-  //   setSelectedTask(task);
-  //   setIsModalVisible(!isModalVisible);
-  // };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -180,7 +181,10 @@ const HomeScreen = ({ setUser: setUser }) => {
                           style={styles.completeButton}
                           onPress={() => {
                             handleDelete(selectedTask?._id);
-                            updatePoints(currentUser, selectedTask?.points);
+                            updatePoints(
+                              selectedTask?.points,
+                              selectedTask?.teamId
+                            );
                           }}
                         >
                           <Text style={styles.completeText}>Complete</Text>
