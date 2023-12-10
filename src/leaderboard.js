@@ -1,27 +1,37 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { ScrollView, View, Text, StyleSheet } from "react-native";
 import Config from "./env";
+import { GroupContext } from './team_context'; 
 
-const Leaderboard = () => {
-  
+const Leaderboard = ({ user, setUser }) => {
+  const { currentGroup } = useContext(GroupContext);
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-
-        const response = await fetch(Config.BACKEND + "/users");
+        const response = await fetch(Config.BACKEND + "users");
         const data = await response.json();
+        if (response.ok) {
+          // Filter users based on the current team's usersList
+          const usersInTeam = data.data.filter(user => currentGroup.usersList.includes(user._id));
 
-        // Sorting users based on total points in descending order
-        const sortedUsers = data.data.sort((a, b) => b.total_point - a.total_point);
-        setUsers(sortedUsers);
+          // Sorting users based on total points in descending order
+          const sortedUsers = usersInTeam.sort((a, b) => b.total_point - a.total_point);
+          setUsers(sortedUsers);
+        }
       } catch (error) {
         console.error("Error fetching users:", error.message);
       }
     };
-    fetchUsers();  
-  }, []);
+
+    const intervalId = setInterval(() => {
+      fetchUsers();
+    }, 500); // Fetch users every 0.5 seconds
+
+    // Cleanup the interval on component unmount
+    return () => clearInterval(intervalId);
+  }, [currentGroup]); // Add currentTeam as a dependency to trigger the useEffect when it changes
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -51,7 +61,6 @@ const Leaderboard = () => {
     </ScrollView>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     padding: 16,
