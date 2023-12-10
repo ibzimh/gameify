@@ -1,3 +1,4 @@
+//Arnav Sampigethaya
 import React, { useState, useEffect, useContext } from "react";
 import { ScrollView, View, Text, StyleSheet } from "react-native";
 import Config from "./env";
@@ -5,6 +6,7 @@ import { GroupContext } from './team_context';
 
 const Leaderboard = ({ user, setUser }) => {
   const { currentGroup } = useContext(GroupContext);
+  //console.log("CG: "+currentGroup._id)
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -16,8 +18,17 @@ const Leaderboard = ({ user, setUser }) => {
           // Filter users based on the current team's usersList
           const usersInTeam = data.data.filter(user => currentGroup.usersList.includes(user._id));
 
-          // Sorting users based on total points in descending order
-          const sortedUsers = usersInTeam.sort((a, b) => b.total_point - a.total_point);
+          // Sorting users based on total points within the specific team in descending order
+          const sortedUsers = usersInTeam.sort((a, b) => {
+            const aTeam = a.teamIds.find(team => team.team_id === currentGroup._id);
+            const bTeam = b.teamIds.find(team => team.team_id === currentGroup._id);
+
+            const aTeamPoints = aTeam ? aTeam.total_points : 0;
+            const bTeamPoints = bTeam ? bTeam.total_points : 0;
+
+            return bTeamPoints - aTeamPoints;
+          });
+
           setUsers(sortedUsers);
         }
       } catch (error) {
@@ -31,7 +42,7 @@ const Leaderboard = ({ user, setUser }) => {
 
     // Cleanup the interval on component unmount
     return () => clearInterval(intervalId);
-  }, [currentGroup]); // Add currentTeam as a dependency to trigger the useEffect when it changes
+  }, [currentGroup]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -54,13 +65,16 @@ const Leaderboard = ({ user, setUser }) => {
             <Text style={styles.email}>{user.email}</Text>
           </View>
           <View style={styles.pointsContainer}>
-            <Text style={styles.pointsText}>{user.total_point}pt</Text>
+            {/* Display team-specific points */}
+            <Text style={styles.pointsText}>{user.teamIds.find(team => team.team_id === currentGroup._id)?.total_points || 0}pt</Text>
           </View>
         </View>
       ))}
     </ScrollView>
   );
 };
+
+
 const styles = StyleSheet.create({
   container: {
     padding: 16,
