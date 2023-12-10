@@ -3,7 +3,7 @@ import { StyleSheet, Pressable, View, Text, ScrollView } from "react-native";
 import UploadImage from "./ImageUpload";
 import Config from "./env"; // Adjust the import path accordingly
 
-const UserProfileView = () => {
+const UserProfileView = ({user,setUser}) => {
   const [teams, setTeams] = useState([]);
 
   useEffect(() => {
@@ -30,8 +30,8 @@ const UserProfileView = () => {
         <View style={styles.header}>
           <View style={styles.headerContent}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.name}>Dashboard</Text>
-              <Text style={styles.userInfo}>User 5</Text>
+              <Text style={styles.name}>Profile</Text>
+              <Text style={styles.userInfo}>{user.user_name}</Text>
             </View>
             <View>
               <UploadImage />

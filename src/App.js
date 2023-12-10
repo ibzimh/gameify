@@ -121,7 +121,7 @@ const App = () => {
                 setUser,
               })}
               {CustomTabScreen("Gift", GiftScreen, "gift", { user, setUser })}
-              {CustomTabScreen("Profile", ProfileScreen, "user-alt")}
+              {CustomTabScreen("Profile", ProfileScreen, "user-alt",{user,setUser})}
               {CustomTabScreen("Dashboard", Dashboard, "tachometer-alt", {
                 user,
                 setUser,
