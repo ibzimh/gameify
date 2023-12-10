@@ -104,7 +104,7 @@ const HomeScreen = ({ user: user, setUser: setUser }) => {
       });
 
       // Update the user in the current component state
-      setCurrentUser((prevUser) => ({
+      setUser((prevUser) => ({
         ...prevUser,
         teamIds: updatedTeamIds,
       }));
