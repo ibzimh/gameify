@@ -88,9 +88,9 @@ const App = () => {
   if (!teams) {
     return (
       <GroupProvider>
-        <View style={styles.container}>
-          <DashBoardScreen user={user} setUser={setUser} setTeams={setTeams} />
-        </View>
+
+        <DashBoardScreen user = {user} setUser={setUser} setTeams = {setTeams}/>
+
       </GroupProvider>
     );
   }
@@ -115,6 +115,7 @@ const App = () => {
                 setUser,
               })}
               {CustomTabScreen("Tasks", TaskScreen, "tasks", { user, setUser })}
+
               {CustomTabScreen("Trophy", Leaderboard, "trophy", {
                 user,
                 setUser,
