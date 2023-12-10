@@ -115,119 +115,116 @@ const HomeScreen = ({ user: user, setUser: setUser }) => {
       // Handle errors related to updating points
     }
   };
-
+  colors = [
+    '#D6EAF8', // Light Blue
+    '#D1F2EB', // Light Aqua
+    '#D5DBDB', // Light Gray
+    '#FADBD8', // Light Pink
+    '#FDEDEC', // Soft Red
+    '#EAECEE', // Lavender Gray
+    '#F2F3F4', // Whisper Gray
+  ];
+  
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Button
-        title={"Logout"}
-        onPress={() => {
-          // temporary button to skip login
-          console.log(setUser(null));
-        }}
-      />
-      <View style={styles.headerContainer}>
-        <Text style={styles.header}></Text>
-      </View>
-      {tasks.map((task, index) => (
-        <View key={index} style={styles.taskContainer}>
-          <View style={styles.layerZeroContainer}>
-            <View style={styles.infoContainer}>
-              <Text style={styles.taskName}>{task.chore_name}</Text>
-              <View style={styles.rightSideContainer}>
-                <View style={styles.pointsContainer}>
-                  <Text style={styles.pointsText}>{task.points}pt</Text>
-                </View>
-                <View style={styles.modalContainer}>
-                  <Button
-                    title="..."
-                    onPress={() => {
-                      setIsModalVisible(true);
-                      setSelectedTask(task);
-                    }}
-                    color={"black"}
-                  />
-                  <Modal
-                    visible={isModalVisible}
-                    onRequestClose={() => setIsModalVisible(false)}
-                    animationType="slide"
-                    transparent={true}
-                  >
-                    <View style={styles.modalContentHelp}>
-                      <View style={styles.modalContent}>
-                        <View style={styles.headerCloseContainer}>
-                          <Text style={styles.taskDetail}>Task Detail</Text>
-                          <View style={styles.closeButton}>
-                            <TouchableOpacity
-                              styles={styles.closeButton}
-                              onPress={() => {
-                                setIsModalVisible(false);
-                                setSelectedTask(null);
-                              }}
-                            >
-                              <Text style={styles.buttonText}>X</Text>
-                            </TouchableOpacity>
-                          </View>
-                        </View>
-                        <View style={styles.modalInfoContainer}>
-                          <Text style={styles.modalTaskName}>
-                            {selectedTask?.chore_name}
-                          </Text>
-                          <Text style={styles.modalDesc}>
-                            {selectedTask?.description}
-                          </Text>
-                          <Text style={styles.modalDate}>
-                            {selectedTask?.due_date}
-                          </Text>
-                        </View>
-                        <TouchableOpacity
-                          style={styles.completeButton}
-                          onPress={() => {
-                            handleDelete(selectedTask?._id);
-                            updatePoints(
-                              selectedTask?.points,
-                              selectedTask?.teamId
-                            );
-                          }}
-                        >
-                          <Text style={styles.completeText}>Complete</Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  </Modal>
-                </View>
-              </View>
+    <View style={styles.header}>
+      <Text style={styles.headerTitle}>Tasks</Text>
+    </View>
+
+    {/* Tasks */}
+    {tasks.map((task, index) => (
+      <View key={index} style={styles.taskCard}>
+        <View style={[styles.taskPriorityHeader, { backgroundColor: colors[index % colors.length] }]}>
+          <Text style={styles.taskPriorityText}>🚩 Priority task {index + 1}</Text>
+          <View style={styles.pointsAndOptionsContainer}>
+            <View style={styles.pointsContainer}>
+              <Text style={styles.pointsText}>{task.points}pt</Text>
             </View>
-            <View style={styles.descContainer}>
-              <Text style={styles.desc}>{task.description}</Text>
-            </View>
-            <View style={styles.deadlineContainer}>
-              <Text style={styles.date}>{task.due_date}</Text>
-            </View>
+            <TouchableOpacity
+              onPress={() => {
+                setIsModalVisible(true);
+                setSelectedTask(task);
+              }}
+              style={styles.optionsButton}
+            >
+              <Text style={styles.optionsButtonText}>...</Text>
+            </TouchableOpacity>
           </View>
         </View>
-      ))}
-    </ScrollView>
+        <View style={styles.taskBody}>
+        <Text style={styles.taskTitle}> 📌 {task.chore_name}</Text>
+        <Text style={styles.taskDate}>{task.due_date}</Text>
+        </View>
+      </View>
+    ))}
+
+    {/* Modal for Task Details */}
+    <Modal
+      visible={isModalVisible}
+      onRequestClose={() => setIsModalVisible(false)}
+      animationType="slide"
+      transparent={true}
+    >
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <Text style={styles.modalTitle}>Task Detail</Text>
+            <TouchableOpacity
+              onPress={() => setIsModalVisible(false)}
+              style={styles.modalCloseButton}
+            >
+              <Text style={styles.modalCloseButtonText}>X</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.modalBody}>
+            <Text style={styles.modalTaskTitle}>📌 {selectedTask?.chore_name}</Text>
+            <Text style={styles.modalTaskDescription}>{selectedTask?.description}</Text>
+            <Text style={styles.modalTaskTime}>{selectedTask?.due_date}</Text>
+          </View>
+          <TouchableOpacity
+            style={styles.completeButton}
+            onPress={() => {
+              handleDelete(selectedTask?._id);
+              updatePoints(selectedTask?.points, selectedTask?.teamId);
+              setIsModalVisible(false);
+            }}
+          >
+            <Text style={styles.completeButtonText}>Complete</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
+  </ScrollView>
   );
 };
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
-  },
-  headerContainer: {
-    marginBottom: 20,
+    flex: 1,
   },
   header: {
+    flexDirection: 'row',
+    justifyContent: 'center', // Center the items horizontally
+    alignItems: 'center',
+    paddingTop: 60, // Increase this value to move the title and button lower
+    paddingHorizontal: 20,
+    },
+  headerTitle: {
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
-  taskContainer: {
-    marginBottom: 20,
-    backgroundColor: "#F0F0F0",
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 16,
-  },
+  taskCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    marginVertical: 25,
+    marginHorizontal: 10,
+    padding: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+    elevation: 6,
+    marginBottom: 10,
+},
   layerZeroContainer: {},
   infoContainer: {
     flexDirection: "row",
@@ -243,18 +240,62 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   pointsContainer: {
-    backgroundColor: "#5CB85C",
-    padding: 8,
-    borderRadius: 4,
+    backgroundColor: '#00CC99', // Replace with actual color from your design
+    borderRadius: 15,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    marginRight: 12,
+  },
+  taskPriorityHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 5,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
+  pointsAndOptionsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  priorityText: {
+    fontSize: 15,
+    color: 'black',
+  },
+  taskHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between', // This spreads out the items to the full width of the container
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    padding: 10,
+  },
+  taskDetailsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 10,
   },
   pointsText: {
-    color: "white",
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  taskIconContainer: {
+    width: 24,
+    height: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 12,
+    marginRight: 8,
   },
   modalContainer: {
     flex: 0,
     marginTop: -8,
     paddingTop: -4,
     paddingLeft: 4,
+  },
+  taskBody: {
+    padding: 16,  // increased padding for a larger body
   },
   modalContentHelp: {
     flex: 1,
@@ -271,6 +312,21 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderTopColor: "gray",
   },
+  optionsButton: {
+    // Ensures the button is large enough to be an easy tap target
+    minWidth: 44,
+    minHeight: 44,
+  },
+  optionsButtonText: {
+    fontSize: 24,
+    color: '#000',
+  },
+  taskDate: {
+    fontSize: 14,
+    color: '#666',
+    alignSelf: 'flex-end',
+    marginTop: 10,
+  },
   headerCloseContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -285,6 +341,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 24,
   },
+  taskDescription: {
+    color: '#666',
+  },
   closeButton: {},
   buttonText: {
     fontSize: 22,
@@ -296,6 +355,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginLeft: 32,
     marginRight: 32,
+  },
+  taskTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'black',
   },
   modalTaskName: {
     fontSize: 20,
@@ -316,21 +380,16 @@ const styles = StyleSheet.create({
     //backgroundColor: "purple",
   },
   completeButton: {
-    flexDirection: "row",
-    backgroundColor: "#5cb85c",
-    borderRadius: 10,
-    marginLeft: 220,
-    paddingTop: 4,
-    paddingBottom: 4,
-    justifyContent: "center",
+    backgroundColor: '#5cb85c',
+    borderRadius: 20,
+    padding: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   completeText: {
-    fontSize: 28,
-    //backgroundColor: "#5CB85C",
-
-    borderRadius: 10,
-
-    justifyContent: "center",
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 18,
   },
   descContainer: {
     marginBottom: 10,
@@ -344,6 +403,56 @@ const styles = StyleSheet.create({
   },
   date: {
     color: "#888",
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+  },
+  modalContainer: {
+    backgroundColor: 'white',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+  },
+  modalCloseButton: {
+    // Style for close button
+  },
+  modalCloseButtonText: {
+    fontSize: 22,
+    color: '#000', // Or any color you prefer
+  },
+  modalBody: {
+    // Styles for the modal body
+  },
+  modalTaskTitle: {
+    fontSize: 20,
+    marginBottom: 20,
+  },
+  modalTaskDescription: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 20,
+  },
+  modalTaskTime: {
+    fontSize: 14,
+    color: '#888',
+    marginBottom: 20,
   },
 });
 
