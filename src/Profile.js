@@ -1,18 +1,37 @@
-import React, { Component } from "react";
-import { StyleSheet, Pressable, View, Image, Text, ImageBackground } from "react-native";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, Pressable, View, Text, ScrollView } from "react-native";
 import UploadImage from "./ImageUpload";
+import Config from "./env"; // Adjust the import path accordingly
 
-export default class UserProfileView extends Component {
+const UserProfileView = ({user,setUser}) => {
+  const [teams, setTeams] = useState([]);
 
-  render() {
-    return (
-      
+  useEffect(() => {
+    const fetchTeams = async () => {
+      try {
+        const response = await fetch(Config.BACKEND + "teams");
+        if (!response.ok) {
+          throw new Error(`Failed to fetch teams. Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setTeams(data.data);
+      } catch (error) {
+        console.error("Error fetching teams:", error.message);
+      }
+    };
+
+    fetchTeams();
+  }, []);
+
+  return (
+    <ScrollView contentContainerStyle={styles.scrollViewContainer}>
       <View style={styles.container}>
         <View style={styles.header}>
           <View style={styles.headerContent}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.name}>Dashboard</Text>
-              <Text style={styles.userInfo}>John Doe</Text>
+              <Text style={styles.name}>Profile</Text>
+              <Text style={styles.userInfo}>{user.user_name}</Text>
             </View>
             <View>
               <UploadImage />
@@ -24,15 +43,12 @@ export default class UserProfileView extends Component {
         </View>
 
         <View style={styles.body}>
-          <Pressable style={styles.RectangleShapeView}>
-            <Text style={styles.headtText}>CS 320</Text>
-            <Text style={styles.SubjectText}>Total Points: 500</Text>
-          </Pressable>
-          <Pressable style={styles.RectangleShapeView}>
-            <Text style={styles.headtText}>Team Burger</Text>
-            <Text style={styles.SubjectText}>Total Points: 500 </Text>
-          </Pressable>
-          {/*Logout Button*/}
+          {teams.map((team) => (
+            <Pressable key={team._id} style={styles.RectangleShapeView}>
+              <Text style={styles.headtText}>{team.team_name}</Text>
+              <Text style={styles.SubjectText}>Total Points: {team.total_points || 0}</Text>
+            </Pressable>
+          ))}
           <Pressable style={styles.btn}>
             <Text style={styles.text}>Logout</Text>
           </Pressable>
@@ -41,11 +57,14 @@ export default class UserProfileView extends Component {
           </Pressable>
         </View>
       </View>
-    );
-  }
-}
+    </ScrollView>
+  );
+};
 
 const styles = StyleSheet.create({
+  scrollViewContainer: {
+    flexGrow: 1,
+  },
   header: {
     backgroundSize: "contain",
     height: 300,
@@ -57,34 +76,13 @@ const styles = StyleSheet.create({
     display: "flex",
     flex: 1,
     flexDirection: "row",
-    flexWrap: "wrap"
-  },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 63,
-    borderWidth: 2,
-    borderColor: "white",
-    marginBottom: 10,
-    float: "right"
-  },
-  location: {
-    borderColor: "white",
-    width: 10,
-    height: 10,
-    float: "left"
-  },
-  hamburger: {
-    borderColor: "white",
-    width: 10,
-    height: 10,
-    float: "right"
+    flexWrap: "wrap",
   },
   name: {
     fontSize: 22,
     color: "black",
     fontWeight: "600",
-    fontFamily: "Helvetica"
+    fontFamily: "Helvetica",
   },
   headtText: {
     fontFamily: "Helvetica",
@@ -92,7 +90,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     float: "left",
     marginLeft: 20,
-    marginTop: 10
+    marginTop: 10,
   },
   SubjectText: {
     color: "black",
@@ -101,12 +99,12 @@ const styles = StyleSheet.create({
     fontFamily: "Helvetica",
     float: "left",
     marginLeft: 20,
-    marginTop: 10
+    marginTop: 10,
   },
   userInfo: {
     fontSize: 20,
     color: "white",
-    fontWeight: "600"
+    fontWeight: "600",
   },
   btn: {
     marginTop: 40,
@@ -122,7 +120,7 @@ const styles = StyleSheet.create({
   body: {
     backgroundColor: "white",
     height: 500,
-    alignItems: "center"
+    alignItems: "center",
   },
   text: {
     color: "white",
@@ -139,7 +137,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderColor: "black",
     borderWidth: 1,
-    elevation: 3
-  }
-
+    elevation: 3,
+  },
+  container: {
+    flex: 1,
+  },
 });
+
+export default UserProfileView;
