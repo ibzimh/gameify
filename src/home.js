@@ -116,13 +116,6 @@ const HomeScreen = ({ user: user, setUser: setUser }) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Button
-        title={"Logout"}
-        onPress={() => {
-          // temporary button to skip login
-          console.log(setUser(null));
-        }}
-      />
       <View style={styles.headerContainer}>
         <Text style={styles.header}></Text>
       </View>

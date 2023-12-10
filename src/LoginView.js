@@ -1,4 +1,4 @@
-//Kshama
+//Kshama and Ibrahim
 import React, { useState, useEffect } from "react";
 import { Text, View, Button, Linking, StyleSheet, TouchableOpacity, TextInput, Image } from "react-native";
 

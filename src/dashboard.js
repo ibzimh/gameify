@@ -1,10 +1,9 @@
-//Kshama
+//Kshama and Viet
 import React, { useEffect, useState ,createContext, useContext} from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Modal, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { GroupContext } from './team_context'; // Adjust the import path accordingly
 
-
+import { GroupContext } from './team_context';
 
 import Config from "./env";
 
@@ -55,6 +54,7 @@ const Dashboard = ({ user: user, setUser: setUser }) => {
     });
     console.log(team);
     setCurrentGroup(group);
+
 
     // Navigate to Users screen with parameters
     navigation.navigate("Users", { currentTeam: group });

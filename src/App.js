@@ -1,3 +1,4 @@
+
 import React, { createContext, useState } from "react";
 
 import {
@@ -16,7 +17,6 @@ import {
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import { createStackNavigator } from "@react-navigation/stack";
 import LoginView from "./LoginView";
 import HomeScreen from "./home";
 import UsersScreen from "./team";
@@ -28,7 +28,7 @@ import TaskScreen from "./create_task";
 import Dashboard from "./dashboard";
 import { GroupProvider } from "./team_context";
 import DashBoardScreen from "./dashboardScreen";
-import WelcomeScreen from "./WelcomeScreen"; // Import the WelcomeScreen component
+import WelcomeScreen from "./WelcomeScreen"; 
 
 const Tab = createBottomTabNavigator();
 const UserContext = createContext();
@@ -103,7 +103,6 @@ const App = () => {
             <Tab.Navigator
               screenOptions={{
                 tabBarStyle: {
-                  /* Your tab bar styles */
                 },
                 tabBarShowLabel: false,
                 headerShown: false,

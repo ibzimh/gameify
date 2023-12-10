@@ -1,3 +1,4 @@
+//Viet
 const express = require("express");
 const Chore = require("../model/chore.model.js");
 const router = express.Router();
@@ -39,11 +40,11 @@ router.route('/:id').delete(async (req, res) => {
     const deleteChore = await Chore.findByIdAndDelete(choreId);
 
     if (!deleteChore) {
-      return res.status(404).json({ message: 'Team not found' });
+      return res.status(404).json({ message: 'Chore not found' });
     }
 
     return res.status(200).json({
-      message: 'Team deleted successfully',
+      message: 'Chore deleted successfully',
     });
   } catch (error) {
     console.log(error.message);

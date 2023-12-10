@@ -1,3 +1,4 @@
+//Viet
 import React, { useState, useContext } from "react";
 import {
   View,
@@ -11,12 +12,11 @@ import {
 import Config from "./env";
 
 import { Calendar } from "react-native-calendars";
-import { GroupContext } from "./team_context"; // Adjust the import path accordingly
-
+import { GroupContext } from "./team_context"; 
 const TaskScreen = () => {
   const { currentGroup } = useContext(GroupContext);
   const [modalVisible, setModalVisible] = useState(false);
-  const [errorModalVisible, setErrorModalVisible] = useState(false); // New state for error modal
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
 
   const [task, setTask] = useState({
     title: "",
@@ -39,9 +39,7 @@ const TaskScreen = () => {
       console.log("Please select a future date.");
       setErrorModalVisible(true); // Show error modal
 
-      // You can choose to handle this situation in various ways, such as resetting the deadline or showing an error message to the user.
-      // For example:
-      // setTask({ ...task, deadline: '' }); // Reset the deadline
+    
     } else {
       handleInputChange("deadline", date.dateString);
     }
