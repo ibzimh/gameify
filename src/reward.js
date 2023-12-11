@@ -1,70 +1,28 @@
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-  Modal,
-  Button,
-} from "react-native";
+import React, { useState, useEffect, useContext } from "react";
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal, Button } from "react-native";
+import Config from "./env";
+import { GroupContext } from './team_context';
 
-const currentUser = {
-  _id: "655130639407a73e835e4ac3",
-  user_name: "Viet Truong",
-  teamIds: ["655d3e1b6669b07181c0a468"],
-  role: "admin",
-  email: "vbtruong@umass.edu",
-  dob: "1990-01-01",
-  gender: "Male",
-  total_point: 1000,
-  achievement: "Some achievement",
-  status: "Active",
-};
-
-const GiftScreen = () => {
+const GiftScreen = ({ user, setUser }) =>  {
+  const { currentGroup } = useContext(GroupContext);
   const [refreshKey, setRefreshKey] = useState(0);
   const [teamPoints, setTeamPoints] = useState(0);
-  const [users, setUsers] = useState([]);
-  const [rewards, setRewards] = useState([
-    {
-      _id: "1",
-      reward_name: "Finish Task 1",
-      points: 100,
-    },
-    {
-      _id: "2",
-      reward_name: "Finish Home Screen",
-      points: 100,
-    },
-    {
-      _id: "3",
-      reward_name: "Finish Rewards Page",
-      points: 100,
-    },
-  ]);
+  const [rewards, setRewards] = useState([]);
   const [selectedReward, setSelectedReward] = useState(null);
   const [redeemModalVisible, setRedeemModalVisible] = useState(false);
   const [redeemedItems, setRedeemedItems] = useState([]);
 
-  //Fetching Rewards
   useEffect(() => {
     const fetchRewards = async () => {
       try {
-        const response = await fetch(Config.BACKEND + "rewards"); // Update the URL
+        const response = await fetch(Config.BACKEND + "rewards");
         const data = await response.json();
         if (response.ok) {
-          const usersInTeam = data.data.filter(user =>
-            currentUser.teamIds.includes(user._id)
-          );
+          // Filter rewards based on the current team's rewards
+          const rewardsInTeam = data.data.filter(reward => reward.teams === currentGroup._id);
 
-          // Extracting only relevant reward information (name and points)
-          const rewardsInfo = usersInTeam.map(user => ({
-            rewardName: user.reward_name,
-            points: user.points["$numberInt"],
-          }));
-
-          setUsers(rewardsInfo); // Set state with rewards information only
+          // Set state with rewards information only
+          setRewards(rewardsInTeam);
         } else {
           console.error("Error fetching rewards:", data.message);
         }
@@ -78,40 +36,64 @@ const GiftScreen = () => {
       setRefreshKey(prevKey => prevKey + 1);
     }, 500);
 
-    fetchRewards(); // Correct function name
+    fetchRewards();
     return () => clearInterval(refreshTimer);
-  }, [refreshKey]);
+  }, [refreshKey, currentGroup._id]);
 
-  //Pre-Existing Function, Not Sure Why It's Here
-  const handleRedeem = () => {
-    if (!selectedReward || currentUser.total_point < selectedReward.points) {
+  
+  const handleRedeem = async () => {
+    if (!selectedReward || !user.teamIds) {
+      // If selected reward doesn't exist or user doesn't have team information, do nothing
       return;
     }
+  
+    // Find the team information for the current group
+    const currentTeam = user.teamIds.find((team) => team.team_id === currentGroup._id);
+  
+    if (!currentTeam || currentTeam.total_points < selectedReward.points) {
+      // If the team information is not found or team doesn't have enough points, do nothing
+      return;
+    }
+  
+    try {
+      const newTeamPoints = currentTeam.total_points - selectedReward.points;
 
-    // Calculate the new points after deduction
-    const newPoints = currentUser.total_point - selectedReward.points;
+      const updatedUser = {
+        ...user,
+        teamIds: user.teamIds.map((team) =>
+          team.team_id === currentGroup._id
+            ? { ...team, total_points: newTeamPoints }
+            : team
+        ),
+        achievement: selectedReward.reward_name,
+      };
 
-    // Calculate the new team points after redemption
-    const newTeamPoints = teamPoints + selectedReward.points;
+      setTeamPoints(newTeamPoints);
+      setRedeemedItems((prevRedeemedItems) => [...prevRedeemedItems, selectedReward._id]);
 
-    // Update the list of redeemed items
-    setRedeemedItems([...redeemedItems, selectedReward._id]);
+      // Update the user's state with the new team points
+      setUser(updatedUser);
+    
+      // Update the user's team points in the database
+      const response = await fetch(`${Config.BACKEND}users/${user._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedUser),
+      });
+    
+      const data = await response.json();
+      if (!response.ok) {
+        console.error("Error updating user's team points:", data.message);
+      }
+    } catch (error) {
+      console.error("Error updating user's team points:", error.message);
+    }
 
-    // Update currentUser with new points and achievements
-    const updatedUser = {
-      ...currentUser,
-      total_point: newPoints,
-      achievement: selectedReward.rewardName,
-    };
-
-    // Update the state with the new points and team points
-    setTeamPoints(newTeamPoints);
-
-    // Close the redeem modal
     setRedeemModalVisible(false);
   };
-
-  //Renders The Rewards. Currently Hardcoded.
+  
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={[
@@ -123,13 +105,13 @@ const GiftScreen = () => {
         setRedeemModalVisible(true);
       }}
     >
-      <Text style={styles.itemName}>{item.rewardName}</Text>
+      <Text style={styles.itemName}>{item.reward_name}</Text>
       <View style={styles.pointsContainer}>
         <Text style={styles.points}>{item.points}pt</Text>
       </View>
       {redeemedItems.includes(item._id) && (
         <Text style={styles.redeemedText}>
-          Redeemed by {currentUser.user_name}
+          Redeemed by {user.user_name}
         </Text>
       )}
     </TouchableOpacity>
@@ -139,7 +121,14 @@ const GiftScreen = () => {
     <View style={styles.container}>
       {/* Team Points Container */}
       <View style={styles.teamPointsContainer}>
-        <Text style={styles.teamPointsText}>Team Points: {teamPoints}</Text>
+      <Text style={styles.teamPointsText}>
+  My Points:{" "}
+  {user.teamIds &&
+    user.teamIds
+      .filter((team) => team.team_id === currentGroup._id)
+      .map((team) => team.total_points)
+      .toString()}
+</Text>
       </View>
 
       {/* List of Items (Rewards) */}
