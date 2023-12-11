@@ -1,4 +1,3 @@
-//Arnav Sampigethaya
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -24,99 +23,109 @@ const currentUser = {
 };
 
 const GiftScreen = () => {
+  const [refreshKey, setRefreshKey] = useState(0);
   const [teamPoints, setTeamPoints] = useState(0);
-  const [completedTasks, setCompletedTasks] = useState([]);
-  const [items, setItems] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [rewards, setRewards] = useState([
+    {
+      _id: "1",
+      reward_name: "Finish Task 1",
+      points: 100,
+    },
+    {
+      _id: "2",
+      reward_name: "Finish Home Screen",
+      points: 100,
+    },
+    {
+      _id: "3",
+      reward_name: "Finish Rewards Page",
+      points: 100,
+    },
+  ]);
   const [selectedReward, setSelectedReward] = useState(null);
   const [redeemModalVisible, setRedeemModalVisible] = useState(false);
   const [redeemedItems, setRedeemedItems] = useState([]);
-  const [selectedTeam, setSelectedTeam] = useState(null);
 
+  //Fetching Rewards
   useEffect(() => {
-    const fetchGiftData = async () => {
+    const fetchRewards = async () => {
       try {
-        // Fetch user data including teamIds
-        const userResponse = await fetch(
-          `http://10.0.0.218:8081/users/${currentUser._id}`
-        );
-        const userData = await userResponse.json();
-        const userTeamIds = userData.data.teamIds;
+        const response = await fetch(Config.BACKEND + "rewards"); // Update the URL
+        const data = await response.json();
+        if (response.ok) {
+          const usersInTeam = data.data.filter(user =>
+            currentUser.teamIds.includes(user._id)
+          );
 
-        // Fetch teams data
-        const teamsResponse = await fetch("http://10.0.0.218:8081/teams");
-        const teamsData = await teamsResponse.json();
+          // Extracting only relevant reward information (name and points)
+          const rewardsInfo = usersInTeam.map(user => ({
+            rewardName: user.reward_name,
+            points: user.points["$numberInt"],
+          }));
 
-        // Find the selected team based on user's teamIds
-        const selectedTeamData = teamsData.data.find((team) =>
-          userTeamIds.includes(team._id)
-        );
-        setSelectedTeam(selectedTeamData);
-
-        // Fetch rewards data for the selected team
-        const rewardsResponse = await fetch(
-          `http://10.0.0.218:8081/rewards/team/${selectedTeamData._id}`
-        );
-        const rewardsData = await rewardsResponse.json();
-        setItems(rewardsData.data);
-
-        // Fetch team points and completed tasks
-        const teamPointsResponse = await fetch(
-          `http://10.0.0.218:8081/team/${selectedTeamData._id}/points`
-        );
-        const teamPointsData = await teamPointsResponse.json();
-        setTeamPoints(teamPointsData.points);
-
-        const completedTasksResponse = await fetch(
-          `http://10.0.0.218:8081/user/${currentUser._id}/tasks`
-        );
-        const completedTasksData = await completedTasksResponse.json();
-        console.log("Completed Tasks:", completedTasksData.tasks);
-  
-        // Set completed tasks state
-        setCompletedTasks(completedTasksData.tasks);
+          setUsers(rewardsInfo); // Set state with rewards information only
+        } else {
+          console.error("Error fetching rewards:", data.message);
+        }
       } catch (error) {
-        console.error("Error fetching gifts:", error.message);
-        setItems([]);
+        console.error("Error fetching rewards:", error.message);
       }
-      };
-    fetchGiftData();
-  }, []);
+    };
 
+    const refreshTimer = setInterval(() => {
+      // Trigger a re-render by updating the state
+      setRefreshKey(prevKey => prevKey + 1);
+    }, 500);
+
+    fetchRewards(); // Correct function name
+    return () => clearInterval(refreshTimer);
+  }, [refreshKey]);
+
+  //Pre-Existing Function, Not Sure Why It's Here
   const handleRedeem = () => {
-    if (!selectedReward) {
+    if (!selectedReward || currentUser.total_point < selectedReward.points) {
       return;
     }
 
-    // calculate the new points after deduction
+    // Calculate the new points after deduction
     const newPoints = currentUser.total_point - selectedReward.points;
 
-    // update the list of redeemed items
+    // Calculate the new team points after redemption
+    const newTeamPoints = teamPoints + selectedReward.points;
+
+    // Update the list of redeemed items
     setRedeemedItems([...redeemedItems, selectedReward._id]);
 
-    // update currentUser with new points and achievements
+    // Update currentUser with new points and achievements
     const updatedUser = {
       ...currentUser,
       total_point: newPoints,
-      achievement: selectedReward.reward_name,
+      achievement: selectedReward.rewardName,
     };
 
-    // update the state with the new points
-    setTeamPoints(newPoints);
+    // Update the state with the new points and team points
+    setTeamPoints(newTeamPoints);
 
-    // close the redeem modal
+    // Close the redeem modal
     setRedeemModalVisible(false);
   };
 
+  //Renders The Rewards. Currently Hardcoded.
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={[
         styles.itemBox,
         redeemedItems.includes(item._id) ? styles.redeemedItem : null,
       ]}
+      onPress={() => {
+        setSelectedReward(item);
+        setRedeemModalVisible(true);
+      }}
     >
-      <Text style={styles.itemName}>{item.reward_name}</Text>
-      <View style={styles.pointsRequired}>
-        <Text style={styles.itemPoints}>{item.points} points</Text>
+      <Text style={styles.itemName}>{item.rewardName}</Text>
+      <View style={styles.pointsContainer}>
+        <Text style={styles.points}>{item.points}pt</Text>
       </View>
       {redeemedItems.includes(item._id) && (
         <Text style={styles.redeemedText}>
@@ -133,26 +142,10 @@ const GiftScreen = () => {
         <Text style={styles.teamPointsText}>Team Points: {teamPoints}</Text>
       </View>
 
-      {/* Display Completed Tasks */}
-      <View style={styles.completedTasksBox}>
-        <Text style={styles.completedTasksText}>Completed Tasks:</Text>
-        {completedTasks.length > 0 ? (
-          <FlatList
-            data={completedTasks}
-            keyExtractor={(task) => task._id}
-            renderItem={({ item }) => (
-              <Text style={styles.completedTaskItem}>{item.title}</Text>
-            )}
-          />
-        ) : (
-          <Text style={styles.noCompletedTasksText}>No completed tasks</Text>
-        )}
-      </View>
-
-      {/* List of Items */}
+      {/* List of Items (Rewards) */}
       <FlatList
-        data={items}
-        keyExtractor={(item) => item._id.toString()}
+        data={rewards}
+        keyExtractor={item => item._id.toString()}
         renderItem={renderItem}
       />
 
@@ -169,7 +162,7 @@ const GiftScreen = () => {
           <View style={styles.modalContent}>
             <Text style={styles.modalText}>
               Are you sure you want to redeem{" "}
-              {selectedReward ? selectedReward.name : ""}?
+              {selectedReward ? selectedReward.rewardName : ""}?
             </Text>
             <Button title="Redeem" onPress={handleRedeem} />
             <Button
@@ -216,7 +209,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
   },
-  completedTasksBox: {
+  rewardsBox: {
     width: 214,
     height: 54,
     borderRadius: 20,
@@ -227,35 +220,42 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 20,
   },
-  completedTasksText: {
+  rewardsText: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 10,
     marginTop: 10,
   },
   itemBox: {
+    height: 100,
+    width: "90%",
+    flexDirection: 'row',
+    marginLeft: 20,
+    marginTop: 30,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    marginVertical: 8,
     borderWidth: 1,
-    borderColor: "#6495ed",
-    padding: 10,
-    marginTop: 12,
-    marginBottom: 14,
-    backgroundColor: "rgba(255, 255, 255, 0.90)",
-    borderRadius: 10,
-    height: 50,
+    borderColor: '#DDD',
+    backgroundColor: '#FFF',
+    elevation: 3,
+    shadowRadius: 2,
+    shadowOpacity: 0.1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 }
   },
   itemName: {
-    fontSize: 16,
+    fontSize: 20,
+    fontWeight: "bold",
+    color: '#555',
   },
   pointsRequired: {
-    width: 80,
-    height: 30,
-    borderRadius: 20,
-    backgroundColor: "#FBECFF",
-    justifyContent: "center",
-    alignItems: "center",
-    position: "absolute",
-    right: 10,
-    top: 4,
+    backgroundColor: '#FBECFF',
+    borderRadius: 14,
+    paddingVertical: 7,
+    paddingHorizontal: 12,
   },
   itemPoints: {
     color: "#2B262D",
@@ -288,6 +288,18 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 5,
   },
+  pointsContainer: {
+    backgroundColor: '#FBECFF',
+    borderRadius: 14,
+    paddingVertical: 7,
+    paddingHorizontal: 12,
+  },
+  points: {
+    fontSize: 16,
+    color: '#555',
+    fontWeight: 'bold',
+  },
 });
 
 export default GiftScreen;
+
