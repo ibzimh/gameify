@@ -1,28 +1,34 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Pressable, View, Text, ScrollView } from "react-native";
 import UploadImage from "./ImageUpload";
-import Config from "./env"; // Adjust the import path accordingly
+import Config from "./env"; 
 
-const UserProfileView = ({user,setUser}) => {
+const UserProfileView = ({ user, setUser }) => {
   const [teams, setTeams] = useState([]);
 
   useEffect(() => {
     const fetchTeams = async () => {
       try {
+        const userTeamIds = user.teamIds.map((team) => team.team_id);
+        
         const response = await fetch(Config.BACKEND + "teams");
         if (!response.ok) {
           throw new Error(`Failed to fetch teams. Status: ${response.status}`);
         }
 
         const data = await response.json();
-        setTeams(data.data);
+
+        // Filter teams based on the user's teamIds
+        const userTeams = data.data.filter((team) => userTeamIds.includes(team._id));
+
+        setTeams(userTeams);
       } catch (error) {
         console.error("Error fetching teams:", error.message);
       }
     };
 
     fetchTeams();
-  }, []);
+  }, [user]);
 
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContainer}>
