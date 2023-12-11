@@ -51,9 +51,12 @@ const UserProfileView = ({ user, setUser }) => {
         <View style={styles.body}>
           {teams.map((team) => (
             <Pressable key={team._id} style={styles.RectangleShapeView}>
-              <Text style={styles.headtText}>{team.team_name}</Text>
-              <Text style={styles.SubjectText}>Total Points: {team.total_points || 0}</Text>
-            </Pressable>
+            <Text style={styles.headtText}>{team.team_name}</Text>
+            <Text style={styles.SubjectText}>
+              {/* Display team-specific points */}
+              Total Points: {user.teamIds.find(userTeam => userTeam.team_id === team._id)?.total_points || 0}
+            </Text>
+          </Pressable>
           ))}
           <Pressable style={styles.btn}>
             <Text style={styles.text}>Logout</Text>
